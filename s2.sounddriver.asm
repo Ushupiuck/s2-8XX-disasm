@@ -1153,18 +1153,28 @@ DoPause:
 ; ---------------------------------------------------------------------------
 
 UnpauseMusic:
-		push	ix
-		ld	(ix+zVar.StopMusic),0
+    if OptimiseDriver
+		xor	a			; a = 0
+		ld	(zAbsVar.StopMusic),a	; Clear pause/unpause flag
+    else
+		push	ix			; Save ix (nothing uses this, beyond this point...)
+		ld	(ix+zVar.StopMusic),0	; Clear pause/unpause flag
+    endif
 		ld	ix,zSongDACFMStart
 		ld	b,MUSIC_DAC_FM_TRACK_COUNT
 		call	zResumeTrack
 		bankswitch SoundIndex
 		ld	ix,zSFX_FMStart
 		ld	b,SFX_FM_TRACK_COUNT
+    if OptimiseDriver
+		; Fall-through to zResumeTrack...
+    else
 		call	zResumeTrack
-		call	zBankSwitchToMusic
-		pop	ix
+		; None of this is necessary...
+		call	zBankSwitchToMusic	; Back to music (Pointless: music isn't updated until the next frame)
+		pop	ix			; Restore ix (nothing uses this, beyond this point...)
 		ret
+    endif
 ; End of function DoPause
 
 
@@ -1176,11 +1186,14 @@ zResumeTrack:
 		jr	z,.nexttrack
 		bit	2,(ix+zTrack.PlaybackControl)
 		jr	nz,.nexttrack
-		ld	c,(ix+zTrack.AMSFMSPan)
-		ld	a,(ix+zTrack.VoiceControl)
-		and	3
-		add	a,0B4h
+    if ~~OptimiseDriver
+		; cfSetVoiceCont already does this
+		ld	c,(ix+zTrack.AMSFMSPan)		; AMS/FMS/panning flags
+		ld	a,(ix+zTrack.VoiceControl)	; Get voice control bits...
+		and	3				; ... the FM portion of them
+		add	a,0B4h				; Command to select AMS/FMS/panning register
 		rst	zWriteFMIorII
+    endif
 		push	bc
 		ld	a,(ix+zTrack.VoiceIndex)
 		call	zSetVoiceMusic
@@ -1442,13 +1455,13 @@ loc_79A:
 		inc	de
 		ld	(iy+zTrack.VoiceControl),a
 		ld	(iy+zTrack.TempoDivider),c
-		ld	(iy+zTrack.StackPointer),zTrack.GoSubStack
+		ld	(iy+zTrack.StackPointer),2Ah
 		ld	(iy+zTrack.AMSFMSPan),0C0h
 		ld	(iy+zTrack.DurationTimeout),1
 		push	de
 		push	bc
 		ld	a,iyl
-		add	a,zTrack.DataPointerLow
+		add	a,3
 		ld	e,a
 		adc	a,iyh
 		sub	e
@@ -1510,12 +1523,12 @@ loc_80D:
 		inc	de
 		ld	(iy+zTrack.VoiceControl),a
 		ld	(iy+zTrack.TempoDivider),c
-		ld	(iy+zTrack.StackPointer),zTrack.GoSubStack
+		ld	(iy+zTrack.StackPointer),2Ah
 		ld	(iy+zTrack.DurationTimeout),1
 		push	de
 		push	bc
 		ld	a,iyl
-		add	a,zTrack.DataPointerLow
+		add	a,3
 		ld	e,a
 		adc	a,iyh
 		sub	e
@@ -1704,9 +1717,9 @@ loc_929:
 		push	bc
 		ld	(ix+zTrack.TempoDivider),c
 		ld	(ix+zTrack.DurationTimeout),1
-		ld	(ix+zTrack.StackPointer),zTrack.GoSubStack
+		ld	(ix+zTrack.StackPointer),2Ah
 		ld	a,e
-		add	a,zTrack.DataPointerLow-zTrack.TempoDivider
+		add	a,1
 		ld	e,a
 		adc	a,d
 		sub	e
@@ -1955,6 +1968,10 @@ sub_AAE:
 		push	bc
 		ld	b,(ix+zVar.Queue0)
 		ld	c,(ix+zVar.Queue1)
+	if FixDriverBugs
+		push	bc
+		ld	(ix+zVar.Queue2),b
+	endif
 		push	bc
 		ld	hl,zAbsVar
 		ld	de,zAbsVar+1
@@ -1964,6 +1981,10 @@ sub_AAE:
 		pop	bc
 		ld	(ix+zVar.Queue0),b
 		ld	(ix+zVar.Queue1),c
+	if FixDriverBugs
+		pop	bc
+		ld	(ix+zVar.Queue2),b
+	endif
 		pop	bc
 		ld	(ix+zVar.SpeedUpFlag),b
 		ld	(ix+zVar.FadeInCounter),c
@@ -2801,7 +2822,11 @@ ptrsize :=	2+2
 idstart :=	81h
 
 dac_sample_metadata macro label,sampleRate
+	if ("label"=="0")
+	dw	0
+	else
 	db	id(label),dpcmLoopCounter(sampleRate)
+	endif
     endm
 
 		dac_sample_metadata zDACPtr_Kick,   8250	; 81h
@@ -2810,7 +2835,7 @@ dac_sample_metadata macro label,sampleRate
 		dac_sample_metadata zDACPtr_Scratch,19000	; 84h
 		dac_sample_metadata zDACPtr_Timpani,7350	; 85h
 		dac_sample_metadata zDACPtr_Tom,   13500	; 86h
-		dw	0										; 87h
+		dac_sample_metadata	0						; 87h
 		dac_sample_metadata zDACPtr_Timpani,9750	; 88h
 		dac_sample_metadata zDACPtr_Timpani,8750	; 89h
 		dac_sample_metadata zDACPtr_Timpani,7250	; 8Ah
