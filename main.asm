@@ -120,7 +120,7 @@ PortA_OK:
 		move.b	HW_Version-Z80_Bus_Request(a1),d0	; get hardware version
 		andi.b	#$F,d0
 		beq.s	SkipSecurity		; if the console has no TMSS,skip the security stuff
-		move.l	#'SEGA',Security_Addr-Z80_Bus_Request(a1)	; satisfy the TMSS
+		move.l	#"SEGA",Security_Addr-Z80_Bus_Request(a1)	; satisfy the TMSS
 ; loc_234:
 SkipSecurity:
 		move.w	(a4),d0	; check if VDP works
@@ -273,7 +273,7 @@ GameProgram:
 		tst.w	(VDP_control_port).l
 		btst	#6,(HW_Expansion_Control).l
 		beq.s	ChecksumTest
-		cmpi.l	#'init',(Checksum_fourcc).w
+		cmpi.l	#"init",(Checksum_fourcc).w
 		beq.w	GameInit
 ; loc_31C:
 ChecksumTest:
@@ -301,7 +301,7 @@ GameClrStack:
 		move.b	(HW_Version).l,d0
 		andi.b	#$C0,d0
 		move.b	d0,(Graphics_Flags).w
-		move.l	#'init',(Checksum_fourcc).w
+		move.l	#"init",(Checksum_fourcc).w
 ; loc_36A:
 GameInit:
 		lea	(RAM_Start&$FFFFFF).l,a6
@@ -410,7 +410,7 @@ ErrorMsg_TwoAddresses:
 		addq.w	#2,sp
 		move.l	(sp)+,(Object_Respawn_Table+$40).w
 		addq.w	#2,sp
-		movem.l	d0-a7,(Object_Respawn_Table).w
+		movem.l	d0-sp,(Object_Respawn_Table).w
 		bsr.w	ShowErrorMsg
 		move.l	2(sp),d0
 		bsr.w	ShowErrAddress
@@ -421,14 +421,14 @@ ErrorMsg_TwoAddresses:
 ; loc_45A:
 ErrorMessage:
 		move	#$2700,sr
-		movem.l	d0-a7,(Object_Respawn_Table).w
+		movem.l	d0-sp,(Object_Respawn_Table).w
 		bsr.w	ShowErrorMsg
 		move.l	2(sp),d0
 		bsr.w	ShowErrAddress
 ; loc_470:
 ErrorMsg_Wait:
 		bsr.w	Error_WaitForC
-		movem.l	(Object_Respawn_Table).w,d0-a7
+		movem.l	(Object_Respawn_Table).w,d0-sp
 		move	#$2300,sr
 		rte
 ; ===========================================================================
@@ -892,7 +892,7 @@ PalToCRAM:
 		move.l	#$C0000000,4(a1)	; set VDP to write to CRAM address $00
 	rept 32
 		move.l	(a0)+,(a1)	; move palette to CRAM (all 64 colors at once)
-	endm
+	endr
 		move.w	#$8ADF,4(a1)	; write %1101 %1111 to register 10 (interrupt every 224th line)
 		movem.l	(sp)+,a0-a1
 		tst.b	(Do_Updates_in_H_int).w
@@ -915,7 +915,7 @@ loc_129A:
 ; loc_12AC:
 sndDriverInput:
 		lea	(Sound_Queue&$FFFFFF).l,a0
-		lea	(Z80_RAM+zStack).l,a1
+		lea	(Z80_RAM+zAbsVar).l,a1
 
 		cmpi.b	#$80,zVar.QueueToPlay(a1)	; is the sound driver still processing a request?
 		bne.s	loc_12E0	; if yes,branch
@@ -934,7 +934,14 @@ loc_12DC:
 		move.b	d0,zVar.QueueToPlay(a1)
 
 loc_12E0:
-		moveq	#4-1,d1	; this is one digit too high,meaning the first byte of the voice table pointer is overwritten
+	if FixBugs
+		moveq	#3-1,d1
+	else
+		; This is too high: there is only room for three bytes in the
+		; driver's queue. This causes the first byte of 'VoiceTblPtr' to be
+		; overwritten.
+		moveq	#4-1,d1
+	endif
 
 loc_12E2:
 		move.b	SoundQueue.SFX0(a0,d1.w),d0
@@ -1104,9 +1111,14 @@ ClearScreen:
 		clr.l	(Vscroll_Factor).w
 		clr.l	(unk_F61A).w
 
+	if FixBugs
+		clearRAM Sprite_Table,Sprite_Table_End+$80
+		clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End_Padded
+	else
 		; These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
 		clearRAM Sprite_Table,Sprite_Table_End+$80+4
 		clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End_Padded+4
+	endif
 
 		startZ80
 		rts
@@ -1620,7 +1632,9 @@ RunPLC_RAM:
 
 loc_17CA:
 		andi.w	#$7FFF,d2
+	if ~~FixBugs
 		move.w	d2,(Plc_Buffer_Reg18).w
+	endif
 		bsr.w	NemDec4
 		move.b	(a0)+,d5
 		asl.w	#8,d5
@@ -1634,6 +1648,9 @@ loc_17CA:
 		move.l	d0,(Plc_Buffer_RegC).w
 		move.l	d5,(Plc_Buffer_Reg10).w
 		move.l	d6,(Plc_Buffer_Reg14).w
+	if FixBugs
+		move.w	d2,(Plc_Buffer_Reg18).w
+	endif
 
 return_17FC:
 		rts
