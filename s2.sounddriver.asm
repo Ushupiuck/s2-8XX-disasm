@@ -7,7 +7,7 @@
 ; from 68K to Z80. Even the push block is still fully intact here.
 ; ---------------------------------------------------------------------------
 
-FixDriverBugs = 0
+FixDriverBugs = FixBugs
 OptimiseDriver = 0
 
 ; ---------------------------------------------------------------------------
@@ -430,9 +430,11 @@ loc_A1:
 		call	nz,UpdatePSGTrack
 		pop	bc
 		djnz	loc_A1
+
 		bankswitch SoundIndex
 		ld	a,80h
 		ld	(zDoSFXFlag),a	; 00 - SFX Mode
+
 		ld	b,SFX_FM_TRACK_COUNT
 
 loc_C7:
@@ -443,6 +445,7 @@ loc_C7:
 		call	nz,UpdateFMTrack
 		pop	bc
 		djnz	loc_C7
+
 		ld	b,SFX_PSG_TRACK_COUNT
 
 loc_D9:
@@ -1217,7 +1220,7 @@ DoSoundQueue:
 		ld	hl,zAbsVar.Queue0
 		ld	a,(zAbsVar.SFXPriorityVal)	; 1B80 - current SFX Priority
 		ld	c,a
-		ld	b,(zVar.Queue2-zVar.Queue0)+1
+		ld	b,3
 
 loc_630:
 		ld	a,(hl)
@@ -2544,8 +2547,17 @@ loc_DCE:
 		rr	e
 		jr	nc,loc_DD9
 		push	af
+	if FixDriverBugs
+		set	7,c
+	endif
 		ld	a,d
 		add	a,c
+	if FixDriverBugs
+		; Prevent attenuation overflow (volume underflow)
+		ld	c,a
+		sbc	a,a
+		or	c
+	endif
 		ld	c,a
 		pop	af
 

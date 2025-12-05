@@ -25,9 +25,14 @@ Mus_Unused1_FM4:
 	smpsSetvoice        $00
 	smpsAlterNote       $01
 	dc.b	nRst, $12
+	if FixMusicAndSFXDataBugs
+Mus_Unused1_Loop04:
+	endif
 	smpsPan             panLeft, $00
 
+	if ~~FixMusicAndSFXDataBugs
 Mus_Unused1_Loop04:
+	endif
 	dc.b	nE5, $03, nE5, nCs5, nCs5, nA4, nA4, nCs5, nCs5, nA4, nA4, nE4
 	dc.b	nE4
 	smpsLoop            $00, $07, Mus_Unused1_Loop04

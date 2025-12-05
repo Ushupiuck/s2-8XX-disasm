@@ -351,11 +351,17 @@ Mus_CNZ_Jump02:
 ; FM5 Data
 Mus_CNZ_FM5:
 	dc.b	nRst, $30, nRst
+	if ~~FixMusicAndSFXDataBugs
 	smpsSetvoice        $02
 	smpsModSet          $02, $04, $04, $04
+	endif
 	smpsPan             panLeft, $00
 
 Mus_CNZ_Jump01:
+	if FixMusicAndSFXDataBugs
+	smpsSetvoice        $02
+	smpsModSet          $02, $04, $04, $04
+	endif
 	dc.b	nRst, $18, nC5, $30, nG4, $08, nRst, $10, nD5, nD5, $08, nRst
 	dc.b	$10, nC5, $08, nRst, $10, nG4, $20, nRst, $18, nD4, $08, nRst
 	dc.b	$10, nF4, nEb4, $08, nRst, $10, nD4, $08, nRst, $30

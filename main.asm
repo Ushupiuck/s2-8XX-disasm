@@ -34,6 +34,8 @@
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
 ;
+FixBugs = 0
+;
 padToPowerOfTwo = 1
 ;	| If 1, pads the end of the ROM to the next power of two bytes (for real hardware)
 ;
@@ -54,7 +56,7 @@ useFullWaterTables = 0
 ; Equates section - Names for variables.
 	include	"constants.asm"
 SonicDriverVer = 2
-FixMusicAndSFXDataBugs = 0
+FixMusicAndSFXDataBugs = FixBugs
 	include	"sound/_smps2asm_inc.asm"
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
