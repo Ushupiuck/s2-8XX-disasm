@@ -3090,7 +3090,11 @@ PlayLevel:
 		move.l	d0,(Got_Emeralds_array+4).w
 		move.b	d0,(Continue_count).w
 		move.l	#5000,(Next_Extra_life_score).w
-		move.b	#SndID_SpindashRev,d0	; Bug: This should be using MusID_Stop
+	if FixBugs
+		move.b	#MusID_Stop,d0
+	else
+		move.b	#$E0,d0	; Bug: This should be using MusID_Stop
+	endif
 		bsr.w	PlaySound
 		rts
 ; ===========================================================================
@@ -4658,7 +4662,11 @@ loc_5260:
 		moveq	#S1PLCID_SpecStg,d0
 		bsr.w	RunPLC_ROM
 
+	if FixBugs
+		clearRAM Object_RAM,Object_RAM_End
+	else
 		clearRAM Primary_Collision,Primary_Collision+$2000
+	endif
 		clearRAM Misc_Variables,Misc_Variables_End
 		clearRAM Oscillating_Data,Oscillating_Numbers_End
 		clearRAM Decomp_Buffer,Decomp_Buffer_End
