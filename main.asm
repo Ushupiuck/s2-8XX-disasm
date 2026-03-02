@@ -44570,14 +44570,20 @@ DACSamples_End:
 ; ---------------------------------------------------------------------------
 ; Music pointers
 ; ---------------------------------------------------------------------------
+
+music_ptr macro DATA
+DATA.pointer label *
+	rom_ptr_z80	DATA
+    endm
+
 ; loc_F0000:
 MusicPoint1:	startBank
-MusPtr_ExtraLife:	rom_ptr_z80	Mus_ExtraLife	; $98
-MusPtr_Title:		rom_ptr_z80	Mus_Title	; $99
-MusPtr_ActClear:	rom_ptr_z80	Mus_ActClear	; $9A
-MusPtr_GameOver:	rom_ptr_z80	Mus_GameOver	; $9B
-MusPtr_Continue:	rom_ptr_z80	Mus_Continue	; $9C
-MusPtr_Emerald:		rom_ptr_z80	Mus_Emerald	; $9D-$9F
+		music_ptr	Mus_ExtraLife	; $98
+		music_ptr	Mus_Title		; $99
+		music_ptr	Mus_ActClear	; $9A
+		music_ptr	Mus_GameOver	; $9B
+		music_ptr	Mus_Continue	; $9C
+		music_ptr	Mus_Emerald		; $9D-$9F
 
 ; loc_F000C:
 Mus_ExtraLife:	include		"sound/music/Extra life.asm"
@@ -44613,27 +44619,27 @@ Sega_Snd_End:
 ; ------------------------------------------------------------------------------
 ; loc_F8000: Music_81_To_97:
 MusicPoint2:	startBank
-MusPtr_OOZ:		rom_ptr_z80	Mus_OOZ		; $81
-MusPtr_GHZ:		rom_ptr_z80	Mus_GHZ		; $82
-MusPtr_MTZ:		rom_ptr_z80	Mus_MTZ		; $83
-MusPtr_CNZ:		rom_ptr_z80	Mus_CNZ		; $84
-MusPtr_DHZ:		rom_ptr_z80	Mus_DHZ		; $85
-MusPtr_HPZ:		rom_ptr_z80	Mus_HPZ		; $86
-MusPtr_NGHZ:		rom_ptr_z80	Mus_NGHZ	; $87
-MusPtr_DEZ:		rom_ptr_z80	Mus_DEZ		; $88
-MusPtr_SpecStg:		rom_ptr_z80	Mus_SpecStg	; $89
-MusPtr_LevelSel:	rom_ptr_z80	Mus_LevelSel	; $8A
-MusPtr_LevelSelDup:	rom_ptr_z80	Mus_LevelSel	; $8B ; yes,the same song is referenced twice
-MusPtr_FinalBoss:	rom_ptr_z80	Mus_FinalBoss	; $8C
-MusPtr_CPZ:		rom_ptr_z80	Mus_CPZ		; $8D
-MusPtr_Boss:		rom_ptr_z80	Mus_Boss	; $8E
-MusPtr_RWZ:		rom_ptr_z80	Mus_RWZ		; $8F
-MusPtr_SSZ:		rom_ptr_z80	Mus_SSZ		; $90 and $91
-MusPtr_Unused1:		rom_ptr_z80	Mus_Unused1	; $92
-MusPtr_BOZ:		rom_ptr_z80	Mus_BOZ		; $93
-MusPtr_Unused2:		rom_ptr_z80	Mus_Unused2	; $94
-MusPtr_Invinc:		rom_ptr_z80	Mus_Invinc	; $95
-MusPtr_HTZ:		rom_ptr_z80	Mus_HTZ		; $96 and $97
+		music_ptr	Mus_OOZ		; $81
+		music_ptr	Mus_GHZ		; $82
+		music_ptr	Mus_MTZ		; $83
+		music_ptr	Mus_CNZ		; $84
+		music_ptr	Mus_DHZ		; $85
+		music_ptr	Mus_HPZ		; $86
+		music_ptr	Mus_NGHZ	; $87
+		music_ptr	Mus_DEZ		; $88
+		music_ptr	Mus_SpecStg	; $89
+		music_ptr	Mus_LevelSel	; $8A
+		music_ptr	Mus_LevelSelDup	; $8B ; yes,the same song is referenced twice
+		music_ptr	Mus_FinalBoss	; $8C
+		music_ptr	Mus_CPZ		; $8D
+		music_ptr	Mus_Boss	; $8E
+		music_ptr	Mus_RWZ		; $8F
+		music_ptr	Mus_SSZ		; $90 and $91
+		music_ptr	Mus_Unused1	; $92
+		music_ptr	Mus_BOZ		; $93
+		music_ptr	Mus_Unused2	; $94
+		music_ptr	Mus_Invinc	; $95
+		music_ptr	Mus_HTZ		; $96 and $97
 
 ; loc_F802A:
 Mus_OOZ:	include		"sound/music/OOZ.asm"		; CNZ 2-player theme in final
@@ -44646,7 +44652,8 @@ Mus_NGHZ:	include		"sound/music/NGHZ.asm"
 Mus_DEZ:	include		"sound/music/DEZ.asm"		; Technically used in this build for the extra life jingle when collecting 100
 								; or 200 rings,but labeled as DEZ regardless to prevent confusion
 Mus_SpecStg:	include		"sound/music/Special Stage.asm"
-Mus_LevelSel:	include		"sound/music/Level select.asm"
+Mus_LevelSel:
+Mus_LevelSelDup:	include		"sound/music/Level select.asm"
 Mus_FinalBoss:	include		"sound/music/Final boss.asm"
 Mus_CPZ:	include		"sound/music/CPZ.asm"
 Mus_Boss	include		"sound/music/Boss.asm"

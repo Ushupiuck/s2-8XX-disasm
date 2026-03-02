@@ -3168,7 +3168,7 @@ dac_sample_metadata macro label,sampleRate
 	else
 	db	id(label),dpcmLoopCounter(sampleRate)
 	endif
-    endm
+	endm
 
 		dac_sample_metadata zDACPtr_Kick,   8250	; 81h
 		dac_sample_metadata zDACPtr_Snare, 24000	; 82h
@@ -3220,52 +3220,50 @@ byte_10E5:	db 4,4,3,3,2,2,1,1,1,1,1,1,1,1,1,1,1,1
 		db 7,80h
 byte_1165:	db 0,1,3,80h
 
+; Stuff for zMasterPlaylist.
+z80_bank_size = 8000h
+getZ80BankOffset function label, label # z80_bank_size
+getZ80BankBase function label, label - getZ80BankOffset(label)
+withinSameZ80Bank function label1, label2, getZ80BankBase(label1) == getZ80BankBase(label2)
+
+music_metadata macro DATA
+	db	(withinSameZ80Bank(DATA.pointer, MusicPoint2)<<7)|(getZ80BankOffset(DATA.pointer)/2)
+	endm
+
 ; zbyte_116A:
 zMasterPlaylist:
 
-; Music IDs
-; bank         - Which bank that the song is in.
-; label        - The location of the song data's pointer.
-music_metadata macro bank,label
-    if bank
-.base = MusicPoint2
-    else
-.base = MusicPoint1
-    endif
-	db	(bank<<7)|((label-.base)/2)
-    endm
-
-zMusIDPtr_OOZ:		music_metadata	1,MusPtr_OOZ
-zMusIDPtr_GHZ:		music_metadata	1,MusPtr_GHZ
-zMusIDPtr_MTZ:		music_metadata	1,MusPtr_MTZ
-zMusIDPtr_CNZ:		music_metadata	1,MusPtr_CNZ
-zMusIDPtr_DHZ:		music_metadata	1,MusPtr_DHZ
-zMusIDPtr_HPZ:		music_metadata	1,MusPtr_HPZ
-zMusIDPtr_NGHZ:		music_metadata	1,MusPtr_NGHZ
-zMusIDPtr_DEZ:		music_metadata	1,MusPtr_DEZ
-zMusIDPtr_SpecStg:	music_metadata	1,MusPtr_SpecStg
-zMusIDPtr_LevelSel:	music_metadata	1,MusPtr_LevelSel
-zMusIDPtr_LevelSelDup:	music_metadata	1,MusPtr_LevelSelDup
-zMusIDPtr_FinalBoss:	music_metadata	1,MusPtr_FinalBoss
-zMusIDPtr_CPZ:		music_metadata	1,MusPtr_CPZ
-zMusIDPtr_Boss:		music_metadata	1,MusPtr_Boss
-zMusIDPtr_RWZ:		music_metadata	1,MusPtr_RWZ
-zMusIDPtr_SSZ:		music_metadata	1,MusPtr_SSZ
-zMusIDPtr_SSZDup:	music_metadata	1,MusPtr_SSZ
-zMusIDPtr_Unused1:	music_metadata	1,MusPtr_Unused1
-zMusIDPtr_BOZ:		music_metadata	1,MusPtr_BOZ
-zMusIDPtr_Unused2:	music_metadata	1,MusPtr_Unused2
-zMusIDPtr_Invinc:	music_metadata	1,MusPtr_Invinc
-zMusIDPtr_HTZ:		music_metadata	1,MusPtr_HTZ
-zMusIDPtr_HTZDup:	music_metadata	1,MusPtr_HTZ
-zMusIDPtr_ExtraLife:	music_metadata	0,MusPtr_ExtraLife
-zMusIDPtr_Title:	music_metadata	0,MusPtr_Title
-zMusIDPtr_ActClear:	music_metadata	0,MusPtr_ActClear
-zMusIDPtr_GameOver:	music_metadata	0,MusPtr_GameOver
-zMusIDPtr_Continue:	music_metadata	0,MusPtr_Continue
-zMusIDPtr_Emerald:	music_metadata	0,MusPtr_Emerald
-zMusIDPtr_EmeraldDup:	music_metadata	0,MusPtr_Emerald
-zMusIDPtr_EmeraldDup2:	music_metadata	0,MusPtr_Emerald
+zMusIDPtr_OOZ:		music_metadata	Mus_OOZ
+zMusIDPtr_GHZ:		music_metadata	Mus_GHZ
+zMusIDPtr_MTZ:		music_metadata	Mus_MTZ
+zMusIDPtr_CNZ:		music_metadata	Mus_CNZ
+zMusIDPtr_DHZ:		music_metadata	Mus_DHZ
+zMusIDPtr_HPZ:		music_metadata	Mus_HPZ
+zMusIDPtr_NGHZ:		music_metadata	Mus_NGHZ
+zMusIDPtr_DEZ:		music_metadata	Mus_DEZ
+zMusIDPtr_SpecStg:	music_metadata	Mus_SpecStg
+zMusIDPtr_LevelSel:	music_metadata	Mus_LevelSel
+zMusIDPtr_LevelSelDup:	music_metadata	Mus_LevelSelDup
+zMusIDPtr_FinalBoss:	music_metadata	Mus_FinalBoss
+zMusIDPtr_CPZ:		music_metadata	Mus_CPZ
+zMusIDPtr_Boss:		music_metadata	Mus_Boss
+zMusIDPtr_RWZ:		music_metadata	Mus_RWZ
+zMusIDPtr_SSZ:		music_metadata	Mus_SSZ
+zMusIDPtr_SSZDup:	music_metadata	Mus_SSZ
+zMusIDPtr_Unused1:	music_metadata	Mus_Unused1
+zMusIDPtr_BOZ:		music_metadata	Mus_BOZ
+zMusIDPtr_Unused2:	music_metadata	Mus_Unused2
+zMusIDPtr_Invinc:	music_metadata	Mus_Invinc
+zMusIDPtr_HTZ:		music_metadata	Mus_HTZ
+zMusIDPtr_HTZDup:	music_metadata	Mus_HTZ
+zMusIDPtr_ExtraLife:	music_metadata	Mus_ExtraLife
+zMusIDPtr_Title:	music_metadata	Mus_Title
+zMusIDPtr_ActClear:	music_metadata	Mus_ActClear
+zMusIDPtr_GameOver:	music_metadata	Mus_GameOver
+zMusIDPtr_Continue:	music_metadata	Mus_Continue
+zMusIDPtr_Emerald:	music_metadata	Mus_Emerald
+zMusIDPtr_EmeraldDup:	music_metadata	Mus_Emerald
+zMusIDPtr_EmeraldDup2:	music_metadata	Mus_Emerald
 zMusIDPtr__End:
 
 SpeedUpTempoLst:
