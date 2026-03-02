@@ -1535,7 +1535,7 @@ loc_6D8:
 ; ---------------------------------------------------------------------------
 
 zPlayMusic:
-		ld	(byte_11A9),a	; make a backup	of the Music ID
+		ld	(zCurSong),a	; make a backup	of the Music ID
 		cp	MusID_ExtraLife
 		jr	nz,loc_725
 		ld	a,(zAbsVar.1upPlaying)
@@ -1578,7 +1578,7 @@ loc_725:
 
 loc_72C:
 		call	sub_AAE
-		ld	a,(byte_11A9)	; read Music ID	back
+		ld	a,(zCurSong)	; read Music ID	back
 		sub	MusID__First
 		ld	e,a
 		ld	d,0
@@ -1827,14 +1827,14 @@ PlaySFX:
 		ld	a,c
 		cp	SndID_RingRight
 		jr	nz,loc_8B6
-		ld	a,(byte_11AB)	; check	Ring Speaker
+		ld	a,(zRingSpeaker)	; check	Ring Speaker
 		or	a
 		jr	nz,loc_8AF
 		ld	c,SndID_RingLeft	; change SFX ID,play on left speaker
 
 loc_8AF:
 		cpl
-		ld	(byte_11AB),a	; write	inverted Ring Speaker value back
+		ld	(zRingSpeaker),a	; write	inverted Ring Speaker value back
 	if OptimiseDriver=1
 		jr	loc_8C5
 	else
@@ -3300,7 +3300,7 @@ SpeedUpTempoLst:
 		db 20h
 		db 20h
 zCurDAC:	db 0
-byte_11A9:	db 0
+zCurSong:	db 0
 zDoSFXFlag:	db 0
-byte_11AB:	db 0
+zRingSpeaker:	db 0
 zPushingFlag:	db 0
