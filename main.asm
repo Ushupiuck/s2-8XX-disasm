@@ -36,16 +36,15 @@
 ;
 FixBugs = 0
 ;
-padToPowerOfTwo = 1
-;	| If 1, pads the end of the ROM to the next power of two bytes (for real hardware)
-;
-zeroOffsetOptimization = 0
+AllOptimizations = 0
+;	| If 1, enables all optimizations
+ZeroOffsetOptimization = 0|AllOptimizations
 ;	| If 1, makes a handful of zero-offset instructions smaller
-;
+PaddingOptimization = 0|AllOptimizations
+;	| If 1, removes about 33 KB of various superfluous padding
 useFullWaterTables = 0
 ;	| If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
 ;	| Set to 1 if you've shifted level IDs around or you want water in levels with a level slot below 8
-;
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; AS-specific macros and assembler settings
@@ -40147,6 +40146,15 @@ loc_22982:
 loc_22988:
 		rts
 loc_2298A:
+	if FixBugs
+		move.w	(a0)+,d0
+		move.w	d0,d2
+		andi.w	#$F800,d0
+		andi.w	#$7FF,d2
+		lsr.w	#1,d2
+		or.w	d2,d0
+		move.w	d0,(a1)+
+	else
 		move.w	(a0)+,d0
 		move.w	d0,d1
 		andi.w	#$F800,d0
@@ -40154,6 +40162,7 @@ loc_2298A:
 		lsr.w	#1,d1
 		or.w	d1,d0
 		move.w	d0,(a1)+
+	endif
 		dbf	d1,loc_2298A
 		rts
 ; off_229A2:
@@ -40429,7 +40438,7 @@ AddPoints: ; loc_22Fd0:
 		move.b	#1,(Update_HUD_score).w
 		lea	(Score).w,A3
 		add.l	d0,(a3)
-		move.l	#$F423F,d1
+		move.l	#999999,d1
 		cmp.l	(a3),d1
 		bhi.s	loc_22FE8
 		move.l	d1,(a3)
@@ -40448,7 +40457,7 @@ loc_23010:
 		rts
 HudUpdate: ; loc_23012:
 		nop
-		lea	(VDP_data_port),A6
+		lea	(VDP_data_port).l,A6
 		tst.w	(Debug_mode_flag).w
 		bne.w	loc_23104
 		tst.b	(Update_HUD_score).w
@@ -40507,7 +40516,7 @@ loc_230C4:
 		tst.b	(Update_Bonus_score).w
 		beq.s	loc_230EC
 		clr.b	(Update_Bonus_score).w
-		move.l	#$6E000002,(VDP_control_port)
+		move.l	#$6E000002,(VDP_control_port).l
 		moveq	#0,d1
 		move.w	(Bonus_Countdown_1).w,d1
 		bsr.w	loc_2337E
@@ -40519,7 +40528,7 @@ loc_230EC:
 Sub_Time_Over: ; loc_230EE:
 		clr.b	(Update_HUD_timer).w
 		lea	(MainCharacter).w,A0
-		move.l	A0,A2
+		movea.l	A0,A2
 		bsr.w	KillSonic				; loc_21422
 		move.b	#1,(Time_Over_flag).w
 		rts
@@ -40548,7 +40557,7 @@ loc_23146:
 		tst.b	(Update_Bonus_score).w
 		beq.s	loc_2316E
 		clr.b	(Update_Bonus_score).w
-		move.l	#$6E000002,(VDP_control_port)
+		move.l	#$6E000002,(VDP_control_port).l
 		moveq	#0,d1
 		move.w	(Bonus_Countdown_1).w,d1
 		bsr.w	loc_2337E
@@ -40558,14 +40567,14 @@ loc_23146:
 loc_2316E:
 		rts
 loc_23170:
-		move.l	#$5F400003,(VDP_control_port)
+		move.l	#$5F400003,(VDP_control_port).l
 		lea	loc_231D8(pc),A2
 		move.w	#2,d2
 		bra.s	loc_231A0
 Head_Up_Display_Base: ; loc_23184: ; HUD routine
 		lea	(VDP_data_port),A6
 		bsr.w	loc_233DE
-		move.l	#$5C400003,(VDP_control_port)
+		move.l	#$5C400003,(VDP_control_port).l
 		lea	loc_231CC(pc),A2
 		move.w	#$E,d2
 loc_231A0:
@@ -40576,7 +40585,7 @@ loc_231A4:
 		bmi.s	loc_231C0
 		ext.w	d0
 		lsl.w	#5,d0
-		lea	(A1,d0),A3
+		lea	(A1,d0.w),A3
 loc_231B4:
 		move.l	(a3)+,(a6)
 		dbf	d1,loc_231B4
@@ -40592,7 +40601,7 @@ loc_231CC:
 loc_231D8:
 		dc.l	$FFFF0000
 loc_231DC:
-		move.l	#$5C400003,(VDP_control_port)
+		move.l	#$5C400003,(VDP_control_port).l
 		move.w	(Camera_X_pos).w,d1
 		lsr.w	#7,d1
 		move.w	(Timer_frames).w,d1
@@ -40680,8 +40689,8 @@ loc_232A2:
 		dbf	d6,loc_2325E
 		rts
 ; loc_232AE:
-		move.l	#$5F800003,(VDP_control_port)
-		lea	(VDP_data_port),A6
+		move.l	#$5F800003,(VDP_control_port).l
+		lea	(VDP_data_port).l,A6
 		lea	(loc_23316).l,A2
 		moveq	#1,d6
 		moveq	#0,d4
@@ -40697,7 +40706,7 @@ loc_232d0:
 loc_232D8:
 		add.l	d3,d1
 		lsl.w	#6,d2
-		lea	(A1,d2),A3
+		lea	(A1,d2.w),A3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40754,7 +40763,7 @@ loc_2333E:
 loc_23348:
 		lsl.w	#6,d2
 		move.l	d0,4(a6)
-		lea	(A1,d2),A3
+		lea	(A1,d2.w),A3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40796,7 +40805,7 @@ loc_233A0:
 		tst.w	d4
 		beq.s	loc_233d0
 		lsl.w	#6,d2
-		lea	(A1,d2),A3
+		lea	(A1,d2.w),A3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40849,7 +40858,7 @@ loc_23410:
 		beq.s	loc_23436
 loc_23414:
 		lsl.w	#5,d2
-		lea	(A1,d2),A3
+		lea	(A1,d2.w),A3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -42080,9 +42089,13 @@ loc_24A0C:
 		dc.w	$9d00
 		dc.l	ArtNem_EggChoppers-$07E2   ; loc_7E12E
 		dc.w	$Ad00
+
+	if PaddingOptimization=0
 Unknow_Data_0x024A30:
-loc_24A30:
 		binclude	"misc/24A30.bin"
+	else
+		align	$8000
+	endif
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Animated flowers in GHZ and HTZ ; ArtUnc_28000: ArtUnc_28080: ArtUnc_21800: ArtUnc_28180:
@@ -42100,6 +42113,7 @@ ArtUnc_GHZPulseBall:	binclude	"art/uncompressed/Pulsing ball against checkered b
 
 Hill_Top_Background:	 ; loc_28300:
 		binclude	"data\htz\backgnd.nem"
+		even
 Hill_Top_Background_Unc: ; loc_28C2A:
 		binclude	"data\htz\backgnd.dat"
 ;---------------------------------------------------------------------------------------
@@ -42298,7 +42312,6 @@ Ghz_1_Foreground:  ; loc_333d6:
 		binclude	"level/layout/GHZ_1.bin"
 Ghz_2_Foreground:  ; loc_33BD8:
 		binclude	"level/layout/GHZ_2.bin"
-
 Ghz_Background:	   ; loc_343DA:
 		binclude	"level/layout/GHZ_BG.bin"
 Null_Layout_1:	   ; loc_343E4:
@@ -42391,10 +42404,12 @@ loc_42B76: ; Filler for Null Level Layout - Left Over from previous build ???
 		dc.l 0
 loc_42B7A: ; Another Big Ring - Left Over from Sonic 1
 		binclude	"data\sprites\bigring.dat"
+	if PaddingOptimization=0
 Unknow_Pallete_0x0437BA: ; loc_437BA:
-		dc.w	$0000,$0262,$02A4,$04E8,$0000,$0EEE
+		dc.w	$000,$262,$2A4,$4E8,$000,$EEE
 Unknow_Data_0x0437C6: ; loc_437C6:
 		binclude	"misc/437C6.bin"
+	endif
 ;===============================================================================
 ; Level Object Layout
 ; [ Begin ]
@@ -42402,7 +42417,7 @@ Unknow_Data_0x0437C6: ; loc_437C6:
 
 ; Macro for marking the boundaries of an object layout file
 ObjectLayoutBoundary macro
-	dc.w	$FFFF,$0000,$0000
+	dc.w	$FFFF,0,0
 	endm
 
 ; off_44000:
@@ -42486,14 +42501,14 @@ Null_Objects_Layout:
 ; Level Object Layout
 ; [ End ]
 ;===============================================================================
+	if PaddingOptimization=0
 Unknow_Data_0x04634E: ; loc_4634E:
 		binclude	"misc/4634E.bin"
 Unknow_Pallete_0x0474AC:
-loc_474AC:
 		binclude	"misc/474AC.bin"
 Unknow_Data_0x04760C:
-loc_4760C:
 		binclude	"misc/4760C.bin"
+	endif
 ;===============================================================================
 ; Level Rings Layout
 ; [ Begin ]
@@ -42586,6 +42601,7 @@ DEz_2_Rings_Layout:	  ; loc_48DB2:
 ; Level Rings Layout
 ; [ End ]
 ;===============================================================================
+	if PaddingOptimization=0
 Unknow_Data_0x048DB4: ; loc_48DB4:
 		binclude	"misc/48DB4.bin"
 Rock_Splashing: ; loc_4B76C:
@@ -42596,21 +42612,16 @@ Unknow_Data_0x04BC4C: ; loc_4BC4C:
 		binclude	"misc/4BC4C.bin"
 Fire_In_Bowl: ; loc_4E86C:
 		binclude	"data\sprites\firebowl.dat"
-; ---------------------------------------------------------------------------
-; Filler (free space)
-; ---------------------------------------------------------------------------
-		rept $194
-		dc.b	$FF
-		endm
+
+		dc.b	[$194]$FF
 
 Unknow_Data_0x04EE00: ; loc_4EE00:
 		binclude	"misc/4EE00.bin"
-; ---------------------------------------------------------------------------
-; Filler (free space)
-; ---------------------------------------------------------------------------
-		rept $468
-		dc.b	$FF
-		endm
+
+		dc.b	[$468]$FF
+	else
+		align	$8000	; This is necessary because of the DMA.
+	endif
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Patterns for Sonic  ; ArtUnc_50000:
@@ -42621,8 +42632,7 @@ ArtUnc_Sonic:	binclude	"art/uncompressed/Sonic's art.bin"
 ; Sonic			; MapUnc_614C0: Sonic_Mappings:
 ;--------------------------------------------------------------------------------------
 MapUnc_Sonic:	binclude	"mappings/sprite/Sonic.bin"
-Tails_Sprites: ; loc_6254C:
-		binclude	"data\sprites\tails.dat"
+Tails_Sprites:	binclude	"data\sprites\tails.dat"
 ;--------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Sonic DPLCs			; MapRUnc_6DA4C: Sonic_Dyn_Script:
@@ -42631,8 +42641,10 @@ MapRUnc_Sonic:	binclude	"mappings/spriteDPLC/Sonic.bin"
 
 ArtNem_Shield: ; loc_6DF8E:
 		binclude	"data\sprites\shield.nem"
+		even
 Invencibility_Stars: ; loc_6E114:
 		binclude	"data\sprites\invstars.nem"
+		even
 Unused_Dust: ; loc_6E1FC:
 		binclude	"data\sprites\dust.dat"
 Tails_Mappings: ; loc_6FB3C:
@@ -43716,448 +43728,494 @@ loc_7095A:
 		dc.w	$759C,$35A4
 SegaLogo: ; loc_70960:
 		binclude	"data\sprites\sega.nem"
+		even
 SegaLogo_Mappings: ; loc_70Dd0:
 		binclude	"data\all\sega.eni"
+		even
 TS_Wings_MapUnc_Sonic: ; loc_70ECC:
 		binclude	"data\all\titlescr.eni"
+		even
 Title_Screen_Bg_Mappings: ; loc_71024:
 		binclude	"data\all\titscrbg.eni"
+		even
 Title_Screen_R_Bg_Mappings: ; loc_712D8:
 		binclude	"data\all\titscrb2.eni"
+		even
 Title_Screen_Bg_Wings: ; loc_71520:
 		binclude	"data\sprites\titlescr.nem" ; Title Screen Wings and background
+		even
 Title_Screen_Sonic_Tails: ; loc_72E82:
 		binclude	"data\sprites\sontascr.nem" ; Sonic And Tails in Title Screen
+		even
 FireBall: ; loc_739C6:
 		binclude	"data\sprites\fireball.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Waterfall in GHZ			; ArtNem_73B3C: Ghz_Waterfall:
-		even
 ArtNem_GHZ_Waterfall:	binclude	"art/nemesis/GHZ waterfall tiles.bin"
+		even
 
 Htz_Lava_Bubble: ; loc_73C42:
 		binclude	"data\htz\lvbubble.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bridge in GHZ				; ArtNem_73D90: Ghz_Bridge:
-		even
 ArtNem_GHZ_Bridge:	binclude	"art/nemesis/GHZ bridge.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonally moving lift in HTZ		; ArtNem_73E68: Htz_Teleferic:
-	even
 ArtNem_HtzZipline:	binclude	"art/nemesis/HTZ zip-line platform.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; One way barrier from HTZ		; ArtNem_7415C: Htz_Automatic_Door:
-	even
 ArtNem_HtzValveBarrier:	binclude	"art/nemesis/One way barrier from HTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ			; ArtNem_741d4: Htz_See_saw:
-	even
 ArtNem_HtzSeeSaw:	binclude	"art/nemesis/See-saw in HTZ.bin"
+		even
 
 Fireball_1: ; loc_7436C:
 		binclude	"data\sprites\firebal1.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Rock from HTZ				; ArtNem_7447A: Htz_Rock:
-	even
 ArtNem_HtzRock:	binclude	"art/nemesis/Rock from HTZ.bin"
+		even
 
 Htz_See_saw_badnick: ; loc_745B0:
 		binclude	"data\htz\see-sawb.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large spinning wheel from MTZ		; ArtNem_7461C: Mz_Rotating_Gear:
-	even
 ArtNem_MtzWheel:	binclude	"art/nemesis/Large spinning wheel from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Indent in large spinning wheel from MTZ	; ArtNem_74A74: Mz_Machine_Ball:
-	even
 ArtNem_MtzWheelIndent:	binclude	"art/nemesis/Large spinning wheel from MTZ - indent.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spike block from MTZ			; ArtNem_74B1C: Mz_Block:
-	even
 ArtNem_MtzSpikeBlock:	binclude	"art/nemesis/MTZ spike block.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Steam from MTZ			; ArtNem_74BEA: Mz_Steam:
-	even
 ArtNem_MtzSteam:	binclude	"art/nemesis/Steam from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spike from MTZ			; ArtNem_74CF4: Mz_Harpoon:
-	even
 ArtNem_MtzSpike:	binclude	"art/nemesis/Spike from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Similarly shaded blocks from MTZ	; ArtNem_74DB6: Mz_Screw_Nut:
-	even
 ArtNem_MtzAsstBlocks:	binclude	"art/nemesis/Similarly shaded blocks from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lava bubble from MTZ			; ArtNem_74E2C: Mz_Lava_Bubble:
-	even
 ArtNem_MtzLavaBubble:	binclude	"art/nemesis/Lava bubble from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lava cup				; ArtNem_74EE2:
-	even
 ArtNem_LavaCup:	binclude	"art/nemesis/Lava cup from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Paralellogram platform from MTZ	; ArtNem_74F52: Mz_Parallelogram_Elevator:
-	even
 ArtNem_MTZ_Platform:	binclude	"art/nemesis/Paralellogram platform from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; End of a bolt and rope from MTZ	; ArtNem_751FE:
-	even
 ArtNem_BoltEnd_Rope:	binclude	"art/nemesis/Bolt end and rope from MTZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Small cog from MTZ			; ArtNem_752A0: Mz_Mini_Gear:
-	even
 ArtNem_MtzCog:	binclude	"art/nemesis/Small cog from MTZ.bin"
+		even
 
 Mz_Teleport: ; Mz_Four_Block: ; loc_75382:
 		dc.b	$00,$04,$86,$71,$00,$FF,$00,$00,$00,$00,$00,$00
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bridge in HPZ				; ArtNem_7538E: Hpz_Bridge:
-	even
 ArtNem_HPZ_Bridge:	binclude	"art/nemesis/HPZ bridge.bin"
+		even
 ; ---------------------------------------------------------------------
 ; Waterfall in HPZ			; Artnem_75506: Hpz_Waterfall:
-	even
 ArtNem_HPZ_Waterfall:	binclude	"art/nemesis/HPZ waterfall tiles.bin"
+		even
 ; ---------------------------------------------------------------------
 ; (meant to be breakable) emerald from HPZ	; Artnem_75868: Hpz_Emerald:
-	even
 ArtNem_HPZ_Emerald:	binclude	"art/nemesis/Emerald from HPZ.bin"
+		even
 ; ---------------------------------------------------------------------
 ; Collapsing platform from HPZ		; ArtNem_75ADA: Hpz_Platform:
-	even
 ArtNem_HPZPlatform:	binclude	"art/nemesis/Collapsing platform from HPZ.bin"
+		even
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Glowing orb from HPZ			; ArtNem_75B8A: Hpz_Orbs_Comp:
-	even
 ArtNem_HPZOrb:		binclude	"art/nemesis/Pulsing orb from HPZ.bin"
+		even
 
 Hpz_Unknow_Platform: ; loc_75Dd6:
 		binclude	"data\hpz\unkptfm.nem"
+		even
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Raising platform from OOZ		; ArtNem_75F70: OOz_Elevator:
-	even
 ArtNem_OOZElevator:	binclude	"art/nemesis/Rising platform from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spiked thing from OOZ			; ArtNem_76060: OOz_Giant_Spikeball:
-	even
 ArtNem_SpikyThing:	binclude	"art/nemesis/Spiked ball from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Green platform over the burners in OOZ	; ArtNem_80274: OOz_Touch_Boost_Up:
-	even
 ArtNem_BurnerLid:	binclude	"art/nemesis/Burner platform from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Striped blocks from OOZ			; ArtNem_762EE: OOz_Break_Boost:
-	even
 ArtNem_StripedBlocksVert:	binclude	"art/nemesis/Striped blocks from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Oil splashing into oil in OOZ			; ArtNem_7635A: OOz_Oil:
-	even
 ArtNem_Oilfall:		binclude	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Cascading oil from OOZ			; ArtNem_764d6: OOz_Tube_Oil:
-	even
 ArtNem_Oilfall2:	binclude	"art/nemesis/Cascading oil from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Ball thing from OOZ				; ArtNem_76602: OOz_Ball:
-	even
 ArtNem_OOZBall:		binclude	"art/nemesis/Ball on spring from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spinball from OOZ				; ArtNem_76722: OOz_Cannon:
-	even
 ArtNem_LaunchBall:	binclude	"art/nemesis/Transporter ball from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Collapsing platform from OOZ			; ArtNem_76A12: OOz_Collapsing_Platform:
-	even
 ArtNem_OOZPlatform:	binclude	"art/nemesis/OOZ collapsing platform.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonal and vertical weird spring from OOZ	; ArtNem_76CA6: OOz_Spring_Push_Boost:
-	even
 ArtNem_PushSpring:	binclude	"art/nemesis/Push spring from OOZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Swinging platform from OOZ			; ArtNem_76E68: OOz_Swing_Platform:
-	even
 ArtNem_OOZSwingPlat:	binclude	"art/nemesis/Swinging platform from OOZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large wooden box from DHZ			; ArtNem_7708A: Dhz_Box:
-	even
 ArtNem_Crate:	binclude	"art/nemesis/Large wooden box from DHZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Collapsing platform from DHZ			; ArtNem_772C8: Dhz_Collapsing_Platform:
-	even
 ArtNem_DHZCollapsePlat:	binclude	"art/nemesis/Collapsing platform from DHZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Switch that you pull on from DHZ (not yet programmed)		; ArtNem_77472: Dhz_Vines:
-	even
 ArtNem_VineSwitch:	binclude	"art/nemesis/Pull switch from DHZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Vine that lowers in DHZ (not yet programmed)	; ArtNem_7756A: Dhz_Vines_1:
-	even
 ArtNem_VinePulley:	binclude	"art/nemesis/Vine that lowers from DHZ.bin"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Log viewed from the end for folding gates in DHZ	; ArtNem_77614: Dhz_Bridge:
-	even
 ArtNem_DHZGateLog:	binclude	"art/nemesis/Drawbridge logs from DHZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large moving platform from CPZ	; ArtNem_77684: Cpz_Elevator:
-	even
 ArtNem_CPZElevator:	binclude	"art/nemesis/Large moving platform from CNZ.bin"
+		even
 
 Water_Surface: ; loc_777d2:
 		binclude	"data\sprites\watrsurf.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Booster things in CPZ			; ArtNem_77942: Cpz_Speed_Booster:
-	even
 ArtNem_CPZBooster:	binclude	"art/nemesis/Speed booster from CPZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; CPZ droplet chain enemy		; ArtNem_779AA: Cpz_Worms:
-	even
 ArtNem_CPZDroplet:	binclude	"art/nemesis/CPZ worm enemy.bin"
+		even
 
 Cpz_Metal_Structure: ; loc_77A1C:
 		binclude	"data\cpz\metal_st.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; CPZ metal block			; ArtNem_77C26:
-	even
 ArtNem_CPZMetalBlock:	binclude	"art/nemesis/CPZ large moving platform blocks.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Yellow and black stripy tiles from DEZ	; ArtNem_77C66: Cpz_Automatic_Door:
-	even
 ArtNem_ConstructionStripes:	binclude	"art/nemesis/Stripy blocks from CPZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Yellow flipping platforms and stuff CPZ	; ArtNem_77Cd2: Cpz_Open_Close_Platform:
-	even
 ArtNem_CPZAnimatedBits:	binclude	"art/nemesis/Small yellow moving platform from CPZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Moving block from CPZ			; ArtNem_77EB4: Cpz_Platforms:
-	even
 ArtNem_CPZStairBlock:	binclude	"art/nemesis/Moving block from CPZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spring that covers tube in CPZ	; ArtNem_78074: Cpz_Spring_Tubes:
-	even
 ArtNem_CPZTubeSpring:	binclude	"art/nemesis/CPZ spintube exit cover.bin"
+		even
 
 Nghz_Water_Surface: ; loc_78270:
 		binclude	"data\nghz\watrsurf.nem"
+		even
 Nghz_Leaves: ; loc_78356:
 		binclude	"data\nghz\leaves.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Arrow shooter and arrow from ARZ	; ArtNem_783E2: Nghz_Arrow_Shooter:
-	even
 ArtNem_ArrowAndShooter:	binclude	"art/nemesis/Arrow shooter and arrow from NGHZ.bin"
+		even
 
 Nghz_Water_Splash: ; loc_78540:
 		binclude	"data\nghz\w_splash.nem"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Button				; ArtNem_78580: Switch:
-	even
 ArtNem_Button:	binclude	"art/nemesis/Button.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Vertical Spring			; ArtNem_78658: Vertical_Spring:
-	even
 ArtNem_VrtclSprng:	binclude	"art/nemesis/Vertical spring.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Horizontal Spring			; ArtNem_78774: Horizontal_Spring:
-	even
 ArtNem_HrzntlSprng:	binclude	"art/nemesis/Horizontal spring.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonal Spring			; ArtNem_7883E: Diagonal_Spring:
-	even
 ArtNem_DignlSprng:	binclude	"art/nemesis/Diagonal spring.bin"
+		even
 
 Head_up_display_Sprites: ; loc_78A12:
 		binclude	"data\sprites\hud.nem" ; Head-up display
+		even
 Head_up_display_Sonic: ; loc_78B1A:
 		binclude	"art/nemesis/Sonic lives counter.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Ring					; ArtNem_78C30: Rings:
-	even
 ArtNem_Ring:	binclude	"art/nemesis/Ring.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Monitors and powerups			; ArtNem_78d24: Monitors:
-	even
 ArtNem_Powerups:	binclude	"art/nemesis/Monitor and contents.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spikes				; ArtNem_7914E: Spikes:
-	even
 ArtNem_Spikes:	binclude	"art/nemesis/Spikes.bin"
+		even
 
 Enemy_Points_Spr: ; loc_7919E:
 		binclude	"data\sprites\points.nem"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Checkpoint (unused)			; ArtNem_79278: Lamp_Post:
-	even
 ArtNem_Checkpoint:	binclude	"art/nemesis/Checkpoint.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Singpost				; ArtNem_7931E: Signpost:
-	even
 ArtNem_Signpost:	binclude	"art/nemesis/Signpost.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lever spring				; ArtNem_798F4: Diagonal_Spring_1:
-	even
 ArtNem_LeverSpring:	binclude	"art/nemesis/Lever spring.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Long horizontal spike			; ArtNem_79A44: Dhz_Horizontal_Spikes:
-	even
 ArtNem_HorizSpike:	binclude	"art/nemesis/Long horizontal spike.bin"
-
+		even
 Air_Bubbles_Numbers: ; loc_79AC0:
 		binclude	"data\sprites\airbubls.nem"
+		even
 Hpz_Crocobot: ; loc_7A11A:
 		binclude	"data\hpz\Crocobot.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Buzzer (not Bomber)			; ArtNem_7A4BC: Ghz_Buzzer_Bomber:
-	even
 ArtNem_Buzzer:	binclude	"art/nemesis/Buzzer enemy.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Batbot (bat badnik from HPZ)		; ArtNem_7A6A2: Hpz_Batbot:
-	even
 ArtNem_Batbot:	binclude	"art/nemesis/Batbot enemy.bin"
+		even
 OOz_Octus: ; loc_7A9F8:
 		binclude	"data\ooz\octus.nem"
+		even
 Hpz_Rhinobot: ; loc_7Ad18:
 		binclude	"data\hpz\rhinobot.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Redz (red dinosaur badnik from HPZ)	; ArtNem_7A6A2: Hpz_Dinobot:
-	even
 ArtNem_Redz:	binclude	"art/nemesis/Redz enemy.bin"
-
+		even
 Hpz_Piranha: ; loc_7B4EA:
 		binclude	"data\hpz\piranha.nem"
+		even
 OOz_Aquis: ; loc_7B9E2:
 		binclude	"data\ooz\aquis.nem"
+		even
 Spinning_Ball: ; loc_7BE30:
 		binclude	"data\sprites\spinball.nem"
+		even
 Blink: ; loc_7C0C6:
 		binclude	"data\sprites\blink.nem"
+		even
 Bubble_Monster: ; loc_7C2F2:
 		binclude	"data\sprites\bmonster.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Snail badnik from GHZ			; ArtNem_7C514: Ghz_Motobug:
-	even
 ArtNem_Snail:	binclude	"art/nemesis/Snail badnik from GHZ.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bouncer badnik (unused at this point)	; ArtNem_7C710: Crawl:
-	even
 ArtNem_Crawl:	binclude	"art/nemesis/Crawl badnik.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Fish badnik from GHZ			; ArtNem_7CA92: Ghz_Chopper
-		even
 ArtNem_Masher:	binclude	"art/nemesis/GHZ Pirahna badnik.bin"
-
+		even
 Robotnik_Ship: ; loc_7CC9E:
 		binclude	"data\sprites\robotnik.nem"
+		even
 Cpz_Boss: ; loc_7d3DA:
 		binclude	"data\cpz\boss.nem"
+		even
 Boss_Explosions: ; loc_7D938:
 		binclude	"data\sprites\bossexpl.nem"
+		even
 Ship_Boost: ; loc_7DFC0:
 		binclude	"data\sprites\shpboost.nem"
+		even
 Boss_Smoke: ; loc_7E03E:
 		binclude	"data\sprites\b_smoke.nem"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; GHZ Boss				; ArtNem_7E124: Ghz_Boss_Car:
-	even
 ArtNem_GHZBoss:	binclude	"art/nemesis/GHZ boss.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Helicopter blades for GHZ boss	; ArtNem_7E910: Ghz_Boss_Blades:
-	even
 ArtNem_EggChoppers:	binclude	"art/nemesis/Chopper blades for GHZ boss.bin"
-
+		even
 Title_Cards: ; loc_7EA04:
 		binclude	"data\sprites\titlcard.nem" ; Title Cards
+		even
 Explosion: ; loc_7F012:
 		binclude	"data\sprites\explosn.nem"
+		even
 Game_Time_Over: ; loc_7F678:
 		binclude	"data\sprites\gt_over.nem"
+		even
 Vertical_Springs_Sonic_1: ; loc_7F80A:
 		binclude	"data\sprites\vspng_s1.nem"
+		even
 Horizontal_Springs_Sonic_1: ; loc_7F90C:
 		binclude	"data\sprites\hspng_s1.nem"
+		even
 Big_Ring_Flash: ; loc_7F9E8:
 		binclude	"data\sprites\rngflash.nem"
+		even
 Hidden_Points: ; loc_7FB5C:
 		binclude	"data\sprites\h_points.nem"
+		even
 Sonic_Continue_Screen: ; loc_7FE5E:
 		binclude	"data\sprites\sonicctn.nem"
+		even
 Continue_Special_Stage_Results_Screen: ; loc_8010E:
 		binclude	"data\sprites\cont_ss.nem"
+		even
 Rabbit: ; loc_80348:
 		binclude	"data\sprites\rabbit.nem"
+		even
 White_Bird: ; loc_804A0:
 		binclude	"data\sprites\wthebird.nem"
+		even
 Black_Bird: ; loc_805FC:
 		binclude	"data\sprites\blckbird.nem"
+		even
 Seal: ; loc_80778:
 		binclude	"data\sprites\seal.nem"
+		even
 Pig: ; loc_80894:
 		binclude	"data\sprites\pig.nem"
+		even
 Blue_Bird: ; loc_809CA:
 		binclude	"data\sprites\bluebird.nem"
+		even
 Bear: ; loc_80B04:
 		binclude	"data\sprites\bear.nem"
+		even
 ; ---------------------------------------------------------------------------------
 ; GHZ 16x16 block mappings (uncompressed)
 ; LevBlock_80C60: Green_Hill_16x16_Map:
@@ -44166,6 +44224,7 @@ BM16_GHZ:	binclude	"mappings/16x16/GHZ.bin"
 ; GHZ/HTZ main level patterns (Nemesis compression)
 ; ArtNem_81C00: Green_Hill_8x8_Tiles:
 ArtNem_GHZ:	binclude	"art/nemesis/GHZ and HTZ primary.bin"
+		even
 ; ---------------------------------------------------------------------------------
 ; HTZ 16x16 block mappings (uncompressed)
 ; LevBlock_84A50: Hill_Top_16x16_Map:
@@ -44174,10 +44233,11 @@ BM16_HTZ:	binclude	"mappings/16x16/HTZ.bin"
 ; HTZ secondary level patterns (Nemesis compression)
 ; ArtNem_85200: Hill_Top_8x8_Tiles:
 ArtNem_HTZ:	binclude	"art/nemesis/HTZ secondary.bin"
-
+		even
 
 Htz_Init_Sprites_Dyn_Reload: ; loc_86626:
 		binclude	"data\htz\init_spr.nem"
+		even
 ; ----------------------------------------------------------------------------------
 ; EHZ/HTZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_8692E: Green_Hill_128x128_Map:
@@ -44190,9 +44250,11 @@ BM16_WZ:	binclude	"mappings/16x16/WZ.bin"
 ; WZ main level patterns (Nemesis compression)
 ; ArtNem_8AB2E: Wood_8x8_Tiles:
 ArtNem_WZ:	binclude	"art/nemesis/WZ primary.bin"
+		even
 
 Waterfall: ; loc_8E6C6:
 		binclude	"data\sprites\watrfall.nem"
+		even
 ; ----------------------------------------------------------------------------------
 ; WZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_8E826: Wood_128x128_Map:
@@ -44205,10 +44267,12 @@ BM16_MTZ:	binclude	"mappings/16x16/MTZ.bin"
 ; MTZ main level patterns (Nemesis compression)
 ; ArtNem_91160: Metropolis_8x8_Tiles:
 ArtNem_MTZ:	binclude	"art/nemesis/MTZ primary.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; Initial animated tiles for MTZ (Nemesis compression)
 ; ArtNem_94994: Mz_Init_Sprites_Dyn_Reload:
 ArtNem_MTZAnim:	binclude	"art/nemesis/Initial animated tiles for MTZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; MTZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_94C56: Metropolis_128x128_Map:
@@ -44221,10 +44285,11 @@ BM16_HPZ:	binclude	"mappings/16x16/HPZ.bin"
 ; HPZ main level patterns (Nemesis compression)
 ; ArtNem_98B76: Hidden_Palace_8x8_Tiles:
 ArtNem_HPZ:	binclude	"art/nemesis/HPZ primary.bin"
+		even
 
 Hpz_Init_Sprites_Dyn_Reload: ; loc_9B884: ;	 Orbs
 		binclude	"data\hpz\init_spr.nem"
-
+		even
 ; ----------------------------------------------------------------------------------
 ; HPZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_9B9F8: Hidden_Palace_128x128_Map:
@@ -44237,10 +44302,11 @@ BM16_OOZ:	binclude	"mappings/16x16/OOZ.bin"
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_9Ed58: Oil_Ocean_8x8_Tiles:
 ArtNem_OOZ:	binclude	"art/nemesis/OOZ primary.bin"
+		even
 
 OOz_Init_Sprites_Dyn_Reload: ; loc_A186A: ;	 red ball,oil ...
 		binclude	"data\ooz\init_spr.nem"
-
+		even
 ; ----------------------------------------------------------------------------------
 ; OOZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_A1A58: Oil_Ocean_128x128_Map:
@@ -44253,6 +44319,7 @@ BM16_DHZ:	binclude	"mappings/16x16/DHZ.bin"
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_A5248: Dust_Hill_8x8_Tiles:
 ArtNem_DHZ:	binclude	"art/nemesis/DHZ primary.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; DHZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_A8B6A: Dust_Hill_128x128_Map:
@@ -44265,10 +44332,12 @@ BM16_CNZ:	binclude	"mappings/16x16/CNZ.bin"
 ; CNZ main level patterns (Nemesis compression)
 ; ArtNem_ABF2A: Casino_Night_8x8_Tiles:
 ArtNem_CNZ:	binclude	"art/nemesis/CNZ primary.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; Turning cards in CNZ (Nemesis compression)
 ; ArtNem_AEF3C: Cnz_Cards:
 ArtNem_CNZCards:	binclude	"art/nemesis/Turning cards from CNZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; CNZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_AF026: Casino_Night_128x128_Map:
@@ -44281,10 +44350,11 @@ BM16_CPZ:	binclude	"mappings/16x16/CPZ.bin"
 ; CPZ main level patterns (Nemesis compression)
 ; ArtNem_B2506: Chemical_Plant_8x8_Tiles:
 ArtNem_CPZ:	binclude	"art/nemesis/CPZ primary.bin"
+		even
 
 Cpz_Init_Sprites_Dyn_Reload: ; loc_B602E:
 		binclude	"data\cpz\init_spr.nem"
-
+		even
 ; ----------------------------------------------------------------------------------
 ; CPZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_B6058: Chemical_Plant_128x128_Map:
@@ -44297,10 +44367,11 @@ BM16_NGHZ:	binclude	"mappings/16x16/NGHZ.bin"
 ; NGHZ main level patterns (Nemesis compression)
 ; ArtNem_B9E58: Neo_Green_Hill_8x8_Tiles:
 ArtNem_NGHZ:	binclude	"art/nemesis/NGHZ primary.bin"
+		even
 
 Nghz_Init_Sprites_Dyn_Reload: ; loc_BF408:	Waterfalls
 		binclude	"data\nghz\init_spr.nem"
-
+		even
 ; ----------------------------------------------------------------------------------
 ; NGHZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_BF568: Neo_Green_Hill_128x128_Map:
@@ -44326,21 +44397,26 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.bin"
 		binclude	"misc/leftovers/Block data for earlier CPZ.bin"
 ; ArtNem_CAA1C:
 		binclude	"misc/leftovers/Art data for earlier CPZ.bin"
+		even
 ; ArtNem_CDFC6:
 		binclude	"misc/leftovers/Initial animated tiles for earlier CPZ.bin"
+		even
 ; LevChunk_CE03A:
 		binclude	"misc/leftovers/Chunk data for earlier CPZ.bin"
 ; LevBlock_d603A:
 		binclude	"misc/leftovers/Block data for earlier NGHZ.bin"
 ; ArtNem_d793A:
 		binclude	"misc/leftovers/Art data for earlier NGHZ.bin"
+		even
 ; ArtNem_DCEEA:
 		binclude	"misc/leftovers/Initial animated tiles for earlier NGHZ.bin"
+		even
 ; LevChunk_Dd04A:
 		binclude	"misc/leftovers/Chunk data for earlier NGHZ.bin"
 
+	if PaddingOptimization=0
 		align 4
-
+	endif
 ; ===========================================================================
 ; A second set of leftover build data,this time for NGHZ exclusively; oddly,
 ; the chunk data here is created through manually writing bytes,and can be
@@ -44352,8 +44428,10 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.bin"
 
 ; ArtNem_E504A:
 		binclude	"misc/leftovers/Art data for earlier earlier NGHZ.bin"
+		even
 ; ArtNem_E57E6:
 		binclude	"misc/leftovers/Initial animated tiles for earlier NGHZ.bin"
+		even
 ; LevChunk_E5946:
 		binclude	"misc/leftovers/Uncompiled chunk data for NGHZ.bin"
 
@@ -44382,9 +44460,9 @@ Sega_SndDup:	binclude	"sound/Unused Sega PCM.bin"
 
 ; loc_EC000:
 SoundDriverLoad:
-		move	sr,-(sp)
+		move.w	sr,-(sp)
 		movem.l	d0-a6,-(sp)
-		move	#$2700,sr
+		move.w	#$2700,sr
 		lea	(Z80_Bus_Request).l,a3
 		lea	(Z80_Reset).l,a2
 		moveq	#0,d2
@@ -44402,7 +44480,7 @@ SoundDriverLoad:
 -		dbf	d0,-		; wait for 2,314 cycles
 		move.w	d1,(a2)		; release Z80 reset
 		movem.l	(sp)+,d0-a6
-		move	(sp)+,sr
+		move.w	(sp)+,sr
 		rts
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -44592,6 +44670,7 @@ Mus_ActClear:	include		"sound/music/End of level.asm"
 Mus_GameOver:	include		"sound/music/Game over.asm"
 Mus_Continue:	include		"sound/music/Continue.asm"
 Mus_Emerald:	include		"sound/music/Got an emerald.asm"
+
 	finishBank
 
 ; ----------------------------------------------------------------------------------
@@ -44649,8 +44728,7 @@ Mus_CNZ:	include		"sound/music/CNZ.asm"
 Mus_DHZ:	include		"sound/music/DHZ.asm"
 Mus_HPZ:	include		"sound/music/HPZ.asm"		; DHZ/MCZ 2-player theme in final
 Mus_NGHZ:	include		"sound/music/NGHZ.asm"
-Mus_DEZ:	include		"sound/music/DEZ.asm"		; Technically used in this build for the extra life jingle when collecting 100
-								; or 200 rings,but labeled as DEZ regardless to prevent confusion
+Mus_DEZ:	include		"sound/music/DEZ.asm"		; Technically used in this build for the extra life jingle when collecting 100 or 200 rings,but labeled as DEZ regardless to prevent confusion
 Mus_SpecStg:	include		"sound/music/Special Stage.asm"
 Mus_LevelSel:
 Mus_LevelSelDup:	include		"sound/music/Level select.asm"
@@ -44665,7 +44743,7 @@ Mus_Unused2:	include		"sound/music/Unused 2.asm"	; 2-player results theme in fin
 Mus_Invinc:	include		"sound/music/Invincible.asm"	; Super Sonic theme in final
 Mus_HTZ:	include		"sound/music/HTZ.asm"
 
-	org $FF000
+	align $1000
 ; loc_FF000: Sfx_A0_To_F9:
 SoundIndex:
 SndPtr_Jump:		rom_ptr_z80	Sfx_A0
@@ -44738,150 +44816,79 @@ SndPtr_SuperTransform:	rom_ptr_z80	Sfx_DF
 SndPtr_SpindashRev:	rom_ptr_z80	Sfx_E0
 SndPtr__End:
 
-Sfx_A0: ; loc_FF082:
-		include	"sound/SFX/A0 - Jump.asm"
-Sfx_A1: ; loc_FF098:
-		include	"sound/SFX/A1 - Lamppost.asm"
-Sfx_A2: ; loc_FF0C2:
-		include	"sound/SFX/A2.asm"
-Sfx_A3: ; loc_FF0E1:
-		include	"sound/SFX/A3 - Death.asm"
-Sfx_A4: ; loc_FF113:
-		include	"sound/SFX/A4 - Skid.asm"
-Sfx_A5: ; loc_FF148:
-		include	"sound/SFX/A5.asm"
-Sfx_A6: ; loc_FF174:
-		include	"sound/SFX/A6 - Hit Spikes.asm"
-Sfx_A7: ; loc_FF1A3:
-		include	"sound/SFX/A7 - Push Block.asm"
-Sfx_A8: ; loc_FF1d2:
-		include	"sound/SFX/A8 - SS Goal.asm"
-Sfx_A9: ; loc_FF1EC:
-		include	"sound/SFX/A9 - SS Item.asm"
-Sfx_AA: ; loc_FF1FE:
-		include	"sound/SFX/AA - Splash.asm"
-Sfx_AB: ; loc_FF23F:
-		include	"sound/SFX/AB.asm"
-Sfx_AC: ; loc_FF25E:
-		include	"sound/SFX/AC - Hit Boss.asm"
-Sfx_AD: ; loc_FF292:
-		include	"sound/SFX/AD - Get Bubble.asm"
-Sfx_AE: ; loc_FF2C8:
-		include	"sound/SFX/AE - Fireball.asm"
-Sfx_AF: ; loc_FF312:
-		include	"sound/SFX/AF - Shield.asm"
-Sfx_B0: ; loc_FF33F:
-		include	"sound/SFX/B0 - Saw.asm"
-Sfx_B1: ; loc_FF370:
-		include	"sound/SFX/B1 - Electric.asm"
-Sfx_B2: ; loc_FF39C:
-		include	"sound/SFX/B2 - Drown Death.asm"
-Sfx_B3: ; loc_FF3EB:
-		include	"sound/SFX/B3 - Flamethrower.asm"
-Sfx_B4: ; loc_FF41C:
-		include	"sound/SFX/B4 - Bumper.asm"
-Sfx_B5: ; loc_FF477:
-		include	"sound/SFX/B5 - Ring.asm"
-Sfx_B6: ; loc_FF48C:
-		include	"sound/SFX/B6 - Spikes Move.asm"
-Sfx_B7: ; loc_FF4A9:
-		include	"sound/SFX/B7 - Rumbling.asm"
-Sfx_B8: ; loc_FF4E4:
-		include	"sound/SFX/B8.asm"
-Sfx_B9: ; loc_FF501:
-		include	"sound/SFX/B9 - Collapse.asm"
-Sfx_BA: ; loc_FF54B:
-		include	"sound/SFX/BA - SS Glass.asm"
-Sfx_BB: ; loc_FF573:
-		include	"sound/SFX/BB - Door.asm"
-Sfx_BC: ; loc_FF59E:
-		include	"sound/SFX/BC - Teleport.asm"
-Sfx_BD: ; loc_FF5DF:
-		include	"sound/SFX/BD - ChainStomp.asm"
-Sfx_BE: ; loc_FF632:
-		include	"sound/SFX/BE - Roll.asm"
-Sfx_BF: ; loc_FF66C:
-		include	"sound/SFX/BF - Get Continue.asm"
-Sfx_C0: ; loc_FF6DE:
-		include	"sound/SFX/C0 - Basaran Flap.asm"
-Sfx_C1: ; loc_FF70C:
-		include	"sound/SFX/C1 - Break Item.asm"
-Sfx_C2: ; loc_FF746:
-		include	"sound/SFX/C2 - Drown Warning.asm"
-Sfx_C3: ; loc_FF757:
-		include	"sound/SFX/C3 - Giant Ring.asm"
-Sfx_C4: ; loc_FF7d1:
-		include	"sound/SFX/C4 - Bomb.asm"
-Sfx_C5: ; loc_FF7F9:
-		include	"sound/SFX/C5 - Cash Register.asm"
-Sfx_C6: ; loc_FF860:
-		include	"sound/SFX/C6 - Ring Loss.asm"
-Sfx_C7: ; loc_FF888:
-		include	"sound/SFX/C7 - Chain Rising.asm"
-Sfx_C8: ; loc_FF8B6:
-		include	"sound/SFX/C8 - Burning.asm"
-Sfx_C9: ; loc_FF8C7:
-		include	"sound/SFX/C9 - Hidden Bonus.asm"
-Sfx_CA: ; loc_FF8F4:
-		include	"sound/SFX/CA - Enter SS.asm"
-Sfx_CB: ; loc_FF921:
-		include	"sound/SFX/CB - Wall Smash.asm"
-Sfx_CC: ; loc_FF954:
-		include	"sound/SFX/CC - Spring.asm"
-Sfx_CD: ; loc_FF98E:
-		include	"sound/SFX/CD - Switch.asm"
-Sfx_CE: ; loc_FF99B:
-		include	"sound/SFX/CE - Ring Left Speaker.asm"
-Sfx_CF: ; loc_FF9B0:
-		include	"sound/SFX/CF - Signpost.asm"
+Sfx_A0: 	include	"sound/SFX/A0 - Jump.asm"
+Sfx_A1: 	include	"sound/SFX/A1 - Lamppost.asm"
+Sfx_A2: 	include	"sound/SFX/A2.asm"
+Sfx_A3: 	include	"sound/SFX/A3 - Death.asm"
+Sfx_A4: 	include	"sound/SFX/A4 - Skid.asm"
+Sfx_A5: 	include	"sound/SFX/A5.asm"
+Sfx_A6: 	include	"sound/SFX/A6 - Hit Spikes.asm"
+Sfx_A7: 	include	"sound/SFX/A7 - Push Block.asm"
+Sfx_A8: 	include	"sound/SFX/A8 - SS Goal.asm"
+Sfx_A9: 	include	"sound/SFX/A9 - SS Item.asm"
+Sfx_AA: 	include	"sound/SFX/AA - Splash.asm"
+Sfx_AB:		include	"sound/SFX/AB.asm"
+Sfx_AC:		include	"sound/SFX/AC - Hit Boss.asm"
+Sfx_AD:		include	"sound/SFX/AD - Get Bubble.asm"
+Sfx_AE: 	include	"sound/SFX/AE - Fireball.asm"
+Sfx_AF: 	include	"sound/SFX/AF - Shield.asm"
+Sfx_B0: 	include	"sound/SFX/B0 - Saw.asm"
+Sfx_B1: 	include	"sound/SFX/B1 - Electric.asm"
+Sfx_B2: 	include	"sound/SFX/B2 - Drown Death.asm"
+Sfx_B3: 	include	"sound/SFX/B3 - Flamethrower.asm"
+Sfx_B4: 	include	"sound/SFX/B4 - Bumper.asm"
+Sfx_B5: 	include	"sound/SFX/B5 - Ring.asm"
+Sfx_B6: 	include	"sound/SFX/B6 - Spikes Move.asm"
+Sfx_B7: 	include	"sound/SFX/B7 - Rumbling.asm"
+Sfx_B8: 	include	"sound/SFX/B8.asm"
+Sfx_B9: 	include	"sound/SFX/B9 - Collapse.asm"
+Sfx_BA: 	include	"sound/SFX/BA - SS Glass.asm"
+Sfx_BB: 	include	"sound/SFX/BB - Door.asm"
+Sfx_BC: 	include	"sound/SFX/BC - Teleport.asm"
+Sfx_BD: 	include	"sound/SFX/BD - ChainStomp.asm"
+Sfx_BE: 	include	"sound/SFX/BE - Roll.asm"
+Sfx_BF: 	include	"sound/SFX/BF - Get Continue.asm"
+Sfx_C0: 	include	"sound/SFX/C0 - Basaran Flap.asm"
+Sfx_C1: 	include	"sound/SFX/C1 - Break Item.asm"
+Sfx_C2: 	include	"sound/SFX/C2 - Drown Warning.asm"
+Sfx_C3: 	include	"sound/SFX/C3 - Giant Ring.asm"
+Sfx_C4: 	include	"sound/SFX/C4 - Bomb.asm"
+Sfx_C5: 	include	"sound/SFX/C5 - Cash Register.asm"
+Sfx_C6: 	include	"sound/SFX/C6 - Ring Loss.asm"
+Sfx_C7: 	include	"sound/SFX/C7 - Chain Rising.asm"
+Sfx_C8: 	include	"sound/SFX/C8 - Burning.asm"
+Sfx_C9: 	include	"sound/SFX/C9 - Hidden Bonus.asm"
+Sfx_CA: 	include	"sound/SFX/CA - Enter SS.asm"
+Sfx_CB: 	include	"sound/SFX/CB - Wall Smash.asm"
+Sfx_CC: 	include	"sound/SFX/CC - Spring.asm"
+Sfx_CD: 	include	"sound/SFX/CD - Switch.asm"
+Sfx_CE: 	include	"sound/SFX/CE - Ring Left Speaker.asm"
+Sfx_CF: 	include	"sound/SFX/CF - Signpost.asm"
 ; final 16 sounds were ripped by MDTravisYT
-Sfx_D0: ; loc_FF9E7:
-		include	"sound/SFX/D0 - CNZ Boss Zap.asm"
-Sfx_D1: ; loc_FFA1B:
-		include	"sound/SFX/D1 - Unknown (Unused).asm"
-Sfx_D2: ; loc_FFA43:
-		include	"sound/SFX/D2 - Unknown (Unused).asm"
-Sfx_D3: ; loc_FFA74:
-		include	"sound/SFX/D3 - Signpost 2P.asm"
-Sfx_D4: ; loc_FFAA1:
-		include	"sound/SFX/D4 - OOZ Lid Pop.asm"
-Sfx_D5: ; loc_FFAE0:
-		include	"sound/SFX/D5 - Sliding Spike.asm"
-Sfx_D6: ; loc_FFB0D:
-		include	"sound/SFX/D6 - CNZ Elevator.asm"
-Sfx_D7: ; loc_FFB53:
-		include	"sound/SFX/D7 - Platform Knock.asm"
-Sfx_D8: ; loc_FFB80:
-		include	"sound/SFX/D8 - Bonus Bumper.asm"
-Sfx_D9: ; loc_FFBB7:
-		include	"sound/SFX/D9 - Large Bumper.asm"
-Sfx_DA: ; loc_FFC06:
-		include	"sound/SFX/DA - Gloop.asm"
-Sfx_DB: ; loc_FFC47:
-		include	"sound/SFX/DB - Pre-Arrow Firing.asm"
-Sfx_DC: ; loc_FFC64:
-		include	"sound/SFX/DC - Fire.asm"
-Sfx_DD: ; loc_FFCC1:
-		include	"sound/SFX/DD - Arrow Stick.asm"
-Sfx_DE: ; loc_FFCEB:
-		include	"sound/SFX/DE - Helicopter.asm"
-Sfx_DF: ; loc_FFd28:
-		include	"sound/SFX/DF - Super Transform.asm"
-Sfx_E0: ; loc_FFd73:
-		include	"sound/SFX/E0 - Spin Dash Rev.asm"
+Sfx_D0: 	include	"sound/SFX/D0 - CNZ Boss Zap.asm"
+Sfx_D1: 	include	"sound/SFX/D1 - Unknown (Unused).asm"
+Sfx_D2: 	include	"sound/SFX/D2 - Unknown (Unused).asm"
+Sfx_D3: 	include	"sound/SFX/D3 - Signpost 2P.asm"
+Sfx_D4: 	include	"sound/SFX/D4 - OOZ Lid Pop.asm"
+Sfx_D5: 	include	"sound/SFX/D5 - Sliding Spike.asm"
+Sfx_D6: 	include	"sound/SFX/D6 - CNZ Elevator.asm"
+Sfx_D7: 	include	"sound/SFX/D7 - Platform Knock.asm"
+Sfx_D8: 	include	"sound/SFX/D8 - Bonus Bumper.asm"
+Sfx_D9: 	include	"sound/SFX/D9 - Large Bumper.asm"
+Sfx_DA: 	include	"sound/SFX/DA - Gloop.asm"
+Sfx_DB: 	include	"sound/SFX/DB - Pre-Arrow Firing.asm"
+Sfx_DC: 	include	"sound/SFX/DC - Fire.asm"
+Sfx_DD: 	include	"sound/SFX/DD - Arrow Stick.asm"
+Sfx_DE: 	include	"sound/SFX/DE - Helicopter.asm"
+Sfx_DF: 	include	"sound/SFX/DF - Super Transform.asm"
+Sfx_E0: 	include	"sound/SFX/E0 - Spin Dash Rev.asm"
+
 	finishBank
 
 ; end of 'ROM'
-	if padToPowerOfTwo && (*)&(*-1)
+	if PaddingOptimization=0
 		cnop	-1,2<<lastbit(*-1)
-		dc.b	0
-paddingSoFar	:= paddingSoFar+1
-	else
 		even
-	endif
-	if MOMPASS=2
-		; "About" because it will be off by the same amount that Size_of_Snd_driver_guess is incorrect (if you changed it),and because I may have missed a small amount of internal padding somewhere
-		message "ROM size is $\{*} bytes (\{*/1024.0} kb). About $\{paddingSoFar} bytes are padding. "
 	endif
 EndOfRom:
 		END

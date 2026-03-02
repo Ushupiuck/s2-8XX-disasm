@@ -18,8 +18,7 @@ org macro address
 	if notZ80(MOMCPU)
 		if address < *
 			error "too much stuff before org $\{address} ($\{(*-address)} bytes)"
-		elseif address > *
-paddingSoFar	set paddingSoFar + address - *
+		else
 			!org address
 		endif
 	else
@@ -51,7 +50,6 @@ align macro alignment
 even macro
 	if notZ80(MOMCPU)
 		if (*)&1
-paddingSoFar		set paddingSoFar+1
 			dc.b 0 ;ds.b 1
 		endif
 	else
@@ -93,14 +91,14 @@ trace macro optionalMessageWithoutQuotes
 	endif
 tracenum := (tracenum+1)
 	endif
-   endm
-  else
+	endm
+	else
 trace macro
 	endm
-  endif
+	endif
 tracenum := 0
 
-	if zeroOffsetOptimization=0
+	if ZeroOffsetOptimization=0
 	; disable a space optimization in AS so we can build a bit-perfect ROM
 	; (the hard way, but it requires no modification of AS itself)
 
@@ -109,48 +107,48 @@ chkop function op,ref,(substr(lowstring(op),0,strlen(ref))<>ref)
 
 ; 1-arg instruction that's self-patching to remove 0-offset optimization
 insn1op	 macro oper,x
-	  if (chkop("x","0(") && chkop("x","id(") && chkop("x","slot_rout(") && chkop("x","soundqueue.music0("))
+	if (chkop("x","0(") && chkop("x","id(") && chkop("x","slot_rout(") && chkop("x","soundqueue.music0("))
 		!oper	x
-	  else
+	else
 		!oper	1+x
 		!org	*-1
 		!dc.b	0
-	  endif
-	 endm
+	endif
+	endm
 
 ; 2-arg instruction that's self-patching to remove 0-offset optimization
 insn2op	 macro oper,x,y
-	  if (chkop("x","0(") && chkop("x","id(") && chkop("x","slot_rout(") && chkop("x","soundqueue.music0("))
-		  if (chkop("y","0(") && chkop("y","id(") && chkop("y","slot_rout(") && chkop("y","soundqueue.music0("))
+	if (chkop("x","0(") && chkop("x","id(") && chkop("x","slot_rout(") && chkop("x","soundqueue.music0("))
+		if (chkop("y","0(") && chkop("y","id(") && chkop("y","slot_rout(") && chkop("y","soundqueue.music0("))
 			!oper	x,y
-		  else
+		else
 			!oper	x,1+y
 			!org	*-1
 			!dc.b	0
-		  endif
-	  else
+		endif
+	else
 		if chkop("y","d")
-		  if (chkop("y","0(") && chkop("y","id(") && chkop("y","slot_rout(") && chkop("y","soundqueue.music0("))
+		if (chkop("y","0(") && chkop("y","id(") && chkop("y","slot_rout(") && chkop("y","soundqueue.music0("))
 start:
 			!oper	1+x,y
 end:
 			!org	start+3
 			!dc.b	0
 			!org	end
-		  else
+		else
 			!oper	1+x,1+y
 			!org	*-3
 			!dc.b	0
 			!org	*+1
 			!dc.b	0
-		  endif
+		endif
 		else
 			!oper	1+x,y
 			!org	*-1
 			!dc.b	0
 		endif
-	  endif
-	 endm
+	endif
+	endm
 
 	; instructions that were used with 0(a#) syntax
 	; defined to assemble as they originally did
