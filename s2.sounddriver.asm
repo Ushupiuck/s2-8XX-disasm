@@ -2892,6 +2892,7 @@ loc_DD9:
 ; End of function SendFMVolume
 
 ; ---------------------------------------------------------------------------
+	ensure1byteoffset 8
 FMAlgo_OpMask:	db 8,8,8,8,0Ch,0Eh,0Eh,0Fh
 
 ; =============== S U B	R O U T	I N E =======================================
