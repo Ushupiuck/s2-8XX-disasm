@@ -5473,23 +5473,23 @@ loc_5DEA:
 
 ; off_5E16:
 Bg_Scroll_Index: zoneOrderedOffsetTable 2,1
-	zoneOffsetTableEntry.w	  Bg_Scroll_GHz; $00 - Green Hill Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $01 - Null Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Wz; $02 - Wood Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $03 - Null Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Mz; $04 - Metropolis Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Mz; $05 - Metropolis Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $06 - Null Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_HTz; $07 - Hill Top Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_HPz; $08 - Hidden Palace Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $09 - Null Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_OOz; $0A - Oil Ocean Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_DHz; $0B - Dust Hill Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_CNz; $0C - Casino Night Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_CPz; $0D - Chemical Plant Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $0E - Genocide City (Null) Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_NGHz; $0F - Neo Green Hill Background Scroll
-	zoneOffsetTableEntry.w	  Bg_Scroll_Null; $10 - Death Egg (Null) Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_GHz; $00 - Green Hill Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $01 - Null Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Wz; $02 - Wood Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $03 - Null Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Mz; $04 - Metropolis Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Mz; $05 - Metropolis Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $06 - Null Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_HTz; $07 - Hill Top Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_HPz; $08 - Hidden Palace Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $09 - Null Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_OOz; $0A - Oil Ocean Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_DHz; $0B - Dust Hill Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_CNz; $0C - Casino Night Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_CPz; $0D - Chemical Plant Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $0E - Genocide City (Null) Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_NGHz; $0F - Neo Green Hill Background Scroll
+	zoneOffsetTableEntry.w	Bg_Scroll_Null; $10 - Death Egg (Null) Background Scroll
 	zoneTableEnd
 
 loc_5E38: ; Title Screen Background Scroll
@@ -8264,23 +8264,23 @@ loc_7A1A:
 		rts
 ; off_7A26:
 DynResize_Index: zoneOrderedOffsetTable 2,1
-	zoneOffsetTableEntry.w	  loc_7A48
-	zoneOffsetTableEntry.w	  loc_7AD8
-	zoneOffsetTableEntry.w	  loc_7ADA
-	zoneOffsetTableEntry.w	  loc_7ADC
-	zoneOffsetTableEntry.w	  loc_7ADE
-	zoneOffsetTableEntry.w	  loc_7AE0
-	zoneOffsetTableEntry.w	  loc_7AE2
-	zoneOffsetTableEntry.w	  loc_7AE4
-	zoneOffsetTableEntry.w	  loc_7FC8
-	zoneOffsetTableEntry.w	  loc_7FCA
-	zoneOffsetTableEntry.w	  loc_7FCC
-	zoneOffsetTableEntry.w	  loc_7FCE
-	zoneOffsetTableEntry.w	  DynResize_CNz	 ; loc_7Fd0
-	zoneOffsetTableEntry.w	  DynResize_CPz	 ; loc_7Fd2
-	zoneOffsetTableEntry.w	  DynResize_GCz	 ; loc_7Fd4
-	zoneOffsetTableEntry.w	  DynResize_NGHz ; loc_7Fd6
-	zoneOffsetTableEntry.w	  DynResize_DEz	 ; loc_7FD8
+	zoneOffsetTableEntry.w	loc_7A48
+	zoneOffsetTableEntry.w	loc_7AD8
+	zoneOffsetTableEntry.w	loc_7ADA
+	zoneOffsetTableEntry.w	loc_7ADC
+	zoneOffsetTableEntry.w	loc_7ADE
+	zoneOffsetTableEntry.w	loc_7AE0
+	zoneOffsetTableEntry.w	loc_7AE2
+	zoneOffsetTableEntry.w	loc_7AE4
+	zoneOffsetTableEntry.w	loc_7FC8
+	zoneOffsetTableEntry.w	loc_7FCA
+	zoneOffsetTableEntry.w	loc_7FCC
+	zoneOffsetTableEntry.w	loc_7FCE
+	zoneOffsetTableEntry.w	DynResize_CNz	 ; loc_7Fd0
+	zoneOffsetTableEntry.w	DynResize_CPz	 ; loc_7Fd2
+	zoneOffsetTableEntry.w	DynResize_GCz	 ; loc_7Fd4
+	zoneOffsetTableEntry.w	DynResize_NGHz ; loc_7Fd6
+	zoneOffsetTableEntry.w	DynResize_DEz	 ; loc_7FD8
 	zoneTableEnd
 
 loc_7A48:
