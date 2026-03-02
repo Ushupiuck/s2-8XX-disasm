@@ -290,7 +290,7 @@ zmake68kPtr function addr,zROMWindow+(addr&7FFFh)
 ; Function to turn a sample rate into a djnz loop counter
 pcmLoopCounterBase function sampleRate,baseCycles, 1+(3579545/(sampleRate)-(baseCycles)+(13/2))/13
 pcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,138/2) ; 138 is the number of cycles zPlaySegaSound takes to deliver two samples.
-dpcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,297/2) ; 297 is the number of cycles zWriteToDAC takes to deliver two samples.
+dpcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,303/2) ; 303 is the number of cycles zWriteToDAC takes to deliver two samples.
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; Z80 'ROM' start:
@@ -538,12 +538,14 @@ zWaitLoop:
 
 ; loc_13C:
 zWriteToDAC:
+		; According to Kabuto, the Z80 suffers a delay of approximately 3.3 cycles for each ROM access.
+		; https://plutiedev.com/mirror/kabuto-hardware-notes#bus-system
 		djnz	$		; 8	; Busy wait for specific amount of time in 'b'
 
 		di			; 4	; disable interrupts (while updating DAC)
 		ld	a,2Ah		; 7	; DAC port
 		ld	(zYM2612_A0),a	; 13	; Set DAC port register
-		ld	a,(hl)		; 7	; Get next DAC byte
+		ld	a,(hl)		; 7+3	; Get next DAC byte
 		rlca			; 4
 		rlca			; 4
 		rlca			; 4
@@ -569,7 +571,7 @@ zWriteToDAC:
 		ld	a,2Ah		; 7	; DAC port
 		ld	(zYM2612_A0),a	; 13	; Set DAC port register
 		ld	b,c		; 4	; reload 'b' with wait value
-		ld	a,(hl)		; 7	; Get next DAC byte
+		ld	a,(hl)		; 7+3	; Get next DAC byte
 		inc	hl		; 6	; Next byte in DAC stream...
 		dec	de		; 6	; One less byte
 		and	0Fh		; 7	; LOWER 4-bit offset into zDACDecodeTbl
@@ -584,8 +586,8 @@ zWriteToDAC:
 		ei			; 4	; enable interrupts (done updating DAC, busy waiting for next update)
 		nop			; 4
 		jp	zWaitLoop	; 10	; Back to the wait loop; if there's more DAC to write, we come back down again!
-					; 297
-		; 297 cycles for two samples. dpcmLoopCounter should use 297 divided by 2.
+					; 303
+		; 303 cycles for two samples. dpcmLoopCounter should use 303 divided by 2.
 ; ---------------------------------------------------------------------------
 DPCMData:
 		db 0,1,2,4,8,10h,20h,40h
@@ -2850,11 +2852,11 @@ dac_sample_metadata macro label,sampleRate
 		dac_sample_metadata	0						; 87h
 		dac_sample_metadata zDACPtr_Timpani,9750	; 88h
 		dac_sample_metadata zDACPtr_Timpani,8750	; 89h
-		dac_sample_metadata zDACPtr_Timpani,7250	; 8Ah
+		dac_sample_metadata zDACPtr_Timpani,7150	; 8Ah
 		dac_sample_metadata zDACPtr_Timpani,7000	; 8Bh
 		dac_sample_metadata zDACPtr_Tom,   13500	; 8Ch
-		dac_sample_metadata zDACPtr_Tom,   11500	; 8Dh
-		dac_sample_metadata zDACPtr_Tom,    9500	; 8Eh
+		dac_sample_metadata zDACPtr_Tom,   11250	; 8Dh
+		dac_sample_metadata zDACPtr_Tom,    9250	; 8Eh
 
 VolEnvPtrs:	dw byte_FC3,byte_FDA,byte_FE1,byte_FF2,byte_100C,byte_FFD
 		dw byte_1036,byte_1052,byte_107A,byte_108B,byte_10C9
