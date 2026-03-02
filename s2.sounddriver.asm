@@ -3168,7 +3168,7 @@ ptrsize :=	2+2
 idstart :=	81h
 
 dac_sample_metadata macro label,sampleRate
-	if "label"==""
+	if "label"=""
 	dw	0
 	else
 	db	id(label),dpcmLoopCounter(sampleRate)
