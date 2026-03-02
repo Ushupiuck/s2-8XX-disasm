@@ -2986,6 +2986,7 @@ zDACPtr_Tom:
 		dw	zmake68kPtr(DAC_Sample06)
 		dw	DAC_Sample06_End-DAC_Sample06
 
+	ensure1byteoffset 2*0Eh
 ; byte_F8D
 zDACMasterPlaylist:
 
