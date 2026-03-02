@@ -3136,27 +3136,22 @@ SndPriorities:	db 80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h
 		db 70h,70h,70h,70h,80h,80h,80h,80h,80h,80h,80h
 		db 80h,80h,80h,80h,80h,80h,80h,80h,80h,90h,90h
 		db 90h,90h,90h
+
+dac_sample_pointer macro label
+	dw	zmake68kPtr(label)
+	dw	label_End-label
+	endm
+
+	ensure1byteoffset 2*0Ch
 ; word_F75
 zDACPtrTbl:
-zDACPtr_Kick:
-		dw	zmake68kPtr(DAC_Sample01)
-zDACLenTbl:
-		dw	DAC_Sample01_End-DAC_Sample01
-zDACPtr_Snare:
-		dw	zmake68kPtr(DAC_Sample02)
-		dw	DAC_Sample02_End-DAC_Sample02
-zDACPtr_Clap:
-		dw	zmake68kPtr(DAC_Sample03)
-		dw	DAC_Sample03_End-DAC_Sample03
-zDACPtr_Scratch:
-		dw	zmake68kPtr(DAC_Sample04)
-		dw	DAC_Sample04_End-DAC_Sample04
-zDACPtr_Timpani:
-		dw	zmake68kPtr(DAC_Sample05)
-		dw	DAC_Sample05_End-DAC_Sample05
-zDACPtr_Tom:
-		dw	zmake68kPtr(DAC_Sample06)
-		dw	DAC_Sample06_End-DAC_Sample06
+zDACLenTbl = zDACPtrTbl + 2
+zDACPtr_Kick:	dac_sample_pointer	DAC_Sample01
+zDACPtr_Snare:	dac_sample_pointer	DAC_Sample02
+zDACPtr_Clap:	dac_sample_pointer	DAC_Sample03
+zDACPtr_Scratch:	dac_sample_pointer	DAC_Sample04
+zDACPtr_Timpani:	dac_sample_pointer	DAC_Sample05
+zDACPtr_Tom:	dac_sample_pointer	DAC_Sample06
 
 	ensure1byteoffset 2*0Eh
 ; byte_F8D
