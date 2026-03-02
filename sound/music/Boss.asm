@@ -40,20 +40,20 @@ Mus_Boss_Call01:
 	smpsReturn
 
 Mus_Boss_PSG1: 
-	smpsJump     Mus_Boss_Jump01
+	smpsJump			Mus_Boss_Jump01
 
 Mus_Boss_PSG2: 
-	smpsAlterNote    $01 
+	smpsAlterNote		$01 
 	dc.b 	nRst, $06 
-	smpsJump     Mus_Boss_Jump01
+	smpsJump			Mus_Boss_Jump01
 
 Mus_Boss_PSG3: 
-	smpsAlterNote $FF 
+	smpsAlterNote		$FF 
 	dc.b 	nRst, $0C  
-	smpsJump      Mus_Boss_Jump01
+	smpsJump			Mus_Boss_Jump01
  
 Mus_Boss_FM2:
-	smpsSetvoice      $01
+	smpsSetvoice		$01
 
 Mus_Boss_Jump01:
 	smpsNoteFill 		$09  
@@ -84,19 +84,19 @@ Mus_Boss_Loop03:
 
 Mus_Boss_Loop04: 
 	dc.b 	nRst, $30, nRst 
-	smpsLoop      $00, $08, Mus_Boss_Loop04
+	smpsLoop			$00, $08, Mus_Boss_Loop04
 
 Mus_Boss_Loop05:
-	smpsAlterPitch 	$0C 
+	smpsAlterPitch		$0C 
 	smpsCall 			Mus_Boss_Call02 
-	smpsAlterPitch 	$F4  
+	smpsAlterPitch		$F4  
 	smpsLoop 			$00, $02, Mus_Boss_Loop05 
 	smpsJump 			Mus_Boss_FM3
 
 Mus_Boss_FM4:
-	smpsPan 	panLeft, $00 
-	smpsModSet $0C, $01, $04, $04 
-	smpsJump  	Mus_Boss_Jump02 
+	smpsPan 			panLeft, $00 
+	smpsModSet			$0C, $01, $04, $04 
+	smpsJump			Mus_Boss_Jump02 
 
 Mus_Boss_FM5:
 	smpsPan 			panRight, $00 
@@ -122,7 +122,7 @@ Mus_Boss_Loop06:
 	dc.b 	nF5, nE5, nD5, $0C, nE5, nD5, nB4, $18, nG4, $0C, nB4, $18 
 	dc.b 	nC5, $0C, nD5, nE5, $18, nF5, nE5, nD5, $0C, nE5, nF5, nFs5  
 	dc.b 	nAb5, $30 
-	smpsJump 	Mus_Boss_Jump02
+	smpsJump			Mus_Boss_Jump02
 
 Mus_Boss_Call03: 
 	dc.b 	nC4, $30, smpsNoAttack, $18, nD4, $0C, nC4, nB3, $30 
@@ -130,15 +130,15 @@ Mus_Boss_Call03:
 
 Mus_Boss_DAC:
 	dc.b 	dSnare, $0C, dFloorTom, dFloorTom, dSnare, dFloorTom, dFloorTom, dSnare, dFloorTom, dFloorTom, $18, dFloorTom, dFloorTom, dFloorTom 
-	smpsLoop	$00, $02, Mus_Boss_DAC
+	smpsLoop			$00, $02, Mus_Boss_DAC
 
 Mus_Boss_Loop07:  
 	dc.b 	dKick, $0C, dSnare, $06, dSnare, dKick, $0C, dSnare, $06, dSnare, dKick, $0C, dSnare, $06  
 	dc.b 	dSnare, dKick, $0C, dSnare, $06, dSnare, dKick, $0C, dSnare, $06, dSnare, dKick, $0C, dSnare 
 	dc.b  	$06, dSnare, dKick, $0C, dSnare, $02, dFloorTom, $04, dSnare, $02, dFloorTom, $04, dKick, $0C 
 	dc.b 	dSnare, $02, dFloorTom, $04, dSnare, $02, dFloorTom, $04 
-	smpsLoop 	$00, $08, Mus_Boss_Loop07
-	smpsJump 	Mus_Boss_DAC
+	smpsLoop			$00, $08, Mus_Boss_Loop07
+	smpsJump			Mus_Boss_DAC
 
 Mus_Boss_Voice:
 ;	Voice $00
@@ -211,4 +211,4 @@ Mus_Boss_Voice:
 	smpsVcDecayRate2    $01, $02, $01, $01
 	smpsVcDecayLevel    $03, $01, $08, $01
 	smpsVcReleaseRate   $07, $00, $07, $03
-	smpsVcTotalLevel    $85, $19, $80, $17
+	smpsVcTotalLevel    $05, $19, $00, $17

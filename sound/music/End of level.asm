@@ -171,4 +171,4 @@ Mus_ActClear_Voices:
 	smpsVcDecayRate2    $00, $00, $00, $01
 	smpsVcDecayLevel    $01, $01, $01, $02
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-	smpsVcTotalLevel    $82, $82, $82, $1C
+	smpsVcTotalLevel    $02, $02, $02, $1C

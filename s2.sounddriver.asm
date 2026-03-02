@@ -281,7 +281,25 @@ rsttarget macro {INTLABEL}
 	if "__LABEL__"<>""
 __LABEL__ label $
 	endif
-    endm
+	endm
+
+; function to decide whether an offset's full range won't fit in one byte
+offsetover1byte function from,maxsize, ((from&0FFh)>(100h-maxsize))
+
+; macro to make sure that ($ & 0FF00h) == (($+maxsize) & 0FF00h)
+ensure1byteoffset macro maxsize
+	if offsetover1byte($,maxsize)
+startpad := $
+		align 100h
+		if MOMPASS=1
+endpad := $
+		if endpad-startpad>=1h
+			; warn because otherwise you'd have no clue why you're running out of space so fast
+			warning "had to insert \{endpad-startpad}h   bytes of padding before improperly located data at 0\{startpad}h in Z80 code"
+		endif
+		endif
+	endif
+	endm
 
 ; Function to turn a 68k address into a word the Z80 can use to access it,
 ; assuming the correct bank has been switched to first
@@ -289,7 +307,7 @@ zmake68kPtr function addr,zROMWindow+(addr&7FFFh)
 
 ; Function to turn a sample rate into a djnz loop counter
 pcmLoopCounterBase function sampleRate,baseCycles, 1+(3579545/(sampleRate)-(baseCycles)+(13/2))/13
-pcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,138/2) ; 138 is the number of cycles zPlaySegaSound takes to deliver two samples.
+pcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,144/2) ; 144 is the number of cycles zPlaySegaSound takes to deliver two samples.
 dpcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,303/2) ; 303 is the number of cycles zWriteToDAC takes to deliver two samples.
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -300,7 +318,7 @@ dpcmLoopCounter function sampleRate, pcmLoopCounterBase(sampleRate,303/2) ; 303 
 		jp	zStartDAC
 ; ---------------------------------------------------------------------------
 
-	if ~~OptimiseDriver
+	if OptimiseDriver=0
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 		align 8
 ; zsub_8:
@@ -327,14 +345,14 @@ zWriteFMIorII:	rsttarget
 ; zsub_18
 zWriteFMI:	rsttarget
 		; Write reg/data pair to part I; 'a' is register, 'c' is data
-	if ~~OptimiseDriver
+	if OptimiseDriver=0
 		push	af
 		rst	zWaitForYM
 		pop	af
 	endif
 		ld	(zYM2612_A0),a
 		push	af
-	if ~~OptimiseDriver
+	if OptimiseDriver=0
 		rst	zWaitForYM
 	endif
 		ld	a,c
@@ -348,14 +366,14 @@ zWriteFMI:	rsttarget
 ; zsub_28:
 zWriteFMII:	rsttarget
 		; Write reg/data pair to part II; 'a' is register, 'c' is data
-	if ~~OptimiseDriver
+	if OptimiseDriver=0
 		push	af
 		rst	zWaitForYM
 		pop	af
 	endif
 		ld	(zYM2612_A1),a
 		push	af
-	if ~~OptimiseDriver
+	if OptimiseDriver=0
 		rst	zWaitForYM
 	endif
 		ld	a,c
@@ -726,13 +744,39 @@ GetFMFreq:
 		jr	z,loc_25F
 		add	a,(ix+zTrack.Transpose)
 		add	a,a
-		add	a,FMFreqs&0FFh
+	if OptimiseDriver
+		ld	d,12*2			; 12 notes per octave
+		ld	c,0			; Clear c (will hold octave bits)
+
+.loop:
+		sub	d			; Subtract 1 octave from the note
+		jr	c,.getoctave		; If this is less than zero, we are done
+		inc	c			; One octave up
+		jr	.loop
+
+.getoctave:
+		add	a,d			; Add 1 octave back (so note index is positive)
+		sla	c
+		sla	c
+		sla	c			; Multiply octave value by 8, to get final octave bits
+	endif
+		add	a,zFrequencies&0FFh
 		ld	(loc_254+2),a
+;		ld	d,a
+;		adc	a,(zFrequencies&0FF00h)>>8
+;		sub	d
+;		ld	(.storefreq+3),a		; This is how you could store the high byte of the pointer too (unnecessary if it's in the right range)
 
 loc_254:
-		ld	de,(FMFreqs)
+		ld	de,(zFrequencies)
 		ld	(ix+zTrack.FreqLow),e
-		ld	(ix+zTrack.FreqHigh),d
+	if OptimiseDriver
+		ld	a,d
+		or	c
+		ld	(ix+zTrack.FreqHigh),a	; Frequency high byte  -> trackPtr + 0Eh
+	else
+		ld	(ix+zTrack.FreqHigh),d	; Frequency high byte  -> trackPtr + 0Eh
+	endif
 		ret
 ; ---------------------------------------------------------------------------
 
@@ -808,12 +852,12 @@ DoModulation:
 		ret	z
 		ld	a,(ix+zTrack.ModulationWait)
 		or	a
-		jr	z,loc_2D2
+		jr	z,.waitdone
 		dec	(ix+zTrack.ModulationWait)
 		ret
 ; ---------------------------------------------------------------------------
 
-loc_2D2:
+.waitdone:
 		dec	(ix+zTrack.ModulationSpeed)
 		ret	nz
 		ld	l,(ix+zTrack.ModulationPtrLow)
@@ -823,7 +867,7 @@ loc_2D2:
 		ld	(ix+zTrack.ModulationSpeed),a
 		ld	a,(ix+zTrack.ModulationSteps)
 		or	a
-		jr	nz,loc_2F6
+		jr	nz,.calcfreq
 		inc	hl
 		inc	hl
 		ld	a,(hl)
@@ -834,17 +878,26 @@ loc_2D2:
 		ret
 ; ---------------------------------------------------------------------------
 
-loc_2F6:
+.calcfreq:
 		dec	(ix+zTrack.ModulationSteps)
 		ld	l,(ix+zTrack.ModulationValLow)
 		ld	h,(ix+zTrack.ModulationValHigh)
+		; This is a 16-bit sign extension for 'bc'
+	if OptimiseDriver
+		ld	a,(ix+zTrack.ModulationDelta)	; Get current modulation change per step -> 'a'
+		ld	c,a
+		rla					; Carry contains sign of delta
+		sbc	a,a				; a = 0 or -1 if carry is 0 or 1
+		ld	b,a				; bc = sign extension of delta
+	else
 		ld	b,0
-		ld	c,(ix+zTrack.ModulationDelta)
+		ld	c,(ix+zTrack.ModulationDelta)	; Get current modulation change per step -> 'c'
 		bit	7,c
-		jp	z,loc_30B
-		ld	b,0FFh
+		jp	z,.nosignextend
+		ld	b,0FFh				; Sign extend if negative
 
-loc_30B:
+.nosignextend:
+	endif
 		add	hl,bc
 		ld	(ix+zTrack.ModulationValLow),l
 		ld	(ix+zTrack.ModulationValHigh),h
@@ -856,15 +909,30 @@ loc_30B:
 ; End of function DoModulation
 
 ; ---------------------------------------------------------------------------
-FMFreqs:
-		dw 25Eh,284h,2ABh,2D3h,2FEh,32Dh,35Ch,38Fh,3C5h,3FFh,43Ch,47Ch
-		dw 0A5Eh,0A84h,0AABh,0AD3h,0AFEh,0B2Dh,0B5Ch,0B8Fh,0BC5h,0BFFh,0C3Ch,0C7Ch
-		dw 125Eh,1284h,12ABh,12D3h,12FEh,132Dh,135Ch,138Fh,13C5h,13FFh,143Ch,147Ch
-		dw 1A5Eh,1A84h,1AABh,1AD3h,1AFEh,1B2Dh,1B5Ch,1B8Fh,1BC5h,1BFFh,1C3Ch,1C7Ch
-		dw 225Eh,2284h,22ABh,22D3h,22FEh,232Dh,235Ch,238Fh,23C5h,23FFh,243Ch,247Ch
-		dw 2A5Eh,2A84h,2AABh,2AD3h,2AFEh,2B2Dh,2B5Ch,2B8Fh,2BC5h,2BFFh,2C3Ch,2C7Ch
-		dw 325Eh,3284h,32ABh,32D3h,32FEh,332Dh,335Ch,338Fh,33C5h,33FFh,343Ch,347Ch
-		dw 3A5Eh,3A84h,3AABh,3AD3h,3AFEh,3B2Dh,3B5Ch,3B8Fh,3BC5h,3BFFh,3C3Ch,3C7Ch
+zMakeFMFrequency function frequency,roundFloatToInteger(frequency*1024*1024*2/FM_Sample_Rate)
+zMakeFMFrequenciesOctave macro octave
+		; Frequencies for the base octave. The first frequency is B, the last frequency is B-flat.
+		irp op, 15.39, 16.35, 17.34, 18.36, 19.45, 20.64, 21.84, 23.13, 24.51, 25.98, 27.53, 29.15
+			dw zMakeFMFrequency(op)+octave*800h
+		endm
+	endm
+
+    if OptimiseDriver
+	ensure1byteoffset 18h
+    else
+	ensure1byteoffset 0C0h
+    endif
+zFrequencies:
+	zMakeFMFrequenciesOctave 0
+    if ~~OptimiseDriver	; We will calculate these, instead, which will save space
+	zMakeFMFrequenciesOctave 1
+	zMakeFMFrequenciesOctave 2
+	zMakeFMFrequenciesOctave 3
+	zMakeFMFrequenciesOctave 4
+	zMakeFMFrequenciesOctave 5
+	zMakeFMFrequenciesOctave 6
+	zMakeFMFrequenciesOctave 7
+    endif
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -881,13 +949,22 @@ SendFMFreq:
 RefreshFMFreq:
 		bit	2,(ix+zTrack.PlaybackControl)
 		ret	nz
-		ld	h,0
-		ld	l,(ix+zTrack.Detune)
-		bit	7,l
-		jr	z,loc_3FB
-		ld	h,0FFh
+		; This is a 16-bit sign extension of (ix+zTrack.Detune)
+	if OptimiseDriver
+		ld	a,(ix+zTrack.Detune)		; Get detune value
+		ld	l,a
+		rla					; Carry contains sign of detune
+		sbc	a,a				; a = 0 or -1 if carry is 0 or 1
+		ld	h,a				; hl = sign extension of detune
+	else
+		ld	h,0				; h = 0
+		ld	l,(ix+zTrack.Detune)		; Get detune value
+		bit	7,l				; Did prior value have 80h set?
+		jr	z,.nosignextend			; If not, skip next step
+		ld	h,0FFh				; h = FFh
 
-loc_3FB:
+.nosignextend:
+	endif
 		add	hl,de
 		ld	c,h
 		ld	a,(ix+zTrack.VoiceControl)
@@ -896,22 +973,31 @@ loc_3FB:
 		rst	zWriteFMIorII
 		ld	c,l
 		sub	4
-	if OptimiseDriver
-		jp	zWriteFMIorII
-	else
 		rst	zWriteFMIorII
 		ret
-	endif
 ; End of function SendFMFreq
 
 ; ---------------------------------------------------------------------------
+zMakePSGFrequency function frequency,min(3FFh,roundFloatToInteger(PSG_Sample_Rate/(frequency*2)))
+zMakePSGFrequencies macro
+		irp op,ALLARGS
+			dw zMakePSGFrequency(op)
+		endm
+	endm
+
+	ensure1byteoffset 8Ch
 zPSGFrequencies:
-		dw 356h,326h,2F9h,2CEh,2A5h,280h,25Ch,23Ah,21Ah,1FBh,1DFh,1C4h
-		dw 1ABh,193h,17Dh,167h,153h,140h,12Eh,11Dh,10Dh,0FEh,0EFh,0E2h
-		dw 0D6h,0C9h,0BEh,0B4h,0A9h,0A0h,97h,8Fh,87h,7Fh,78h,71h
-		dw 6Bh,65h,5Fh,5Ah,55h,50h,4Bh,47h,43h,40h,3Ch,39h
-		dw 36h,33h,30h,2Dh,2Bh,28h,26h,24h,22h,20h,1Fh,1Dh
-		dw 1Bh,1Ah,18h,17h,16h,15h,13h,12h,11h,0
+	; 6 octaves, each one begins with C and ends with B, with
+	; the exception of the final octave, which ends at A-flat.
+	; The last octave's final note is set to the PSG's maximum
+	; frequency. This is typically used by the noise channel to
+	; create a sound that is similar to a hi-hat.
+	zMakePSGFrequencies  130.98,    138.78,    146.99,    155.79,    165.22,    174.78,    185.19,    196.24,    207.91,    220.63,    233.52,    247.47
+	zMakePSGFrequencies  261.96,    277.56,    293.59,    311.58,    329.97,    349.56,    370.39,    392.49,    415.83,    440.39,    468.03,    494.95
+	zMakePSGFrequencies  522.71,    556.51,    588.73,    621.44,    661.89,    699.12,    740.79,    782.24,    828.59,    880.79,    932.17,    989.91
+	zMakePSGFrequencies 1045.42,   1107.52,   1177.47,   1242.89,   1316.00,   1398.25,   1491.47,   1575.50,   1669.55,   1747.82,   1864.34,   1962.46
+	zMakePSGFrequencies 2071.49,   2193.34,   2330.42,   2485.78,   2601.40,   2796.51,   2943.69,   3107.23,   3290.01,   3495.64,   3608.40,   3857.25
+	zMakePSGFrequencies 4142.98,   4302.32,   4660.85,   4863.50,   5084.56,   5326.69,   5887.39,   6214.47,   6580.02, 223721.56
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -1001,20 +1087,29 @@ RefreshPSGFreq:
 		ld	a,(ix+zTrack.PlaybackControl)
 		and	6
 		ret	nz
+		; This is a 16-bit sign extension of (ix+zTrack.Detune) -> 'hl'
+	if OptimiseDriver
+		ld	a,(ix+zTrack.Detune)	; Get detune value
+		ld	l,a
+		rla				; Carry contains sign of detune
+		sbc	a,a			; a = 0 or -1 if carry is 0 or 1
+		ld	h,a			; hl = sign extension of detune
+	else
 		ld	h,0
-		ld	l,(ix+zTrack.Detune)
-		bit	7,l
-		jr	z,loc_521
-		ld	h,0FFh
+		ld	l,(ix+zTrack.Detune)	; hl = detune value (coord flag E9)
+		bit	7,l			; Did prior value have 80h set?
+		jr	z,.nosignextend		; If not, skip next step
+		ld	h,0FFh			; sign extend negative value
 
-loc_521:
+.nosignextend:
+	endif
 		add	hl,de
 		ld	a,(ix+zTrack.VoiceControl)
 		cp	0E0h
-		jr	nz,loc_52B
+		jr	nz,.notnoise
 		ld	a,0C0h
 
-loc_52B:
+.notnoise:
 		ld	b,a
 		ld	a,l
 		and	0Fh
@@ -1074,11 +1169,13 @@ zPSGDoVolFX:
 
 loc_574:
 		add	a,b
+	if FixDriverBugs=0
 		cp	10h
-		jr	c,loc_57B
+		jr	c,.abovesilence
 		ld	a,0Fh
 
-loc_57B:
+.abovesilence:
+	endif
 		ld	b,a
 ; End of function zPSGUpdateVolFX
 
@@ -1094,9 +1191,20 @@ zPSGUpdateVol:
 		jr	nz,zPSGCheckNoteFill
 
 zPSGSendVol:
+	if FixDriverBugs
+		ld	a,b				; 'b' -> 'a'
+		cp	10h				; Did the level get pushed below silence level? (i.e. a > 0Fh)
+		jr	c,.abovesilence
+		ld	a,0Fh				; If so, fix it!
+
+.abovesilence:
+		or	(ix+zTrack.VoiceControl)	; Apply channel info (which PSG to set!)
+		or	10h				; This bit marks it as an attenuation level assignment (along with channel info just above)
+	else
 		ld	a,(ix+zTrack.VoiceControl)
 		or	b
 		add	a,10h
+	endif
 		ld	(zPSG),a
 		ret
 ; ---------------------------------------------------------------------------
@@ -1117,7 +1225,7 @@ zVolEnvHold:
 	if FixDriverBugs
 		dec	(ix+zTrack.VolFlutter)
 		dec	(ix+zTrack.VolFlutter)
-		jp	zPSGDoVolFX
+		jr	zPSGDoVolFX
 	else
 		dec	(ix+zTrack.VolFlutter)
 		ret
@@ -1132,6 +1240,17 @@ PSGNoteOff:
 		ld	a,(ix+zTrack.VoiceControl)
 		or	1Fh
 		ld	(zPSG),a
+	if FixDriverBugs
+		; Without zInitMusicPlayback forcefully muting all channels, there's the
+		; risk of music accidentally playing noise because it can't detect if
+		; the PSG4/noise channel needs muting, on track initialisation.
+		; This bug can be heard be playing the End of Level music in CNZ, whose
+		; music uses the noise channel. S&K's driver contains a fix just like this.
+		cp	0DFh		; Are we stopping PSG3?
+		ret	nz
+		ld	a,0FFh		; If so, stop noise channel while we're at it
+		ld	(zPSG),a	; Stop noise channel
+	endif
 		ret
 ; End of function PSGNoteOff
 
@@ -1191,7 +1310,7 @@ zResumeTrack:
 		jr	z,.nexttrack
 		bit	2,(ix+zTrack.PlaybackControl)
 		jr	nz,.nexttrack
-    if ~~OptimiseDriver
+    if OptimiseDriver=0
 		; cfSetVoiceCont already does this
 		ld	c,(ix+zTrack.AMSFMSPan)		; AMS/FMS/panning flags
 		ld	a,(ix+zTrack.VoiceControl)	; Get voice control bits...
@@ -1319,7 +1438,7 @@ PlaySegaSound:
 		ld	c,80h			; If QueueToPlay is not this, stops Sega PCM
 
 loc_6B8:
-		ld	a,(hl)			; 7	; Get next PCM byte
+		ld	a,(hl)			; 7+3	; Get next PCM byte
 		ld	(zYM2612_D0),a		; 13	; Send to DAC
 		inc	hl			; 6	; Advance pointer
 		nop				; 4
@@ -1330,7 +1449,7 @@ loc_6C0:
 		ld	a,(zAbsVar.QueueToPlay)	; 13	; Get next item to play
 		cp	c			; 4	; Is it 80h?
 		jr	nz,loc_6D8		; 7	; If not, stop Sega PCM
-		ld	a,(hl)			; 7	; Get next PCM byte
+		ld	a,(hl)			; 7+3	; Get next PCM byte
 		ld	(zYM2612_D0),a		; 13	; Send to DAC
 		inc	hl			; 6	; Advance pointer
 		nop				; 4
@@ -1342,20 +1461,16 @@ loc_6D0:
 		ld	a,d			; 4	; a = d
 		or	e			; 4	; Is de zero?
 		jp	nz,loc_6B8		; 10	; If not, loop
-						; 138
-		; Two samples per 138 cycles, meaning that pcmLoopCounter should used 138 divided by 2.
+						; 144
+		; Two samples per 144 cycles, meaning that pcmLoopCounter should used 144 divided by 2.
 
 loc_6D8:
 		call	zBankSwitchToMusic
 		ld	a,(zAbsVar.DACEnabled)	; load DAC State
 		ld	c,a
 		ld	a,2Bh		; Reg 02B - DAC	Enable/Disable
-	if OptimiseDriver
-		jp	zWriteFMI
-	else
 		rst	zWriteFMI
 		ret
-	endif
 ; ---------------------------------------------------------------------------
 
 zPlayMusic:
@@ -1897,7 +2012,16 @@ loc_A47:
 loc_A5E:
 		push	bc
 		ld	b,(ix+zTrack.Volume)
-		call	zPSGUpdateVol
+	if FixDriverBugs
+		ld	a,(ix+zTrack.VoiceIndex)
+		or	a				; Is this track using volume envelope 0 (no envelope)?
+		call	z,zPSGUpdateVol			; If so, update volume (this code is only run on envelope 1+, so we need to do it here for envelope 0)
+	else
+		; DANGER! This code ignores volume envelopes, breaking fade on envelope-using tracks.
+		; (It's also a part of the envelope-processing code, so calling it here is redundant)
+		; This is only useful for envelope 0 (no envelope).
+		call	zPSGUpdateVol			; Update volume (ignores current envelope!!!)
+	endif
 		pop	bc
 
 loc_A66:
@@ -2103,15 +2227,30 @@ loc_B7A:
 		bit	7,(ix+zTrack.PlaybackControl)
 		jr	z,loc_B92
 		dec	(ix+zTrack.Volume)
+	if FixDriverBugs=0
 		ld	a,(ix+zTrack.Volume)
 		cp	10h
 		jr	c,loc_B8C
 		ld	a,0Fh
 
 loc_B8C:
+	endif
 		push	bc
+	if FixDriverBugs
+		ld	b,(ix+zTrack.Volume)		; Channel volume -> 'b'
+	else
 		ld	b,a
-		call	zPSGUpdateVol
+	endif
+	if FixDriverBugs
+		ld	a,(ix+zTrack.VoiceIndex)
+		or	a				; Is this track using volume envelope 0 (no envelope)?
+		call	z,zPSGUpdateVol			; If so, update volume (this code is only run on envelope 1+, so we need to do it here for envelope 0)
+	else
+		; DANGER! This code ignores volume envelopes, breaking fade on envelope-using tracks.
+		; (It's also a part of the envelope-processing code, so calling it here is redundant)
+		; This is only useful for envelope 0 (no envelope).
+		call	zPSGUpdateVol	; Update volume (ignores current envelope!!!)
+	endif
 		pop	bc
 
 loc_B92:
@@ -2132,12 +2271,8 @@ DoNoteOn:
 		or	0F0h
 		ld	c,a
 		ld	a,28h
-	if OptimiseDriver
-		jp	zWriteFMI
-	else
 		rst	zWriteFMI
 		ret
-	endif
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2148,12 +2283,8 @@ DoNoteOff:
 		ret	nz
 		ld	a,28h
 		ld	c,(ix+zTrack.VoiceControl)
-	if OptimiseDriver
-		jp	zWriteFMI
-	else
 		rst	zWriteFMI
 		ret
-	endif
 ; End of function DoNoteOff
 
 
@@ -2180,8 +2311,14 @@ zSwitchToBank2:
 ; cfHandler:
 zCoordFlag:
 		sub	0E0h
-		add	a,a			; multiply by 4,skipping past padding
+	if OptimiseDriver
+		ld	c,a	; Multiply by 3; this lets us remove padding that was
+		add	a,a	; left over from Sonic 1's sound driver, which used
+		add	a,c	; 4 byte-long instructions for each entry
+	else
+		add	a,a	; Multiply by 4, skipping past padding
 		add	a,a
+	endif
 		ld	(coordFlagLookup+1),a	; store into the instruction after coordflagLookup (self-modifying code)
 		ld	a,(hl)
 		inc	hl
@@ -2190,85 +2327,111 @@ zCoordFlag:
 ; loc_BE8:
 coordFlagLookup:
 		jr	$
-; ---------------------------------------------------------------------------
 		jp	cfE0_Pan
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE1_Detune
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE2_SetComm
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE3_Return
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE4_FadeIn
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE5_TickMult
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE6_ChgFMVol
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE7_Hold
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE8_NoteStop
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfE9_ChgTransp
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfEA_SetTempo
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfEB_TickMulAll
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfEC_ChgPSGVol
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfED_ClearPush
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfEE_null
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfEF_SetIns
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF0_ModSetup
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF1_ModOn
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF2_StopTrk
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF3_PSGNoise
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF4_ModOff
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF5_SetPSGIns
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF6_GoTo
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF7_Loop
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF8_GoSub
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
 		jp	cfF9_FM1Mute
-; ---------------------------------------------------------------------------
+	if OptimiseDriver=0
 		nop
+	endif
+; ---------------------------------------------------------------------------
 
 cfE0_Pan:
 		bit	7,(ix+zTrack.VoiceControl)
@@ -2284,12 +2447,8 @@ cfE0_Pan:
 		ld	a,(ix+zTrack.VoiceControl)
 		and	3
 		add	a,0B4h
-	if OptimiseDriver
-		jp	zWriteFMIorII
-	else
 		rst	zWriteFMIorII
 		ret
-	endif
 ; ---------------------------------------------------------------------------
 
 cfE1_Detune:
@@ -2836,7 +2995,7 @@ ptrsize :=	2+2
 idstart :=	81h
 
 dac_sample_metadata macro label,sampleRate
-	if ("label"=="0")
+	if "label"==""
 	dw	0
 	else
 	db	id(label),dpcmLoopCounter(sampleRate)
@@ -2849,7 +3008,7 @@ dac_sample_metadata macro label,sampleRate
 		dac_sample_metadata zDACPtr_Scratch,19000	; 84h
 		dac_sample_metadata zDACPtr_Timpani,7350	; 85h
 		dac_sample_metadata zDACPtr_Tom,   13500	; 86h
-		dac_sample_metadata	0						; 87h
+		dac_sample_metadata							; 87h
 		dac_sample_metadata zDACPtr_Timpani,9750	; 88h
 		dac_sample_metadata zDACPtr_Timpani,8750	; 89h
 		dac_sample_metadata zDACPtr_Timpani,7150	; 8Ah

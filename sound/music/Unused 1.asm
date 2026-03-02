@@ -30,7 +30,7 @@ Mus_Unused1_Loop04:
 	endif
 	smpsPan             panLeft, $00
 
-	if ~~FixMusicAndSFXDataBugs
+	if FixMusicAndSFXDataBugs=0
 Mus_Unused1_Loop04:
 	endif
 	dc.b	nE5, $03, nE5, nCs5, nCs5, nA4, nA4, nCs5, nCs5, nA4, nA4, nE4

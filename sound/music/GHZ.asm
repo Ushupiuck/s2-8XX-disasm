@@ -547,4 +547,4 @@ Mus_GHZ_Voices:
 	smpsVcDecayRate2    $00, $00, $00, $00
 	smpsVcDecayLevel    $00, $00, $00, $00
 	smpsVcReleaseRate   $0F, $0F, $0F, $1F
-	smpsVcTotalLevel    $8C, $8C, $8D, $17
+	smpsVcTotalLevel    $0C, $0C, $0D, $17

@@ -26,7 +26,11 @@ dma68kToVDP macro source,dest,length,type
 	move.w	#((vdpComm(dest,type,DMA)>>16)&$FFFF),(a5)
 	move.w	#(vdpComm(dest,type,DMA)&$FFFF),(DMA_data_thunk).w
 	move.w	(DMA_data_thunk).w,(a5)
-    endm
+	endm
+
+; calculates initial loop counter value for a dbf loop
+; that writes n bytes total at x bytes per iteration
+bytesToXcnt function n,x,n/x-1
 
 ; calculates initial loop counter value for a dbf loop
 ; that writes n bytes total at 4 bytes per iteration
@@ -38,43 +42,43 @@ bytesToWcnt function n,n>>1-1
 
 ; fills a region of 68k RAM with 0
 clearRAM macro startaddr,endaddr
-    if startaddr>endaddr
+	if startaddr>endaddr
 	fatal "Starting address of clearRAM \{startaddr} is after ending address \{endaddr}."
-    elseif startaddr==endaddr
+	elseif startaddr==endaddr
 	warning "clearRAM is clearing zero bytes. Turning this into a nop instead."
 	exitm
-    endif
-    if ((startaddr)&$8000)==0
+	endif
+	if ((startaddr)&$8000)==0
 	lea	(startaddr).l,a1
-    else
+	else
 	lea	(startaddr).w,a1
-    endif
+	endif
 	moveq	#0,d0
-    if ((startaddr)&1)
+	if ((startaddr)&1)
 	move.b	d0,(a1)+
-    endif
+	endif
 	move.w	#bytesToLcnt((endaddr-startaddr)-((startaddr)&1)),d1
 .loop:	move.l	d0,(a1)+
 	dbf	d1,.loop
-    if (((endaddr-startaddr)-((startaddr)&1))&2)
+	if (((endaddr-startaddr)-((startaddr)&1))&2)
 	move.w	d0,(a1)+
-    endif
-    if (((endaddr-startaddr)-((startaddr)&1))&1)
+	endif
+	if (((endaddr-startaddr)-((startaddr)&1))&1)
 	move.b	d0,(a1)+
-    endif
-    endm
+	endif
+	endm
 
 ; tells the Z80 to stop, and waits for it to finish stopping (acquire bus)
 stopZ80 macro
 	move.w	#$100,(Z80_Bus_Request).l ; stop the Z80
 .loop:	btst	#0,(Z80_Bus_Request).l
 	bne.s	.loop ; loop until it says it's stopped
-    endm
+	endm
 
 ; tells the Z80 to start again
 startZ80 macro
-	move.w	#0,(Z80_Bus_Request).l    ; start the Z80
-    endm
+	move.w	#0,(Z80_Bus_Request).l	  ; start the Z80
+	endm
 
 ; function to make a little-endian 16-bit pointer for the Z80 sound driver
 z80_ptr function x,(x)<<8&$FF00|(x)>>8&$7F|$80
@@ -82,7 +86,7 @@ z80_ptr function x,(x)<<8&$FF00|(x)>>8&$7F|$80
 ; macro to declare a little-endian 16-bit pointer for the Z80 sound driver
 rom_ptr_z80 macro addr
 	dc.w z80_ptr(addr)
-    endm
+	endm
 
 ; aligns the start of a bank, and detects when the bank's contents is too large
 ; can also print the amount of free space in a bank with DebugSoundbanks set
@@ -91,7 +95,7 @@ startBank macro {INTLABEL}
 __LABEL__ label *
 soundBankStart := __LABEL__
 soundBankName := "__LABEL__"
-    endm
+	endm
 
 DebugSoundbanks := 0
 
@@ -101,18 +105,18 @@ finishBank macro
 	elseif (DebugSoundbanks<>0)&&(MOMPASS=1)
 		message "soundBank \{soundBankName} has $\{$8000+soundBankStart-*} bytes free at end."
 	endif
-    endm
+	endm
 
 ; macro to declare an offset table
 offsetTable macro {INTLABEL}
 current_offset_table := __LABEL__
 __LABEL__ label *
-    endm
+	endm
 
 ; macro to declare an entry in an offset table
 offsetTableEntry macro ptr
 	dc.ATTRIBUTE ptr-current_offset_table
-    endm
+	endm
 
 ; macro to declare a zone-ordered table
 ; entryLen is the length of each table entry, and zoneEntries is the number of entries per zone
@@ -126,58 +130,58 @@ zone_entries := zoneEntries
 zone_entries_left := 0
 cur_zone_id := 0
 cur_zone_str := "0"
-    endm
+	endm
 
 zoneOrderedOffsetTable macro entryLen,zoneEntries,{INTLABEL}
 current_offset_table := __LABEL__
 __LABEL__ zoneOrderedTable entryLen,zoneEntries
-    endm
+	endm
 
 ; macro to declare one or more entries in a zone-ordered table
 zoneTableEntry macro value
 	if "value"<>""
-	    if zone_entries_left
+		if zone_entries_left
 		dc.ATTRIBUTE value
 zone_entries_left := zone_entries_left-1
-	    else
+		else
 		!org zone_table_addr+zone_id_{cur_zone_str}*zone_entry_len*zone_entries
 		dc.ATTRIBUTE value
 zone_entries_left := zone_entries-1
 cur_zone_id := cur_zone_id+1
 cur_zone_str := "\{cur_zone_id}"
-	    endif
-	    shift
-	    zoneTableEntry.ATTRIBUTE ALLARGS
+		endif
+		shift
+		zoneTableEntry.ATTRIBUTE ALLARGS
 	endif
-    endm
+	endm
 
 ; macro to declare one or more BINCLUDE entries in a zone-ordered table
 zoneTableBinEntry macro numEntries,path
 	if zone_entries_left
-	    BINCLUDE path
+		BINCLUDE path
 zone_entries_left := zone_entries_left-numEntries
 	else
-	    !org zone_table_addr+zone_id_{cur_zone_str}*zone_entry_len*zone_entries
-	    BINCLUDE path
+		!org zone_table_addr+zone_id_{cur_zone_str}*zone_entry_len*zone_entries
+		BINCLUDE path
 zone_entries_left := zone_entries-numEntries
 cur_zone_id := cur_zone_id+1
 cur_zone_str := "\{cur_zone_id}"
 	endif
-    endm
+	endm
 
 ; macro to declare one entry in a zone-ordered offset table
 zoneOffsetTableEntry macro value
 	zoneTableEntry.ATTRIBUTE value-current_offset_table
-    endm
+	endm
 
 ; macro which sets the PC to the correct value at the end of a zone offset table and checks if the correct
 ; number of entries were declared
 zoneTableEnd macro
 ;	if (cur_zone_id<>no_of_zones)&&(MOMPASS=1)
-;	    message "Warning: Table \{zone_table_name} has \{cur_zone_id/1.0} entries, but it should have \{(no_of_zones)/1.0} entries"
+;		message "Warning: Table \{zone_table_name} has \{cur_zone_id/1.0} entries, but it should have \{(no_of_zones)/1.0} entries"
 ;	endif
 	!org zone_table_addr+cur_zone_id*zone_entry_len*zone_entries
-    endm
+	endm
 
 ; macros to convert from tile index to art tiles, block mapping or VRAM address.
 make_art_tile function addr,pal,pri,((pri&1)<<15)|((pal&3)<<13)|(addr&tile_mask)

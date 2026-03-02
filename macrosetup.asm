@@ -9,7 +9,7 @@
 
 paddingSoFar set 0
 
-; 128 = 80h = z80, 32988 = 80DCh = z80unDoC 
+; 128 = 80h = z80, 32988 = 80DCh = z80unDoC
 notZ80 function cpu,(cpu<>128)&&(cpu<>32988)
 
 ; make org safer (impossible to overwrite previously assembled bytes) and count padding
@@ -31,7 +31,7 @@ paddingSoFar	set paddingSoFar + address - *
 			endm
 		endif
 	endif
-    endm
+	endm
 
 ; define the cnop pseudo-instruction
 cnop macro offset,alignment
@@ -40,26 +40,26 @@ cnop macro offset,alignment
 	else
 		org ($-1+(alignment)-(($-1+(-(offset)))#(alignment)))
 	endif
-    endm
+	endm
 
 ; redefine align in terms of cnop, for the padding counter
 align macro alignment
 	cnop 0,alignment
-    endm
+	endm
 
 ; define the even pseudo-instruction
 even macro
 	if notZ80(MOMCPU)
 		if (*)&1
 paddingSoFar		set paddingSoFar+1
-			dc.b 0 ;ds.b 1 
+			dc.b 0 ;ds.b 1
 		endif
 	else
 		if ($)&1
 			db 0
 		endif
 	endif
-    endm
+	endm
 
 ; make ds work in Z80 code without creating a new segment
 ds macro
@@ -77,7 +77,7 @@ ds macro
 ; lets you easily check what address a location in this disassembly assembles to
 ; if used in Z80 code, the displayed PC will be relative to the start of Z80 RAM
 trace macro optionalMessageWithoutQuotes
-    if MOMPASS=1
+	if MOMPASS=1
 	if notZ80(MOMCPU)
 		if ("ALLARGS"<>"")
 			message "#\{tracenum/1.0}: line=\{MOMLINE/1.0} PC=$\{*} msg=ALLARGS"
@@ -92,7 +92,7 @@ trace macro optionalMessageWithoutQuotes
 		endif
 	endif
 tracenum := (tracenum+1)
-    endif
+	endif
    endm
   else
 trace macro
@@ -100,9 +100,9 @@ trace macro
   endif
 tracenum := 0
 
-    if zeroOffsetOptimization=0
-    ; disable a space optimization in AS so we can build a bit-perfect ROM
-    ; (the hard way, but it requires no modification of AS itself)
+	if zeroOffsetOptimization=0
+	; disable a space optimization in AS so we can build a bit-perfect ROM
+	; (the hard way, but it requires no modification of AS itself)
 
 
 chkop function op,ref,(substr(lowstring(op),0,strlen(ref))<>ref)
@@ -201,9 +201,13 @@ _tst	macro
 		!tst.ATTRIBUTE ALLARGS
 	endm
 
-    endif
+	endif
 
 bit function nBits,1<<(nBits-1)
 signmask function val,nBits,-((-(val&bit(nBits)))&bit(nBits))
 signextend function val,nBits,(val+signmask(val,nBits))!signmask(val,nBits)
 signextendB function val,signextend(val,8)
+roundFloatToInteger function float,INT(float+0.5)
+min function a,b,b!((a!b)&(-(a<b)))
+max function a,b,a!((a!b)&(-(a<b)))
+roundToNextMultiple function val,multiple,(val+(multiple-1))/multiple*multiple

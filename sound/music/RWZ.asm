@@ -119,6 +119,9 @@ Mus_RWZ_Jump01:
 	dc.b	nB4, $0C, nG4, nA4, nG4, $06, nA4
 	smpsCall            Mus_RWZ_Call04
 	dc.b	nB4, $30
+	if FixMusicAndSFXDataBugs
+	smpsSetvoice        $06
+	endif
 	smpsJump            Mus_RWZ_Jump01
 
 Mus_RWZ_Call04:
