@@ -388,12 +388,14 @@ MusID_EmeraldDup2 =	id(zMusIDPtr_EmeraldDup2)
 MusID__End =		id(zMusIDPtr__End)
 
 ; Whenever the music references a slot that was its placement in Sonic 1
-S1MusID_LZ =		MusID_GHZ
-S1MusID_Invinc =	MusID_NGHZ
-S1MusID_ExtraLife =	MusID_DEZ
-S1MusID_Boss =		MusID_FinalBoss
-S1MusID_ActClear =	MusID_Boss
-S1MusID_Emerald =	MusID_BOZ
+S1MusID_LZ =		$82
+S1MusID_Invinc =	$87
+S1MusID_ExtraLife =	$88
+S1MusID_Boss =		$8C
+S1MusID_ActClear =	$8E
+S1MusID_Emerald =	$93
+S1SndID_Waterfall =	$D0
+S1MusID_Stop =		$E0
 
 ; Sound IDs
 offset :=	SoundIndex
