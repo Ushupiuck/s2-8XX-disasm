@@ -44874,7 +44874,6 @@ Sfx_CC: 	include	"sound/SFX/CC - Spring.asm"
 Sfx_CD: 	include	"sound/SFX/CD - Switch.asm"
 Sfx_CE: 	include	"sound/SFX/CE - Ring Left Speaker.asm"
 Sfx_CF: 	include	"sound/SFX/CF - Signpost.asm"
-; final 16 sounds were ripped by MDTravisYT
 Sfx_D0: 	include	"sound/SFX/D0 - CNZ Boss Zap.asm"
 Sfx_D1: 	include	"sound/SFX/D1 - Unknown (Unused).asm"
 Sfx_D2: 	include	"sound/SFX/D2 - Unknown (Unused).asm"
