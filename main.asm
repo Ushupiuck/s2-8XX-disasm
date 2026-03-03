@@ -33,9 +33,11 @@
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
-;
+
 FixBugs = 0
-;
+;	| If 1, enables various bugfixes across the game and sound driver
+;	| See also FixMusicAndSFXDataBugs
+
 AllOptimizations = 0
 ;	| If 1, enables all optimizations
 ZeroOffsetOptimization = 0|AllOptimizations
@@ -423,7 +425,7 @@ ErrorMsg_TwoAddresses:
 ; ---------------------------------------------------------------------------
 ; loc_45A:
 ErrorMessage:
-		move	#$2700,sr
+		move.w	#$2700,sr
 		movem.l	d0-sp,(Object_Respawn_Table).w
 		bsr.w	ShowErrorMsg
 		move.l	2(sp),d0
@@ -1368,7 +1370,7 @@ ProcessDMAQueue_Done:
 ; Nemesis decompression to VRAM
 ; loc_15FC:
 NemDec:
-		movem.l	d0-d7/a0/a1/a3-a5,-(sp)
+		movem.l	d0-d7/a0-a1/a3-a5,-(sp)
 		lea	(NemDec_Output).l,a3
 		lea	(VDP_data_port).l,a4
 		bra.s	loc_1618
@@ -1379,7 +1381,7 @@ NemDec:
 ; input: a4 = starting address of destination
 ; loc_160E:
 NemDecToRAM:
-		movem.l	d0-d7/a0/a1/a3-a5,-(sp)
+		movem.l	d0-d7/a0-a1/a3-a5,-(sp)
 		lea	(NemDec_OutputRAM).l,a3
 
 loc_1618:
@@ -1400,7 +1402,7 @@ loc_1626:
 		move.b	(a0)+,d5
 		move.w	#$10,d6
 		bsr.s	loc_1646
-		movem.l	(sp)+,d0-d7/a0/a1/a3-a5
+		movem.l	(sp)+,d0-d7/a0-a1/a3-a5
 		rts
 loc_1646:
 		move.w	d6,d7
@@ -2099,7 +2101,7 @@ PalCycle_SuperSonic:
 		addq.w	#8,(Palette_frame).w
 		cmpi.w	#$30,(Palette_frame).w
 		blo.s	loc_24d2
-		move.b	#$FF,(Super_Sonic_palette).w
+		move.b	#-1,(Super_Sonic_palette).w
 
 loc_24d2:
 		lea	(Normal_palette+4).w,a1
@@ -2529,31 +2531,56 @@ loc_2946:
 		dbf	d7,loc_2946
 		rts
 PalPointers: ; loc_294E: ; Palette List
-PalPtr_SEGA:		dc.l	Pal_SEGA,$FB00001F
-PalPtr_Title:		dc.l	Pal_Title,$FB00001F
-PalPtr_LevelSel:	dc.l	Pal_LevelSelect,$FB00001F
-PalPtr_SonicTails:	dc.l	Pal_SonicTails,$FB000007
-PalPtr_GHZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_OWZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_WZ:	dc.l	Pal_WZ,$FB200017
-PalPtr_SSZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_MTZ:	dc.l	Pal_MTZ,$FB200017
-PalPtr_MTZ2:	dc.l	Pal_MTZ,$FB200017
-PalPtr_BLZ:	dc.l	Pal_BLZ,$FB200017	; also apparently meant for CNZ2 at one point
-PalPtr_HTZ:	dc.l	Pal_HTZ,$FB200017
-PalPtr_HPZ:	dc.l	Pal_HPZ,$FB200017
-PalPtr_RWZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_OOZ:	dc.l	Pal_OOZ,$FB200017
-PalPtr_DHZ:	dc.l	Pal_DHZ,$FB200017
-PalPtr_CNZ:	dc.l	Pal_CNZ,$FB200017
-PalPtr_CPZ:	dc.l	Pal_CPZ,$FB200017
-PalPtr_GCZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_NGHZ:	dc.l	Pal_NGHZ,$FB200017
-PalPtr_DEZ:	dc.l	Pal_GHZ,$FB200017
-PalPtr_HPZ_U:	dc.l	Pal_HPZ_U,$FB00001F
-PalPtr_CPZ_U:	dc.l	Pal_CPZ_U,$FB00001F
-PalPtr_NGHZ_U:	dc.l	Pal_NGHZ_U,$FB00001F
-PalPtr_SpecStg:	dc.l	Pal_SpecialStage,$FB00001F
+PalPtr_SEGA:		dc.l	Pal_SEGA
+		dc.w	$FB00,$1F
+PalPtr_Title:		dc.l	Pal_Title
+		dc.w	$FB00,$1F
+PalPtr_LevelSel:	dc.l	Pal_LevelSelect
+		dc.w	$FB00,$1F
+PalPtr_SonicTails:	dc.l	Pal_SonicTails
+		dc.w	$FB00,7
+PalPtr_GHZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_OWZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_WZ:	dc.l	Pal_WZ
+		dc.w	$FB20,$17
+PalPtr_SSZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_MTZ:	dc.l	Pal_MTZ
+		dc.w	$FB20,$17
+PalPtr_MTZ2:	dc.l	Pal_MTZ
+		dc.w	$FB20,$17
+PalPtr_BLZ:	dc.l	Pal_BLZ	; also apparently meant for CNZ2 at one point
+		dc.w	$FB20,$17
+PalPtr_HTZ:	dc.l	Pal_HTZ
+		dc.w	$FB20,$17
+PalPtr_HPZ:	dc.l	Pal_HPZ
+		dc.w	$FB20,$17
+PalPtr_RWZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_OOZ:	dc.l	Pal_OOZ
+		dc.w	$FB20,$17
+PalPtr_DHZ:	dc.l	Pal_DHZ
+		dc.w	$FB20,$17
+PalPtr_CNZ:	dc.l	Pal_CNZ
+		dc.w	$FB20,$17
+PalPtr_CPZ:	dc.l	Pal_CPZ
+		dc.w	$FB20,$17
+PalPtr_GCZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_NGHZ:	dc.l	Pal_NGHZ
+		dc.w	$FB20,$17
+PalPtr_DEZ:	dc.l	Pal_GHZ
+		dc.w	$FB20,$17
+PalPtr_HPZ_U:	dc.l	Pal_HPZ_U
+		dc.w	$FB00,$1F
+PalPtr_CPZ_U:	dc.l	Pal_CPZ_U
+		dc.w	$FB00,$1F
+PalPtr_NGHZ_U:	dc.l	Pal_NGHZ_U
+		dc.w	$FB00,$1F
+PalPtr_SpecStg:	dc.l	Pal_SpecialStage
+		dc.w	$FB00,$1F
 
 Pal_SEGA:		binclude	"art/palettes/Sega screen.bin"
 Pal_Title:		binclude	"art/palettes/Title screen.bin"
@@ -2732,7 +2759,7 @@ SegaScreen: ; loc_360C: ; SEGA Logo
 		bsr.w	PlayMusic
 		bsr.w	ClearPLC
 		bsr.w	Pal_FadeFrom
-		lea	(VDP_control_port),a6
+		lea	(VDP_control_port).l,a6
 		move.w	#$8004,(a6)
 		move.w	#$8230,(a6)
 		move.w	#$8407,(a6)
@@ -2740,31 +2767,31 @@ SegaScreen: ; loc_360C: ; SEGA Logo
 		move.w	#$8B00,(a6)
 		move.w	#$8C81,(a6)
 		clr.b	(Water_fullscreen_flag).w
-		move	#$2700,sr
+		move.w	#$2700,sr
 		move.w	(VDP_Reg1_val).w,d0
 		andi.b	#$BF,d0
-		move.w	d0,(VDP_control_port)
+		move.w	d0,(VDP_control_port).l
 		bsr.w	ClearScreen
-		move.l	#$40000000,(VDP_control_port)
+		move.l	#$40000000,(VDP_control_port).l
 		lea	(SegaLogo).l,a0	; Load Sega Sprites
 		bsr.w	NemDec
-		lea	(Chunk_Table),a1
+		lea	(Chunk_Table).l,a1
 		lea	(SegaLogo_Mappings).l,a0	; Load Sega Mappings
 		move.w	#0,d0
 		bsr.w	EniDec
-		lea	(Chunk_Table),a1
+		lea	(Chunk_Table).l,a1
 		move.l	#$65100003,d0
 		moveq	#$17,d1
 		moveq	#7,d2
 		bsr.w	PlaneMapToVRAM_H40
-		lea	(Chunk_Table+$180),a1
+		lea	(Chunk_Table+$180).l,a1
 		move.l	#$40000003,d0
 		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	PlaneMapToVRAM_H40
 		tst.b	(Graphics_Flags).w
 		bmi.s	loc_36BE
-		lea	(Chunk_Table+$A40),a1
+		lea	(Chunk_Table+$A40).l,a1
 		move.l	#$453A0003,d0
 		moveq	#2,d1
 		moveq	#1,d2
@@ -2779,7 +2806,7 @@ loc_36BE:
 		move.w	#$B4,(Demo_Time_left).w
 		move.w	(VDP_Reg1_val).w,d0
 		ori.b	#$40,d0
-		move.w	d0,(VDP_control_port)
+		move.w	d0,(VDP_control_port).l
 Sega_WaitPalette: ; loc_36F0:
 		move.b	#VintID_SEGA,(Vint_routine).w
 		bsr.w	WaitForVint
@@ -2815,8 +2842,8 @@ TitleScreen:
 		bsr.w	PlayMusic
 		bsr.w	ClearPLC
 		bsr.w	Pal_FadeFrom
-		move	#$2700,sr
-		lea	(VDP_control_port),a6
+		move.w	#$2700,sr
+		lea	(VDP_control_port).l,a6
 		move.w	#$8004,(a6)
 		move.w	#$8230,(a6)
 		move.w	#$8407,(a6)
@@ -2839,7 +2866,7 @@ TitleScreen:
 		bsr.w	PalLoad1
 		bsr.w	Pal_FadeFromBlack
 
-		move	#$2700,sr
+		move.w	#$2700,sr
 		move.l	#$40000000,(VDP_control_port).l
 		lea	(Title_Screen_Bg_Wings).l,a0
 		bsr.w	NemDec
@@ -2863,7 +2890,7 @@ loc_3818:
 		move.w	#0,(PalCycle_Timer).w
 		bsr.w	Pal_FadeFrom
 
-		move	#$2700,sr
+		move.w	#$2700,sr
 		lea	(Chunk_Table).l,a1
 		lea	(TS_Wings_MapUnc_Sonic).l,a0
 		move.w	#0,d0
@@ -3000,7 +3027,7 @@ Title_ChkLevSel:
 		clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
 
 		move.l	d0,(Vscroll_Factor).w
-		move	#$2700,sr
+		move.w	#$2700,sr
 		lea	(VDP_data_port).l,a6
 		move.l	#$60000003,(VDP_control_port).l
 		move.w	#$400-1,d1
@@ -3151,9 +3178,9 @@ Run_Demo_Mode: ; loc_3B8E:
 		move.w	d0,(Current_ZoneAndAct).w
 		addq.w	#1,(Demo_number).w
 		cmpi.w	#4,(Demo_number).w
-		blo.s	loc_3bhs
+		blo.s	loc_3BCC
 		move.w	#0,(Demo_number).w
-loc_3bhs:
+loc_3BCC:
 		move.w	#1,(Demo_mode_flag).w
 		move.b	#GameModeID_Demo,(Game_Mode).w
 		cmpi.w	#0,d0
@@ -3278,7 +3305,7 @@ loc_3CDC:
 		swap	d0
 		add.l	d0,d4
 		lea	(Level_Select_Text).l,a1
-		mulu.w	#$1B,d1
+		mulu.w	#27,d1
 		adda.w	d1,a1
 		move.w	#$C680,d3
 		move.l	d4,4(a6)
@@ -3324,64 +3351,47 @@ loc_3d72:
 		rts
 ; ===========================================================================
 
-_0 = $00
-_1 = $01
-_2 = $02
-_A = $11
-_B = $12
-_C = $13
-_D = $14
-_E = $15
-_F = $16
-_G = $17
-_H = $18
-_I = $19
-_J = $1A
-_K = $1B
-_L = $1C
-_M = $1D
-_N = $1E
-_O = $1F
-_P = $20
-_Q = $21
-_R = $22
-_S = $23
-_T = $24
-_U = $25
-_V = $26
-_W = $27
-_X = $28
-_Y = $0F
-_Z = $10
-__ = $FF
 Level_Select_Text: ; loc_3d7C: ; Level Select Menu Text
-		dc.b	_G,_R,_E,_E,_N,__,_H,_I,_L,_L,__,_Z,_O,_N,_E,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_W,_O,_O,_D,__,_Z,_O,_N,_E,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_M,_E,_T,_R,_O,_P,_O,_L,_I,_S,__,_Z,_O,_N,_E,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_2
-		dc.b	_H,_I,_L,_L,__,_T,_O,_P,__,_Z,_O,_N,_E,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_H,_I,_D,_D,_E,_N,__,_P,_A,_L,_A,_C,_E,__,_Z,_O,_N,_E,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_O,_I,_L,__,_O,_C,_E,_A,_N,__,_Z,_O,_N,_E,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_D,_U,_S,_T,__,_H,_I,_L,_L,__,_Z,_O,_N,_E,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_C,_A,_S,_I,_N,_O,__,_N,_I,_G,_H,_T,__,_Z,_O,_N,_E,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_C,_H,_E,_M,_I,_C,_A,_L,__,_P,_L,_A,_N,_T,__,_Z,_O,_N,_E,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_G,_E,_N,_O,_C,_I,_D,_E,__,_C,_I,_T,_Y,__,_Z,_O,_N,_E,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_N,_E,_O,__,_G,_R,_E,_E,_N,__,_H,_I,_L,_L,__,_Z,_O,_N,_E,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_D,_E,_A,_T,_H,__,_E,_G,_G,__,_Z,_O,_N,_E,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_0
-		dc.b	__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,_S,_T,_A,_G,_E,__,_1
-		dc.b	_S,_P,_E,_C,_I,_A,_L,__,_S,_T,_A,_G,_E,__,__,__,__,__,__,__,__,__,__,__,__,__,__
-		dc.b	_S,_O,_U,_N,_D,__,_S,_E,_L,_E,_C,_T,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__
+
+		charset ' ', $FF
+		charset '0','9',$00
+		charset '$', $0A
+		charset '-', $0B
+		charset '=', $0C
+		charset '>', $0D
+		;charset '>', $0E ; there are two right arrows in the font for some reason
+		charset 'Y','Z',$0F ; Y and Z come before A-X
+		charset 'A','X',$11
+
+		dc.b	"GREEN HILL ZONE     STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"WOOD ZONE           STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"METROPOLIS ZONE     STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"                    STAGE 2"
+		dc.b	"HILL TOP ZONE       STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"HIDDEN PALACE ZONE  STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"OIL OCEAN ZONE      STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"DUST HILL ZONE      STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"CASINO NIGHT ZONE   STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"CHEMICAL PLANT ZONE STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"GENOCIDE CITY ZONE  STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"NEO GREEN HILL ZONE STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"DEATH EGG ZONE      STAGE 0"
+		dc.b	"                    STAGE 1"
+		dc.b	"SPECIAL STAGE              "
+		dc.b	"SOUND SELECT               "
+
+		charset
 		even
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -3398,7 +3408,7 @@ Level_Select_Text: ; loc_3d7C: ; Level Select Menu Text
 		move.w	d0,d1
 		andi.w	#$F800,d1
 		andi.w	#$7FF,d0
-		lsr.w	#$01,d0
+		lsr.w	#1,d0
 		or.w	d0,d1
 		move.w	d1,(a1)+
 		dbf	d2,-
