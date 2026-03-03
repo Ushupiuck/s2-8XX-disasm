@@ -3512,8 +3512,11 @@ MusicList:	zoneOrderedTable 1,1
 	zoneTableEntry.b	MusID_CPZ	; CPZ
 	zoneTableEntry.b	MusID_CPZ	; GCZ
 	zoneTableEntry.b	MusID_NGHZ	; NGHZ
+	if FixBugs
+	zoneTableEntry.b	MusID_DEZ	; DEZ
+	else
 	; no *proper* entry for DEZ,so it instead uses the alignment to play sound $08
-	;zoneTableEntry.b	MusID_DEZ	; DEZ
+	endif
 	zoneTableEnd
 	even
 
@@ -11984,9 +11987,14 @@ CollectRing:
 loc_Ad50:
 		addq.b	#1,(Life_count).w
 		addq.b	#1,(Update_HUD_lives).w
+	if FixBugs
+		; Bug fix based on Monitors.
+		move.w	#MusID_ExtraLife,d0
+	else
 		; leftover from Sonic 1,which had the extra life music in slot
 		; $88 instead if $98 (which is now the Death Egg music slot)
 		move.w	#S1MusID_ExtraLife,d0
+	endif
 
 loc_Ad5C:
 		jmp	(PlaySound).l
@@ -12515,9 +12523,9 @@ loc_B47E:
 		move.b	$1C(a0),d0
 		addq.b	#1,d0
 		move.b	d0,$1A(a0)
-		move.l	#Obj26_MapUnc_B6d2,A1  ; loc_B6d2
+		movea.l	#Obj26_MapUnc_B6d2,A1  ; loc_B6d2
 		add.b	d0,d0
-		adda.w	(A1,d0),A1
+		adda.w	(A1,d0.w),A1
 		addq.w	#2,A1
 		move.l	A1,4(a0)
 loc_B4C2:
@@ -12531,7 +12539,7 @@ loc_B4C8:
 		rts
 loc_B4DC:
 		addq.b	#2,$24(a0)
-		move.w	#$1D,$1E(a0)
+		move.w	#29,$1E(a0)
 		moveq	#0,d0
 		move.b	$1C(a0),d0
 		add.w	d0,d0
@@ -13279,7 +13287,7 @@ loc_C08C:
 		beq.s	loc_C094
 		rts
 loc_C094:
-		move.l	A0,A1
+		movea.l	A0,A1
 		lea	(loc_C1E6).l,A2
 		moveq	#3,d1
 		cmpi.w	#50,(Ring_count).w
@@ -13806,10 +13814,10 @@ Touch_ChkHurt2:
 		asl.l	#8,d0
 		sub.l	d0,d3
 		move.l	d3,$C(a1)
-		move.l	A0,A2
-		move.l	A1,A0
-		jsr	 HurtSonic				 ; loc_21384
-		move.l	A2,A0
+		movea.l	A0,A2
+		movea.l	A1,A0
+		jsr	(HurtSonic).l				 ; loc_21384
+		movea.l	A2,A0
 ; return_CAFC: Touch_Spikes_No_Hurt:
 Touch_ChkHurt2_No_Hurt:
 		rts
@@ -18428,8 +18436,11 @@ Sonic_MusicList:	zoneOrderedTable 1,1
 	zoneTableEntry.b	MusID_CPZ	; CPZ
 	zoneTableEntry.b	MusID_CPZ	; GCZ
 	zoneTableEntry.b	MusID_NGHZ	; NGHZ
+	if FixBugs
+	zoneTableEntry.b	MusID_DEZ	; DEZ
+	else
 	; no *proper* entry for DEZ,so it instead uses the alignment to play sound $08
-	;zoneTableEntry.b	MusID_DEZ	; DEZ
+	endif
 	zoneTableEnd
 	even
 
@@ -20399,8 +20410,11 @@ Tails_MusicList:	zoneOrderedTable 1,1
 	zoneTableEntry.b	MusID_CPZ	; CPZ
 	zoneTableEntry.b	MusID_CPZ	; GCZ
 	zoneTableEntry.b	MusID_NGHZ	; NGHZ
+	if FixBugs
+	zoneTableEntry.b	MusID_DEZ	; DEZ
+	else
 	; no *proper* entry for DEZ,so it instead uses the alignment to play sound $08
-	;zoneTableEntry.b	MusID_DEZ	; DEZ
+	endif
 	zoneTableEnd
 	even
 
@@ -28677,12 +28691,12 @@ loc_17Fd6:
 		cmpi.w	#$0280,d0
 		bhi.s	loc_18002
 loc_17FFC:
-		jmp	DisplaySprite			; (loc_d3C2)
+		jmp	(DisplaySprite).l			; (loc_d3C2)
 loc_18002:
-		move.l	$003C(a0),A1
+		movea.l	$003C(a0),A1
 		cmpa.l	A0,A1
 		beq.s	loc_18010
-		jsr	 (DeleteObject2)
+		jsr	(DeleteObject2).l
 loc_18010:
 		lea	(Object_Respawn_Table).w,A2
 		moveq	#0,d0
@@ -30674,7 +30688,7 @@ Obj_0x40_Diagonal_Springs: ; loc_1A30C:
 		moveq	#0,d0
 		move.b	routine(a0),d0
 		move.w	loc_1A31E(pc,d0),d1
-		jsr	 loc_1A31E(pc,d1)
+		jsr	loc_1A31E(pc,d1.w)
 		bra.w	JmpTo13_MarkObjGone
 loc_1A31E:
 		dc.w	loc_1A328-loc_1A31E
@@ -32043,7 +32057,7 @@ loc_1B5EE:
 		move.b	$0025(a0),d0
 		add.w	d0,d0
 		move.w	loc_1B60A(pc,d0.w),d1
-		jsr	 loc_1B60A(pc,d1.w)
+		jsr	loc_1B60A(pc,d1.w)
 		move.w	$0030(a0),d0
 		bra.w	JmpTo2_MarkObjGone2
 loc_1B60A:
@@ -32608,7 +32622,7 @@ loc_1BD88:
 		andi.w	#$000F,d0
 		add.w	d0,d0
 		move.w	loc_1BDC8(pc,d0.w),d1
-		jsr	 loc_1BDC8(pc,d1.w)
+		jsr	loc_1BDC8(pc,d1.w)
 		move.w	(sp)+,d4
 		tst.b	$0001(a0)
 		bpl.s	loc_1BDC0
@@ -32799,7 +32813,7 @@ Obj_0x6C_Mz_Moving_Platforms: ; loc_1BF6C:
 		moveq	#0,d0
 		move.b	routine(a0),d0
 		move.w	loc_1BF94(pc,d0.w),d1
-		jsr	 loc_1BF94(pc,d1.w)
+		jsr	loc_1BF94(pc,d1.w)
 		move.w	$0030(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
@@ -33219,7 +33233,7 @@ loc_1C570:
 		move.b	$0028(a0),d0
 		add.w	d0,d0
 		move.w	loc_1C5DA(pc,d0),d1
-		jsr	 loc_1C5DA(pc,d1)
+		jsr	loc_1C5DA(pc,d1.w)
 		move.w	(sp)+,d4
 		moveq	#0,d1
 		move.b	$0019(a0),d1
@@ -33926,7 +33940,7 @@ loc_1d0DE:
 		moveq	#0,d0
 		move.b	$0028(a0),d0
 		move.w	loc_1d14A(pc,d0.w),d1
-		jsr	 loc_1d14A(pc,d1.w)
+		jsr	loc_1d14A(pc,d1.w)
 		move.w	(sp)+,d4
 		tst.b	$0001(a0)
 		bpl.s	loc_1d142
@@ -34659,7 +34673,7 @@ loc_1DA28:
 loc_1DA2A:
 		bsr.w	loc_1DA74
 		bsr.w	JmpTo2_ObjectMoveAndFall
-		jsr	 ObjHitFloor			 ; (loc_13898)
+		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1DA50
 		cmpi.w	#$000C,d1
@@ -34971,8 +34985,8 @@ JmpTo12_ObjectMove:
 Obj_0x4F_Dinobot: ; loc_1DEAC:
 		moveq	#0,d0
 		move.b	routine(a0),d0
-		move.w	loc_1DEBA(pc,d0),d1
-		jmp	loc_1DEBA(pc,d1)
+		move.w	loc_1DEBA(pc,d0.w),d1
+		jmp	loc_1DEBA(pc,d1.w)
 loc_1DEBA:
 		dc.w	loc_1DEC0-loc_1DEBA
 		dc.w	loc_1DF16-loc_1DEBA
@@ -34987,7 +35001,7 @@ loc_1DEC0:
 		move.b	#$06,$0017(a0)
 		move.b	#$0C,$0020(a0)
 		bsr.w	JmpTo3_ObjectMoveAndFall
-		jsr	 ObjHitFloor			 ; loc_13898
+		jsr	(ObjHitFloor).l			 ; loc_13898
 		tst.w	d1
 		bpl.s	loc_1DF14
 		add.w	d1,$000C(a0)
@@ -34999,8 +35013,8 @@ loc_1DF14:
 loc_1DF16:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
-		move.w	loc_1DF5C(pc,d0),d1
-		jsr	 loc_1DF5C(pc,d1)
+		move.w	loc_1DF5C(pc,d0.w),d1
+		jsr	loc_1DF5C(pc,d1.w)
 		lea	(loc_1DFBC).l,A1
 		bsr.w	JmpTo8_AnimateSprite
 		move.w	8(a0),d0
@@ -35014,7 +35028,7 @@ loc_1DF46:
 		moveq	#0,d0
 		move.b	$0023(a0),d0
 		beq.s	loc_1DF58
-		bclr	#$07,$02(A2,d0)
+		bclr	#$07,$02(A2,d0.w)
 loc_1DF58:
 		bra.w	JmpTo35_DeleteObject
 loc_1DF5C:
@@ -35030,7 +35044,7 @@ loc_1DF5C:
 loc_1DF82:
 		rts
 		bsr.w	JmpTo13_ObjectMove
-		jsr	 ObjHitFloor			 ; loc_13898
+		jsr	(ObjHitFloor).l			 ; loc_13898
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1DFA0
 		cmpi.w	#$000C,d1
@@ -35138,7 +35152,7 @@ loc_1E0E2:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1E108(pc,d0),d1
-		jsr	 loc_1E108(pc,d1)
+		jsr	loc_1E108(pc,d1)
 		bsr.w	loc_1E2E0
 		bra.w	JmpTo22_MarkObjGone
 loc_1E108:
@@ -35313,7 +35327,7 @@ loc_1E31A:
 		bsr.w	JmpTo9_AnimateSprite
 		bra.w	JmpTo22_MarkObjGone
 loc_1E330:
-		jsr	 ObjHitFloor			 ; (loc_13898)
+		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1E34A
 		add.w	d1,$000C(a0)
@@ -35546,7 +35560,7 @@ loc_1E6A4:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1E6C4(pc,d0),d1
-		jsr	 loc_1E6C4(pc,d1)
+		jsr	loc_1E6C4(pc,d1)
 		bra.w	JmpTo22_MarkObjGone
 loc_1E6C4:
 		dc.w	loc_1E6DC-loc_1E6C4
@@ -35785,7 +35799,7 @@ loc_1E9A8:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1E9C4(pc,d0),d1
-		jsr	 loc_1E9C4(pc,d1)
+		jsr	loc_1E9C4(pc,d1)
 		lea	(loc_1EAF2).l,A1
 		bsr.w	JmpTo10_AnimateSprite
 		bra.w	JmpTo_MarkObjGone_P1
@@ -35852,7 +35866,7 @@ loc_1EA6C:
 		subq.b	#$02,$0025(a0)
 		rts
 loc_1EA72:
-		jsr	 SingleObjLoad2		 ; loc_E788
+		jsr	(SingleObjLoad2).l		 ; loc_E788
 		bne.s	loc_1EAEC
 		_move.b	#$4B,0(a1)
 		move.b	#$06,$0024(a1)
@@ -35963,7 +35977,7 @@ loc_1EBF6:
 		move.b	#$10,$0016(a0)
 		move.b	#$08,$0017(a0)
 		bsr.w	JmpTo5_ObjectMoveAndFall
-		jsr	 ObjHitFloor			 ; (loc_13898)
+		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1EC54
 		add.w	d1,$000C(a0)
@@ -35981,7 +35995,7 @@ loc_1EC5C:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1EC78(pc,d0),d1
-		jsr	 loc_1EC78(pc,d1)
+		jsr	loc_1EC78(pc,d1)
 		lea	(loc_1EDAA).l,A1
 		bsr.w	JmpTo11_AnimateSprite
 		bra.w	JmpTo23_MarkObjGone
@@ -36016,7 +36030,7 @@ loc_1ECC2:
 		beq.w	loc_1ED8E
 		bpl.w	loc_1ED8C
 		move.w	#$001E,$002C(a0)
-		jsr	 SingleObjLoad		  ; (loc_E772)
+		jsr	(SingleObjLoad).l		  ; (loc_E772)
 		bne.s	loc_1Ed28
 		_move.b	#$4A,0(a1)
 		move.b	#$04,$0024(a1)
@@ -36031,7 +36045,7 @@ loc_1ECC2:
 		move.b	$0001(a0),$0001(a1)
 		move.b	$0022(a0),$0022(a1)
 loc_1Ed28:
-		jsr	 SingleObjLoad		  ; (loc_E772)
+		jsr	(SingleObjLoad).l		  ; (loc_E772)
 		bne.s	loc_1ED8C
 		_move.b	#$4A,0(a1)
 		move.b	#$06,$0024(a1)
@@ -36156,7 +36170,7 @@ loc_1EEBA:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1EEDA(pc,d0),d1
-		jsr	 loc_1EEDA(pc,d1)
+		jsr	loc_1EEDA(pc,d1)
 		bsr.w	loc_1EEE0
 		lea	(loc_1F0d2).l,A1
 		bsr.w	JmpTo12_AnimateSprite
@@ -36277,7 +36291,7 @@ loc_1F046:
 		bpl.s	loc_1F07C
 		bsr.w	loc_1EEFA
 		beq.s	loc_1F07C
-		jsr	 (PseudoRandomNumber).l		 ; loc_31E4
+		jsr	(PseudoRandomNumber).l		 ; loc_31E4
 		andi.b	#$FF,d0
 		bne.s	loc_1F07C
 		move.w	#$0018,$002A(a0)
@@ -36366,7 +36380,7 @@ loc_1F302:
 		move.b	#$10,$0016(a0)
 		move.b	#$08,$0017(a0)
 		bsr.w	JmpTo6_ObjectMoveAndFall
-		jsr	 ObjHitFloor			 ; (loc_13898)
+		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1F350
 		add.w	d1,$000C(a0)
@@ -36378,7 +36392,7 @@ loc_1F352:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1F36E(pc,d0),d1
-		jsr	 loc_1F36E(pc,d1)
+		jsr	loc_1F36E(pc,d1)
 		lea	(loc_1F406).l,A1
 		bsr.w	JmpTo13_AnimateSprite
 		bra.w	JmpTo25_MarkObjGone
@@ -36399,7 +36413,7 @@ loc_1F394:
 loc_1F396:
 		bsr.w	loc_1F3CE
 		bsr.w	JmpTo17_ObjectMove
-		jsr	 ObjHitFloor			 ; (loc_13898)
+		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1F3B6
 		cmpi.w	#$000C,d1
@@ -36655,7 +36669,7 @@ loc_1F79A:
 loc_1F7A0:
 		bsr.w	loc_1F7E8
 		bsr.w	JmpTo19_ObjectMove
-		jsr	 ObjHitFloor			 ; loc_13898
+		jsr	(ObjHitFloor).l			 ; loc_13898
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1F7CC
 		cmpi.w	#$000C,d1
@@ -36886,7 +36900,7 @@ loc_1FAAE:
 		moveq	#0,d0
 		move.b	$002C(a0),d0
 		move.w	loc_1FAC0(pc,d0),d1
-		jsr	 loc_1FAC0(pc,d1)
+		jsr	loc_1FAC0(pc,d1)
 		bra.w	JmpTo18_DisplaySprite
 loc_1FAC0:
 		dc.w	loc_1FAC6-loc_1FAC0
@@ -38471,7 +38485,7 @@ loc_215CA:
 		move.b	(a1)+,d1
 		subq.b	#1,d1
 		bmi.s	loc_21622
-		jsr	 (DrawSprite_Loop)
+		jsr	(DrawSprite_Loop).l
 loc_21622:
 		addq.w	#4,A4
 		dbf	d6,loc_215CA
@@ -38781,7 +38795,7 @@ loc_21A70:
 		move.l	S1SS_LayoutIndex(pc,d0),A0 ; loc_21A06
 		lea	(Chunk_Table+$4000),A1
 		move.w	#0,d0
-		jsr	 (EniDec).l				  ; loc_18DA
+		jsr	(EniDec).l				  ; loc_18DA
 		lea	(Chunk_Table),A1
 		move.w	#$FFF,d0
 loc_21A9C:

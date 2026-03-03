@@ -362,8 +362,7 @@ MusID_HPZ =		id(zMusIDPtr_HPZ)
 MusID_NGHZ =		id(zMusIDPtr_NGHZ)
 MusID_DEZ =		id(zMusIDPtr_DEZ)
 MusID_SpecStg =		id(zMusIDPtr_SpecStg)
-MusID_LevelSel =	id(zMusIDPtr_LevelSel)		; according to the code that handles drowning, this was where
-							; the developers were planning to put the drowning theme
+MusID_LevelSel =	id(zMusIDPtr_LevelSel)		; according to the code that handles drowning, this was where the developers were planning to put the drowning theme
 MusID_LevelSelDup =	id(zMusIDPtr_LevelSelDup)
 MusID_FinalBoss =	id(zMusIDPtr_FinalBoss)
 MusID_CPZ =		id(zMusIDPtr_CPZ)
