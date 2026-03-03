@@ -3534,12 +3534,12 @@ Level:
 		bsr.w	Pal_FadeFrom
 		tst.w	(Demo_mode_flag).w
 		bmi.s	Level_ClrRAM
-		move	#$2700,sr
+		move.w	#$2700,sr
 		move.l	#$70000002,(VDP_control_port).l
 		lea	(Title_Cards).l,a0	; load title card patterns
 		bsr.w	NemDec
 		bsr.w	ClearScreen
-		move	#$2300,sr
+		move.w	#$2300,sr
 		moveq	#0,d0
 		move.w	d0,(Timer_frames).w
 		move.b	(Current_Zone).w,d0
@@ -4230,7 +4230,7 @@ Move_Sonic_In_Demo: ; loc_48DE:
 		bne.s	Move_Demo_On	; loc_495C
 		rts
 Move_Sonic_Demo_Record: ; unused subroutine for	recording demos
-		lea	($FE8000),A1
+		lea	($FE8000).l,A1
 		move.w	(Demo_button_index).w,d0
 		adda.w	d0,A1
 		move.b	(Ctrl_1_Held).w,d0
@@ -4248,7 +4248,7 @@ loc_4908:
 loc_491C:
 		cmpi.b	#green_hill_zone,(Current_Zone).w
 		bne.s	loc_495A
-		lea	($FEC000),A1
+		lea	($FEC000).l,A1
 		move.w	(Demo_button_index_2P).w,d0
 		adda.w	d0,A1
 		move.b	(Ctrl_2_Held).w,d0
@@ -4648,7 +4648,7 @@ SpecialStage:
 		move.w	#SndID_SpecStageEntry,d0
 		bsr.w	PlaySound
 		bsr.w	Pal_MakeFlash
-		move	#$2700,sr
+		move.w	#$2700,sr
 		lea	(VDP_control_port).l,a6
 		move.w	#$8B03,(a6)
 		move.w	#$8004,(a6)
@@ -4658,7 +4658,7 @@ SpecialStage:
 		andi.b	#$BF,d0
 		move.w	d0,(VDP_control_port).l
 		bsr.w	ClearScreen
-		move	#$2300,sr
+		move.w	#$2300,sr
 		lea	(VDP_control_port).l,a5
 		move.w	#$8F01,(a5)
 		move.l	#$946F93FF,(a5)
@@ -4765,17 +4765,17 @@ loc_53BE:
 loc_53F8:
 		tst.w	(Demo_Time_left).w
 		bne.s	loc_53BE
-		move	#$2700,sr
+		move.w	#$2700,sr
 		lea	(VDP_control_port),A6
 		move.w	#$8230,(a6)
 		move.w	#$8407,(a6)
 		move.w	#$9001,(a6)
 		bsr.w	ClearScreen				; loc_1418
-		move.l	#$70000002,(VDP_control_port)
+		move.l	#$70000002,(VDP_control_port).l
 		lea	(Title_Cards).l,A0 ; loc_7EA04
 		bsr.w	NemDec				; loc_15FC
 		jsr	(Head_Up_Display_Base).l  ; loc_23184
-		move	#$2300,sr
+		move.w	#$2300,sr
 		moveq	#S1PalID_SpecStg,d0	; same wrong palette
 		bsr.w	PalLoad2		; loc_28FE
 		moveq	#PLCID_Std1,d0
@@ -4814,11 +4814,11 @@ loc_54C0:
 		beq.s	loc_54B8
 		rts
 SS_Background_Load: ; loc_54CA:
-		lea	(Chunk_Table),A1
+		lea	(Chunk_Table).l,A1
 		move.w	#$4051,d0
 		bsr.w	EniDec				 ; loc_18DA
 		move.l	#$50000001,d3
-		lea	(Chunk_Table+$80),A2
+		lea	(Chunk_Table+$80).l,A2
 		moveq	#6,d7
 loc_54E6:
 		move.l	d3,d0
@@ -4835,7 +4835,7 @@ loc_54F6:
 		bne.s	loc_550A
 		cmpi.w	#6,d7
 		bne.s	loc_551A
-		lea	(Chunk_Table),A1
+		lea	(Chunk_Table).l,A1
 loc_550A:
 		movem.l d0-d4,-(sp)
 		moveq	#7,d1
@@ -4856,15 +4856,15 @@ loc_551A:
 loc_5544:
 		adda.w	#$80,A2
 		dbf	d7,loc_54E6
-		lea	(Chunk_Table),A1
+		lea	(Chunk_Table).l,A1
 		move.w	#$4000,d0
 		bsr.w	EniDec				 ; loc_18DA
-		lea	(Chunk_Table),A1
+		lea	(Chunk_Table).l,A1
 		move.l	#$40000003,d0
 		moveq	#$3F,d1
 		moveq	#$1F,d2
 		bsr.w	PlaneMapToVRAM_H40		   ; loc_154C
-		lea	(Chunk_Table),A1
+		lea	(Chunk_Table).l,A1
 		move.l	#$50000003,d0
 		moveq	#$3F,d1
 		moveq	#$3F,d2
@@ -4875,7 +4875,7 @@ S1_Pal_Cycle_Special_Stage: ; loc_5584:
 		bne.s	loc_5608
 		subq.w	#1,(SSPalCycle_Timer).w
 		bpl.s	loc_5608
-		lea	(VDP_control_port),A6
+		lea	(VDP_control_port).l,A6
 		move.w	(SSPalCycle_Frame).w,d0
 		addq.w	#1,(SSPalCycle_Frame).w
 		andi.w	#$1F,d0
@@ -4899,8 +4899,8 @@ loc_55B4:
 		move.w	#$8400,d0
 		move.b	(a0)+,d0
 		move.w	d0,(a6)
-		move.l	#$40000010,(VDP_control_port)
-		move.l	(Vscroll_Factor).w,(VDP_data_port)
+		move.l	#$40000010,(VDP_control_port).l
+		move.l	(Vscroll_Factor).w,(VDP_data_port).l
 		moveq	#0,d0
 		move.b	(a0)+,d0
 		bmi.s	loc_560A
@@ -5632,7 +5632,7 @@ loc_5FA2:
 		move.b	(Vint_runcount+3).w,d1
 		andi.w	#7,d1
 		bne.s	loc_5FB0
-		subq.w	#$01,(TempArray_LayerDef).w
+		subq.w	#1,(TempArray_LayerDef).w
 loc_5FB0:
 		move.w	(Camera_BG_Y_pos).w,(Vscroll_Factor_BG).w
 		andi.l	#$FFFEFFFE,(Vscroll_Factor).w
@@ -6778,13 +6778,13 @@ loc_6B78:
 		rts
 Scroll_Vertical: ; loc_6B84:
 		moveq	#0,d1
-		move.w	$C(a0),d0
+		move.w	y_pos(a0),d0
 		sub.w	(a1),d0
-		btst	#2,$22(a0)
+		btst	#2,status(a0)
 		beq.s	loc_6B96
 		subq.w	#5,d0
 loc_6B96:
-		btst	#1,$22(a0)
+		btst	#1,status(a0)
 		beq.s	loc_6BB6
 		addi.w	#$20,d0
 		sub.w	(Camera_Y_pos_bias).w,d0
@@ -6805,7 +6805,7 @@ loc_6BC2:
 loc_6BC6:
 		cmpi.w	#$60,(Camera_Y_pos_bias).w
 		bne.s	loc_6BEE
-		move.w	$14(a0),d1
+		move.w	inertia(a0),d1
 		bpl.s	loc_6Bd6
 		neg.w	d1
 loc_6Bd6:
@@ -6814,21 +6814,21 @@ loc_6Bd6:
 		move.w	#$600,d1
 		cmpi.w	#6,d0
 		bgt.s	loc_6C5A
-		cmpi.w	#$FFFA,d0
+		cmpi.w	#-6,d0
 		blt.s	loc_6C28
 		bra.s	loc_6C18
 loc_6BEE:
 		move.w	#$200,d1
 		cmpi.w	#2,d0
 		bgt.s	loc_6C5A
-		cmpi.w	#$FFFE,d0
+		cmpi.w	#-2,d0
 		blt.s	loc_6C28
 		bra.s	loc_6C18
 loc_6C00:
 		move.w	#$1000,d1
 		cmpi.w	#$10,d0
 		bgt.s	loc_6C5A
-		cmpi.w	#$FFF0,d0
+		cmpi.w	#-$10,d0
 		blt.s	loc_6C28
 		bra.s	loc_6C18
 loc_6C12:
@@ -6854,9 +6854,9 @@ loc_6C38:
 		cmpi.w	#$FF00,d1
 		bgt.s	loc_6C54
 		andi.w	#$7FF,d1
-		andi.w	#$7FF,$C(a0)
+		andi.w	#$7FF,y_pos(a0)
 		andi.w	#$7FF,(a1)
-		andi.w	#$3FF,8(a1)
+		andi.w	#$3FF,x_pos(a1)
 		bra.s	loc_6C84
 loc_6C54:
 		move.w	(Camera_Min_Y_pos).w,d1
@@ -6871,9 +6871,9 @@ loc_6C62:
 		blt.s	loc_6C84
 		subi.w	#$800,d1
 		blo.s	loc_6C80
-		andi.w	#$7FF,$C(a0)
+		andi.w	#$7FF,y_pos(a0)
 		subi.w	#$800,(a1)
-		andi.w	#$3FF,8(a1)
+		andi.w	#$3FF,x_pos(a1)
 		bra.s	loc_6C84
 loc_6C80:
 		move.w	(Camera_Max_Y_pos_now).w,d1
@@ -7901,8 +7901,8 @@ loc_76A2:
 		move.w	d4,d0
 		rts
 Load_Tiles_From_Start: ; loc_76BE:
-		lea	(VDP_control_port),A5
-		lea	(VDP_data_port),A6
+		lea	(VDP_control_port).l,A5
+		lea	(VDP_data_port).l,A6
 		tst.w	(Two_player_mode).w
 		beq.s	loc_76DE
 		lea	(Camera_X_pos_P2).w,A3
@@ -7932,9 +7932,9 @@ loc_770E
 		move.w	d1,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
-		move	#$2700,sr
+		move.w	#$2700,sr
 		bsr.w	loc_7348
-		move	#$2300,sr
+		move.w	#$2300,sr
 		movem.l (sp)+,d4-d6
 		addi.w	#$10,d4
 		dbf	d6,loc_770E
@@ -7950,9 +7950,9 @@ loc_773E
 		move.w	d1,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
-		move	#$2700,sr
+		move.w	#$2700,sr
 		bsr.w	loc_7348
-		move	#$2300,sr
+		move.w	#$2300,sr
 		movem.l (sp)+,d4-d6
 		addi.w	#$10,d4
 		dbf	d6,loc_773E
@@ -7968,9 +7968,9 @@ loc_776E:
 		move.w	d1,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
-		move	#$2700,sr
+		move.w	#$2700,sr
 		bsr.w	loc_7358
-		move	#$2300,sr
+		move.w	#$2300,sr
 		movem.l (sp)+,d4-d6
 		addi.w	#$10,d4
 		dbf	d6,loc_776E
@@ -8107,7 +8107,7 @@ Load_Level_Layout: ; loc_7886: ; Load Level Layout
 		lea	(Level_Layout).w,a3
 		move.w	#bytesToLcnt((Level_Layout_End-Level_Layout)-((Level_Layout)&1)),d1
 		moveq	#0,d0
-.loop:		move.l	d0,(a3)+
+.loop:	move.l	d0,(a3)+
 		dbf	d1,.loop
 		lea	(Level_Layout).w,A3 ; Foreground
 		moveq	#0,d1
@@ -8158,16 +8158,16 @@ loc_78DE:
 ; [ Begin ]
 ;===============================================================================
 ;loc_78F8:
-		lea	($FE0000),A1
-		lea	($FE0080),A2
-		lea	(Chunk_Table),A3
+		lea	($FE0000).l,A1
+		lea	($FE0080).l,A2
+		lea	(Chunk_Table).l,A3
 		move.w	#$3F,d1
 loc_790E:
 		bsr.w	loc_79A0
 		bsr.w	loc_79A0
 		dbf	d1,loc_790E
-		lea	($FE0000),A1
-		lea	($FF0000),A2
+		lea	($FE0000).l,A1
+		lea	($FF0000).l,A2
 		move.w	#$3F,d1
 loc_792A:
 		move.w	#0,(a2)+
@@ -8177,17 +8177,17 @@ loc_7936:
 		move.w	(a1)+,(a2)+
 		dbf	d1,loc_7936
 		rts
-		lea	($FE0000),A1
-		lea	(Chunk_Table),A3
+		lea	($FE0000).l,A1
+		lea	(Chunk_Table).l,A3
 		moveq	#$1F,d0
 loc_794C:
 		move.l	(a1)+,(a3)+
 		dbf	d0,loc_794C
 		moveq	#0,d7
-		lea	($FE0000),A1
+		lea	($FE0000).l,A1
 		move.w	#$FF,d5
 loc_795E:
-		lea	(Chunk_Table),A3
+		lea	(Chunk_Table).l,A3
 		move.w	d7,d6
 loc_7966:
 		movem.l A1-A3,-(sp)
@@ -8768,21 +8768,21 @@ Obj11_Index:	offsetTable
 ; loc_8004:
 Obj11_Init:
 		addq.b	#2,routine(a0)
-		move.l	#Obj11_MapUnc_85E0,4(a0)
-		move.w	#$43C6,2(a0)
+		move.l	#Obj11_MapUnc_85E0,mappings(a0)
+		move.w	#$43C6,art_tile(a0)
 		move.b	#3,$18(a0)
 		cmpi.b	#hidden_palace_zone,(Current_Zone).w	; are we in HPZ?
 		bne.s	+			; if not,branch
 		addq.b	#4,routine(a0)
-		move.l	#Obj11_MapUnc_8598,4(a0)
-		move.w	#$6300,2(a0)
+		move.l	#Obj11_MapUnc_8598,mappings(a0)
+		move.w	#$6300,art_tile(a0)
 +
 		bsr.w	Adjust2PArtPointer
 		move.b	#4,render_flags(a0)
 		move.b	#$80,$19(a0)
-		move.w	$C(a0),d2
+		move.w	y_pos(a0),d2
 		move.w	d2,$3C(a0)
-		move.w	8(a0),d3
+		move.w	x_pos(a0),d3
 		lea	$28(a0),a2		; copy bridge subtype to a2
 		moveq	#0,d1
 		move.b	(a2),d1			; d1 = subtype
@@ -8819,10 +8819,10 @@ Obj11_MakeBdgSegment:
 		bsr.w	SingleObjLoad2
 		bne.s	+
 		_move.b	id(a0),id(a1)		; load obj11
-		move.w	8(a0),8(a1)
-		move.w	$C(a0),$C(a1)
-		move.l	4(a0),4(a1)
-		move.w	2(a0),2(a1)
+		move.w	x_pos(a0),x_pos(a1)
+		move.w	y_pos(a0),y_pos(a1)
+		move.l	mappings(a0),mappings(a1)
+		move.w	art_tile(a0),art_tile(a1)
 		move.b	render_flags(a0),render_flags(a1)
 		bset	#6,render_flags(a1)
 		move.b	#$40,$E(a1)
