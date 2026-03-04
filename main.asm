@@ -40153,9 +40153,9 @@ loc_22870:
 		bpl.s	loc_2286E
 		move.b	#7,(CPZ_UnkScroll_Timer).w
 		move.b	#1,(Screen_redraw_flag).w
-		lea	(Chunk_Table+$7500),a1
+		lea	(Chunk_Table+$7500).l,a1
 		bsr.s	loc_228A0
-		lea	(Chunk_Table+$7D00),a1
+		lea	(Chunk_Table+$7D00).l,a1
 loc_228A0:
 		move.w	#7,d1
 loc_228A4:
@@ -40212,8 +40212,8 @@ loc_22960:
 		moveq	#0,d0
 		move.b	(Current_Zone).w,d0
 		add.w	d0,d0
-		move.w	Map16Delta_Index(pc,d0),d0 ; loc_229A2
-		lea	Map16Delta_Index(pc,d0),a0 ; loc_229A2
+		move.w	Map16Delta_Index(pc,d0.w),d0 ; loc_229A2
+		lea	Map16Delta_Index(pc,d0.w),a0 ; loc_229A2
 		tst.w	(a0)
 		beq.s	loc_22988
 		lea	(Block_Table).w,a1
@@ -40236,6 +40236,7 @@ loc_2298A:
 		or.w	d2,d0
 		move.w	d0,(a1)+
 	else
+		; Bug: The loop counter (d1) gets overwritten in this routine.
 		move.w	(a0)+,d0
 		move.w	d0,d1
 		andi.w	#$F800,d0
@@ -40429,7 +40430,7 @@ loc_22d62: ; Load Hill Top 8x8 Extra Background Tiles In To Ram
 loc_22d7E:
 		moveq	#-1,d0
 		move.w	(a4)+,d0
-		move.l	d0,A2
+		movea.l	d0,a2
 		moveq	#$1F,d1
 loc_22D86:
 		move.l	(a1),(a2)+
@@ -40532,7 +40533,12 @@ loc_22FE8:
 		bmi.s	loc_23010
 		addq.b	#1,(Life_count).w
 		addq.b	#1,(Update_HUD_lives).w
+	if FixBugs
+		; Bug fix based on Monitors.
+		move.w	#MusID_ExtraLife,d0
+	else
 		move.w	#S1MusID_ExtraLife,d0
+	endif
 		jmp	(PlayMusic).l			 ; loc_14C0
 loc_23010:
 		rts
@@ -40608,8 +40614,8 @@ loc_230EC:
 		rts
 Sub_Time_Over: ; loc_230EE:
 		clr.b	(Update_HUD_timer).w
-		lea	(MainCharacter).w,A0
-		movea.l	A0,A2
+		lea	(MainCharacter).w,a0
+		movea.l	a0,a2
 		bsr.w	KillSonic				; loc_21422
 		move.b	#1,(Time_Over_flag).w
 		rts
@@ -40649,24 +40655,24 @@ loc_2316E:
 		rts
 loc_23170:
 		move.l	#$5F400003,(VDP_control_port).l
-		lea	loc_231D8(pc),A2
+		lea	loc_231D8(pc),a2
 		move.w	#2,d2
 		bra.s	loc_231A0
 Head_Up_Display_Base: ; loc_23184: ; HUD routine
-		lea	(VDP_data_port),A6
+		lea	(VDP_data_port),a6
 		bsr.w	loc_233DE
 		move.l	#$5C400003,(VDP_control_port).l
-		lea	loc_231CC(pc),A2
+		lea	loc_231CC(pc),a2
 		move.w	#$E,d2
 loc_231A0:
-		lea	loc_23448(pc),A1
+		lea	loc_23448(pc),a1
 loc_231A4:
 		move.w	#$F,d1
 		move.b	(a2)+,d0
 		bmi.s	loc_231C0
 		ext.w	d0
 		lsl.w	#5,d0
-		lea	(A1,d0.w),A3
+		lea	(a1,d0.w),a3
 loc_231B4:
 		move.l	(a3)+,(a6)
 		dbf	d1,loc_231B4
@@ -40698,7 +40704,7 @@ loc_231DC:
 		move.w	(MainCharacter+y_pos).w,d1
 loc_2320E:
 		moveq	#7,d6
-		lea	(loc_23888).l,A1
+		lea	(loc_23888).l,a1
 loc_23216:
 		rol.w	#4,d1
 		move.w	d1,d2
@@ -40708,7 +40714,7 @@ loc_23216:
 		addi.w	#7,d2
 loc_23228:
 		lsl.w	#5,d2
-		lea	(A1,d2),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40721,15 +40727,15 @@ loc_23228:
 		dbf	d6,loc_23216
 		rts
 loc_23246:
-		lea	(loc_23312).l,A2
+		lea	(loc_23312).l,a2
 		moveq	#2,d6
 		bra.s	loc_23258
 loc_23250:
-		lea	(loc_23306).l,A2
+		lea	(loc_23306).l,a2
 		moveq	#5,d6
 loc_23258:
 		moveq	#0,d4
-		lea	loc_23448(pc),A1
+		lea	loc_23448(pc),a1
 loc_2325E:
 		moveq	#0,d2
 		move.l	(a2)+,d3
@@ -40748,7 +40754,7 @@ loc_23274:
 		beq.s	loc_232A2
 		lsl.w	#6,d2
 		move.l	d0,4(a6)
-		lea	(A1,d2),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40771,11 +40777,11 @@ loc_232A2:
 		rts
 ; loc_232AE:
 		move.l	#$5F800003,(VDP_control_port).l
-		lea	(VDP_data_port).l,A6
-		lea	(loc_23316).l,A2
+		lea	(VDP_data_port).l,a6
+		lea	(loc_23316).l,a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	loc_23448(pc),A1
+		lea	loc_23448(pc),a1
 loc_232CC:
 		moveq	#0,d2
 		move.l	(a2)+,d3
@@ -40787,7 +40793,7 @@ loc_232d0:
 loc_232D8:
 		add.l	d3,d1
 		lsl.w	#6,d2
-		lea	(A1,d2.w),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40807,27 +40813,27 @@ loc_232D8:
 		dbf	d6,loc_232CC
 		rts
 loc_23306:
-		dc.l	$000186A0
+		dc.l	100000
 ;loc_2330A:
-		dc.l	$00002710
+		dc.l	10000
 loc_2330E:
-		dc.l	$000003E8
+		dc.l	1000
 loc_23312:
-		dc.l	$00000064
+		dc.l	100
 loc_23316:
-		dc.l	$0000000A
+		dc.l	10
 loc_2331A:
-		dc.l	$00000001
+		dc.l	1
 loc_2331E:
-		lea	loc_2331A(pc),A2
+		lea	loc_2331A(pc),a2
 		moveq	#0,d6
 		bra.s	loc_2332C
 loc_23326:
-		lea	loc_23316(pc),A2
+		lea	loc_23316(pc),a2
 		moveq	#1,d6
 loc_2332C:
 		moveq	#0,d4
-		lea	loc_23448(pc),A1
+		lea	loc_23448(pc),a1
 loc_23332:
 		moveq	#0,d2
 		move.l	(a2)+,d3
@@ -40844,7 +40850,7 @@ loc_2333E:
 loc_23348:
 		lsl.w	#6,d2
 		move.l	d0,4(a6)
-		lea	(A1,d2.w),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40865,10 +40871,10 @@ loc_23348:
 		dbf	d6,loc_23332
 		rts
 loc_2337E:
-		lea	loc_2330E(pc),A2
+		lea	loc_2330E(pc),a2
 		moveq	#3,d6
 		moveq	#0,d4
-		lea	loc_23448(pc),A1
+		lea	loc_23448(pc),a1
 loc_2338A:
 		moveq	#0,d2
 		move.l	(a2)+,d3
@@ -40886,7 +40892,7 @@ loc_233A0:
 		tst.w	d4
 		beq.s	loc_233d0
 		lsl.w	#6,d2
-		lea	(A1,d2.w),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
@@ -40916,10 +40922,10 @@ loc_233DE:
 		move.l	#$7BA00003,d0
 		moveq	#0,d1
 		move.b	(Life_count).w,d1
-		lea	loc_23316(pc),A2
+		lea	loc_23316(pc),a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	loc_23748(pc),A1
+		lea	loc_23748(pc),a1
 loc_233F6:
 		move.l	d0,4(a6)
 		moveq	#0,d2
@@ -40939,7 +40945,7 @@ loc_23410:
 		beq.s	loc_23436
 loc_23414:
 		lsl.w	#5,d2
-		lea	(A1,d2.w),A3
+		lea	(a1,d2.w),a3
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
