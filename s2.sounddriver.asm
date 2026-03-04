@@ -402,7 +402,7 @@ VInt:	rsttarget
 		ld	a,(zAbsVar.StopMusic)	; 1B83 = Pause Mode
 		or	a
 		jr	z,zUpdateEverything	; 00 = not paused
-		call	DoPause
+		call	zPauseMusic
 		jp	RestoreDACBank
 ; ---------------------------------------------------------------------------
 
@@ -1187,7 +1187,7 @@ zPSGDoVolFX:
 		ld	a,(ix+zTrack.VoiceIndex)
 		or	a
 		jr	z,zPSGUpdateVol
-		ld	hl,VolEnvPtrs
+		ld	hl,zPSG_EnvTbl
 		dec	a
 		add	a,a
 		ld	e,a
@@ -1312,7 +1312,7 @@ SilencePSG:
 ; =============== S U B	R O U T	I N E =======================================
 
 
-DoPause:
+zPauseMusic:
 		jp	m,UnpauseMusic	; 80-FF	- request Unpause
 		cp	2		; 02 - already paused?
 		ret	z		; yes -	return
@@ -1332,7 +1332,14 @@ UnpauseMusic:
 		ld	ix,zSongDACFMStart
 		ld	b,MUSIC_DAC_FM_TRACK_COUNT
 		call	zResumeTrack
+
 		bankswitch SoundIndex
+
+	if FixDriverBugs
+		; Bug fix to fix SFX using music FM instruments when unpausing.
+		ld	a,0FFh			; a = 0FFH
+		ld	(zDoSFXFlag),a		; Set flag to say we are updating SFX
+	endif
 		ld	ix,zSFX_FMStart
 		ld	b,SFX_FM_TRACK_COUNT
     if OptimiseDriver
@@ -1344,7 +1351,7 @@ UnpauseMusic:
 		pop	ix			; Restore ix (nothing uses this, beyond this point...)
 		ret
     endif
-; End of function DoPause
+; End of function zPauseMusic
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1364,8 +1371,14 @@ zResumeTrack:
 		rst	zWriteFMIorII
     endif
 		push	bc
+	if FixDriverBugs
+		; Bug fix to fix SFX using music FM instruments when unpausing.
+		ld	c,(ix+zTrack.VoiceIndex)
+		call	GetFMInsPtr
+	else
 		ld	a,(ix+zTrack.VoiceIndex)
 		call	zSetVoiceMusic
+	endif
 		pop	bc
 
 .nexttrack:
@@ -1412,9 +1425,9 @@ loc_630:
 
 loc_642:
 		push	hl
-		add	a,SndPriorities&0FFh		; add lower byte of 0F30 (SndPriorities)
+		add	a,zSFXPriority&0FFh		; add lower byte of 0F30 (zSFXPriority)
 		ld	l,a
-		adc	a,(SndPriorities&0FF00h)>>8	; higher byte of 0F30 (SndPriorities)
+		adc	a,(zSFXPriority&0FF00h)>>8	; higher byte of 0F30 (zSFXPriority)
 		sub	l
 		ld	h,a
 		ld	a,(hl)
@@ -1608,7 +1621,7 @@ loc_72C:
 		sub	MusID__First
 		ld	e,a
 		ld	d,0
-		ld	hl,SpeedUpTempoLst
+		ld	hl,zSpedUpTempoTable
 		add	hl,de
 		ld	a,(hl)
 		ld	(zAbsVar.TempoTurbo),a
@@ -3226,7 +3239,7 @@ cfF7_Loop:
 		ld	c,(hl)
 		inc	hl
 		push	hl
-		add	a,20h
+		add	a,zTrack.LoopCounters
 		ld	l,a
 		ld	h,0
 		ld	e,ixl
@@ -3234,13 +3247,13 @@ cfF7_Loop:
 		add	hl,de
 		ld	a,(hl)
 		or	a
-		jr	nz,loc_EFF
+		jr	nz,.loopexists
 		ld	(hl),c
 
-loc_EFF:
+.loopexists:
 		dec	(hl)
 		pop	hl
-		jr	z,loc_F08
+		jr	z,.noloop
 		ld	a,(hl)
 		inc	hl
 		ld	h,(hl)
@@ -3248,7 +3261,7 @@ loc_EFF:
 		ret
 ; ---------------------------------------------------------------------------
 
-loc_F08:
+.noloop:
 		inc	hl
 		inc	hl
 		ret
@@ -3285,13 +3298,12 @@ cfF9_FM1Mute:
 		dec	hl
 		ret
 ; ---------------------------------------------------------------------------
-SndPriorities:	db 80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h
-		db 70h,70h,70h,60h,70h,70h,60h,70h,60h,70h,70h
-		db 70h,70h,70h,70h,70h,70h,70h,70h,70h,7Fh,60h
-		db 70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h
-		db 70h,70h,70h,70h,80h,80h,80h,80h,80h,80h,80h
-		db 80h,80h,80h,80h,80h,80h,80h,80h,80h,90h,90h
-		db 90h,90h,90h
+zSFXPriority:
+		db 80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h,70h,70h,70h,60h	; A0
+		db 70h,70h,60h,70h,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h	; B0
+		db 70h,7Fh,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h	; C0
+		db 70h,70h,70h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h	; D0
+		db 80h,80h,80h,80h,90h,90h,90h,90h,90h							; E0
 
 dac_sample_pointer macro label
 	dw	zmake68kPtr(label)
@@ -3341,40 +3353,33 @@ dac_sample_metadata macro label,sampleRate
 		dac_sample_metadata zDACPtr_Tom,   11250	; 8Dh
 		dac_sample_metadata zDACPtr_Tom,    9250	; 8Eh
 
-VolEnvPtrs:	dw byte_FC3,byte_FDA,byte_FE1,byte_FF2,byte_100C,byte_FFD
-		dw byte_1036,byte_1052,byte_107A,byte_108B,byte_10C9
-		dw byte_10E5,byte_1165
-byte_FC3:	db 0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5
-		db 6,6,6,7,80h
-byte_FDA:	db 0,2,4,6,8,10h,80h
-byte_FE1:	db 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,80h
-byte_FF2:	db 0,0,2,3,4,4,5,5,5,6,80h
-byte_FFD:	db 3,3,3,2,2,2,2,1,1,1,0,0,0,0,80h
-byte_100C:	db 0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1
-		db 1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3
-		db 3,3,3,3,4,80h
-byte_1036:	db 0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3
-		db 3,4,4,4,5,5,5,6,7,80h
-byte_1052:	db 0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,3,3
-		db 3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6
-		db 7,7,7,80h
-byte_107A:	db 0,1,2,3,4,5,6,7,8,9,0Ah,0Bh,0Ch,0Dh,0Eh
-		db 0Fh,	80h
-byte_108B:	db 0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1
-		db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-		db 1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3
-		db 3,3,3,3,3,3,4,80h
-byte_10C9:	db 4,4,4,3,3,3,2,2,2,1,1,1,1,1,1,1,2,2
-		db 2,2,2,3,3,3,3,3,4,80h
-byte_10E5:	db 4,4,3,3,2,2,1,1,1,1,1,1,1,1,1,1,1,1
-		db 1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2
-		db 2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3
-		db 3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4
-		db 4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5
-		db 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6
-		db 6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
-		db 7,80h
-byte_1165:	db 0,1,3,80h
+zPSG_EnvTbl:
+		dw zPSG_Env1, zPSG_Env2, zPSG_Env3
+		dw zPSG_Env4, zPSG_Env5, zPSG_Env6
+		dw zPSG_Env7, zPSG_Env8, zPSG_Env9
+		dw zPSG_Env10, zPSG_Env11, zPSG_Env12
+		dw zPSG_Env13
+zPSG_Env1:	db 0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,80h
+zPSG_Env2:	db 0,2,4,6,8,10h,80h
+zPSG_Env3:	db 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,80h
+zPSG_Env4:	db 0,0,2,3,4,4,5,5,5,6,80h
+zPSG_Env6:	db 3,3,3,2,2,2,2,1,1,1,0,0,0,0,80h
+zPSG_Env5:	db 0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2
+		db 2,2,2,3,3,3,3,3,3,3,3,4,80h
+zPSG_Env7:	db 0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,4,4,4,5,5,5,6,7,80h
+zPSG_Env8:	db 0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5
+		db 5,5,6,6,6,6,6,7,7,7,80h
+zPSG_Env9:	db 0,1,2,3,4,5,6,7,8,9,0Ah,0Bh,0Ch,0Dh,0Eh,0Fh,80h
+zPSG_Env10:	db 0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+		db 1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3
+		db 4,80h
+zPSG_Env11:	db 4,4,4,3,3,3,2,2,2,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,80h
+zPSG_Env12:	db 4,4,3,3,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2
+		db 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+		db 3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5
+		db 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
+		db 6,6,6,6,7,80h
+zPSG_Env13:	db 0,1,3,80h
 
 ; Stuff for zMasterPlaylist.
 z80_bank_size = 8000h
@@ -3421,15 +3426,16 @@ zMusIDPtr_EmeraldDup:	music_metadata	Mus_Emerald
 zMusIDPtr_EmeraldDup2:	music_metadata	Mus_Emerald
 zMusIDPtr__End:
 
-SpeedUpTempoLst:
-		db 07h
-		db 72h
-		db 73h
-		db 26h
-		db 15h
-		db 08h
-		db 0FFh
-		db 05h
+; The first 8 entries are identical to Sonic 1's speed up tempo list.
+zSpedUpTempoTable:
+		db 07h	; GHZ
+		db 72h	; LZ
+		db 73h	; MZ
+		db 26h	; SLZ
+		db 15h	; SYZ
+		db 08h	; SBZ
+		db 0FFh	; Invincibility
+		db 05h	; Extra Life
 		db 20h
 		db 20h
 		db 20h
@@ -3454,8 +3460,11 @@ SpeedUpTempoLst:
 		db 20h
 		db 20h
 		db 20h
-zCurDAC:	db 0
-zCurSong:	db 0
-zDoSFXFlag:	db 0
-zRingSpeaker:	db 0
+; ---------------------------------------------------------------------------
+
+; space for a few global variables
+zCurDAC:	db 0	; seems to indicate DAC sample playing status
+zCurSong:	db 0	; currently playing song index
+zDoSFXFlag:	db 0	; flag to indicate we're updating SFX (and thus use custom voice table); set to anything but 0 while doing SFX, 0 when not.
+zRingSpeaker:	db 0	; stereo alternation flag. 0 = next one plays on left, -1 = next one plays on right
 zPushingFlag:	db 0
