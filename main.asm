@@ -5623,6 +5623,15 @@ loc_5F44:
 		add.l	d0,d3
 		swap	d3
 		dbf	d1,loc_5F44
+
+	if FixBugs
+		rept 2
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		endm
+	else
+		; Bug: The last 2 pixels of the screen are not covered, resulting in very weird artifacting at the bottom of the screen.
+	endif
 		rts
 loc_5F60:
 		dc.b	$01,$02,$01,$03,$01,$02,$02,$01,$02,$03,$01,$02,$01,$02,$00,$00

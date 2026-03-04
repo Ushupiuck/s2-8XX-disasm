@@ -3388,7 +3388,6 @@ music_metadata macro DATA
 
 ; zbyte_116A:
 zMasterPlaylist:
-
 zMusIDPtr_OOZ:		music_metadata	Mus_OOZ
 zMusIDPtr_GHZ:		music_metadata	Mus_GHZ
 zMusIDPtr_MTZ:		music_metadata	Mus_MTZ
