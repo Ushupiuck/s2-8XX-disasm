@@ -342,7 +342,7 @@ GameMode_SpecialStage:	bra.w	SpecialStage
 ChecksumError:
 		bsr.w	VDPSetupGame
 		move.l	#$C0000000,(VDP_control_port).l	; write to CRAM
-		moveq	#$3F,d7
+		moveq	#bytesToWcnt(palette_line_size*4),d7
 ; loc_3C0:
 Checksum_Red:
 		move.w	#$E,(VDP_data_port).l		; color a line red
@@ -526,7 +526,7 @@ ShowErrDigit_NoOverflow:
 ; loc_5D8:
 Error_WaitForC:
 		bsr.w	ReadJoypads
-		cmpi.b	#$20,(Ctrl_1_Press).w
+		cmpi.b	#button_C_mask,(Ctrl_1_Press).w
 		bne.w	Error_WaitForC
 		rts
 ; End of function ShowErrAddress
@@ -1180,7 +1180,7 @@ PauseGame:
 		beq.w	Unpause
 		tst.w	(Game_paused).w
 		bne.s	+
-		btst	#7,(Ctrl_1_Press).w
+		btst	#button_start,(Ctrl_1_Press).w
 		beq.s	Pause_DoNothing
 +
 		move.w	#1,(Game_paused).w
@@ -1191,7 +1191,7 @@ Pause_Loop:
 		bsr.w	WaitForVint
 		tst.b	(Slow_motion_flag).w
 		beq.s	Pause_ChkStart
-		btst	#6,(Ctrl_1_Press).w
+		btst	#button_A,(Ctrl_1_Press).w
 		beq.s	Pause_ChkBC
 		move.b	#GameModeID_TitleScreen,(Game_Mode).w
 		nop
@@ -1199,13 +1199,13 @@ Pause_Loop:
 ; ===========================================================================
 ; loc_1518:
 Pause_ChkBC:
-		btst	#4,(Ctrl_1_Held).w
+		btst	#button_B,(Ctrl_1_Held).w
 		bne.s	Pause_SlowMo
-		btst	#5,(Ctrl_1_Press).w
+		btst	#button_C,(Ctrl_1_Press).w
 		bne.s	Pause_SlowMo
 ; loc_1528:
 Pause_ChkStart:
-		btst	#7,(Ctrl_1_Press).w
+		btst	#button_start,(Ctrl_1_Press).w
 		beq.s	Pause_Loop
 ; loc_1530:
 Pause_Resume:
@@ -2799,7 +2799,7 @@ SegaScreen: ; loc_360C: ; SEGA Logo
 loc_36BE:
 		moveq	#PalID_SEGA,d0
 		bsr.w	PalLoad2
-		move.w	#$FFF6,(PalCycle_Frame).w
+		move.w	#-$A,(PalCycle_Frame).w
 		move.w	#0,(PalCycle_Timer).w
 		move.w	#0,(unk_F662).w
 		move.w	#0,(unk_F660).w
@@ -2822,7 +2822,7 @@ Sega_WaitEnd: ; loc_3718:
 		bsr.w	WaitForVint
 		tst.w	(Demo_Time_left).w
 		beq.s	Sega_GoToTitleScreen
-		andi.b	#$80,(Ctrl_1_Press).w
+		andi.b	#button_start_mask,(Ctrl_1_Press).w
 		beq.s	Sega_WaitEnd
 Sega_GoToTitleScreen: ; loc_3730:
 		move.b	#GameModeID_TitleScreen,(Game_Mode).w
@@ -2971,7 +2971,7 @@ Title_EnterCheat:
 		move.w	(Correct_cheat_entries).w,d0
 		adda.w	d0,a0
 		move.b	(Ctrl_1_Press).w,d0
-		andi.b	#$F,d0
+		andi.b	#button_up_mask+button_down_mask+button_left_mask+button_right_mask,d0
 		cmp.b	(a0),d0
 		bne.s	Title_CheatFail
 		addq.w	#1,(Correct_cheat_entries).w
@@ -3003,7 +3003,7 @@ Title_CheatFail:
 ; loc_39d2:
 Title_CountC:
 		move.b	(Ctrl_1_Press).w,d0
-		andi.b	#$20,d0
+		andi.b	#button_C_mask,d0
 		beq.s	TitleScreen_SkipC
 		addq.w	#1,(Correct_cheat_entries_2).w
 
@@ -3011,13 +3011,13 @@ Title_CountC:
 TitleScreen_SkipC:
 		tst.w	(Demo_Time_left).w
 		beq.w	Demo_Mode
-		andi.b	#$80,(Ctrl_1_Press).w
+		andi.b	#button_start_mask,(Ctrl_1_Press).w
 		beq.w	TitleScreen_Loop
 ; loc_39F2:
 Title_ChkLevSel:
 		tst.b	(Level_select_flag).w
 		beq.w	PlayLevel
-		btst	#6,(Ctrl_1_Held).w
+		btst	#button_A,(Ctrl_1_Held).w
 		beq.w	PlayLevel
 		move.b	#MusID_LevelSel,d0
 		bsr.w	PlayMusic
@@ -3030,7 +3030,7 @@ Title_ChkLevSel:
 		move.w	#$2700,sr
 		lea	(VDP_data_port).l,a6
 		move.l	#$60000003,(VDP_control_port).l
-		move.w	#$400-1,d1
+		move.w	#bytesToLcnt($1000),d1
 ; loc_3A3E: LevelSelect_ClearVRAM:
 Title_ClrVram:
 		move.l	d0,(a6)
@@ -3045,10 +3045,10 @@ LevelSelect_Loop:
 		bsr.w	RunPLC_RAM
 		tst.l	(Plc_Buffer).w
 		bne.s	LevelSelect_Loop
-		andi.b	#$F0,(Ctrl_1_Press).w
+		andi.b	#button_A_mask+button_B_mask+button_C_mask+button_start_mask,(Ctrl_1_Press).w
 		beq.s	LevelSelect_Loop
 		move.w	#0,(Two_player_mode).w
-		btst	#4,(Ctrl_1_Held).w
+		btst	#button_B,(Ctrl_1_Held).w
 		beq.s	loc_3A7C
 		move.w	#1,(Two_player_mode).w
 
@@ -3056,7 +3056,7 @@ loc_3A7C:
 		move.w	(Level_select_zone).w,d0
 		cmpi.w	#$1A,d0
 		bne.s	LevelSelect_PressStart
-		btst	#6,(Ctrl_1_Press).w
+		btst	#button_A,(Ctrl_1_Press).w
 		bne.s	LevelSelect_Loop
 		move.w	(Sound_test_sound).w,d0
 		addi.w	#$80,d0
@@ -3165,7 +3165,7 @@ loc_3B68:
 		move.b	#GameModeID_SegaScreen,(Game_Mode).w
 		rts
 Run_Demo_Mode: ; loc_3B8E:
-		andi.b	#$80,(Ctrl_1_Press).w
+		andi.b	#button_start_mask,(Ctrl_1_Press).w
 		bne.w	Title_ChkLevSel
 		tst.w	(Demo_Time_left).w
 		bne.w	loc_3B68
@@ -3219,7 +3219,7 @@ Demo_Mode_Level_Array: ; loc_3C16: ; Demo sequence array
 ; loc_3C2E:
 LevelSelect_Controls:
 		move.b	(Ctrl_1_Press).w,d1
-		andi.b	#3,d1
+		andi.b	#button_up_mask+button_down_mask,d1
 		bne.s	loc_3C3E
 		subq.w	#1,(LevSel_HoldTimer).w
 		bpl.s	LevelSelect_Controls2
@@ -3227,17 +3227,17 @@ LevelSelect_Controls:
 loc_3C3E:
 		move.w	#$B,(LevSel_HoldTimer).w
 		move.b	(Ctrl_1_Held).w,d1
-		andi.b	#3,d1
+		andi.b	#button_up_mask+button_down_mask,d1
 		beq.s	LevelSelect_Controls2
 		move.w	(Level_select_zone).w,d0
-		btst	#0,d1
+		btst	#button_up,d1
 		beq.s	loc_3C5E
 		subq.w	#1,d0
 		bhs.s	loc_3C5E
 		moveq	#$1A,d0
 
 loc_3C5E:
-		btst	#1,d1
+		btst	#button_down,d1
 		beq.s	loc_3C6E
 		addq.w	#1,d0
 		cmpi.w	#$1B,d0
@@ -3255,16 +3255,16 @@ LevelSelect_Controls2:
 		bne.s	return_3CC2
 		move.w	(Sound_test_sound).w,d0
 		move.b	(Ctrl_1_Press).w,d1
-		andi.b	#$C,d1
+		andi.b	#button_left_mask+button_right_mask,d1
 		beq.s	loc_3CAA
-		btst	#2,d1
+		btst	#button_left,d1
 		beq.s	loc_3C9A
 		subq.b	#1,d0
 		bhs.s	loc_3C9A
 		moveq	#$7F,d0
 
 loc_3C9A:
-		btst	#3,d1
+		btst	#button_right,d1
 		beq.s	loc_3CAA
 		addq.b	#1,d0
 		cmpi.w	#$80,d0
@@ -3272,7 +3272,7 @@ loc_3C9A:
 		moveq	#0,d0
 
 loc_3CAA:
-		btst	#6,(Ctrl_1_Press).w
+		btst	#button_A,(Ctrl_1_Press).w
 		beq.s	loc_3CBA
 		addi.b	#$10,d0
 		andi.b	#$7F,d0
@@ -3590,7 +3590,7 @@ Level_InitWater:
 		move.w	#$9001,(a6)		; Scroll table size: 64x32
 		move.w	#$8004,(a6)		; H-INT disabled
 		move.w	#$8720,(a6)		; Background palette/color: 2/0
-		btst	#5,(Ctrl_1_Held).w
+		btst	#button_C,(Ctrl_1_Held).w
 		beq.s	loc_4262
 		move.w	#$8C89,(a6)		; H res 40 cells,no interlace,S/H enabled
 
@@ -3696,7 +3696,7 @@ Level_SkipHUD:
 		subi.w	#32,(Sidekick+x_pos).w
 		tst.b	(Debug_options_flag).w
 		beq.s	Level_ChkWater
-		btst	#6,(Ctrl_1_Held).w
+		btst	#button_A,(Ctrl_1_Held).w
 		beq.s	Level_ChkWater
 		move.b	#1,(Debug_mode_flag).w
 ; loc_43BC:
@@ -4154,11 +4154,11 @@ loc_47CC:
 		move.w	#0,y_vel(a1)
 		move.b	#$F,anim(a1)
 		bset	#1,status(a1)
-		btst	#0,(Ctrl_1_Held).w
+		btst	#button_up,(Ctrl_1_Held).w
 		beq.s	loc_47F6
 		subq.w	#1,y_pos(a1)
 loc_47F6:
-		btst	#1,(Ctrl_1_Held).w
+		btst	#button_down,(Ctrl_1_Held).w
 		beq.s	loc_4802
 		addq.w	#1,y_pos(a1)
 loc_4802:
@@ -4188,7 +4188,7 @@ S1_LZ_Water_Slides: ; loc_4844:
 		andi.w	#$7F,d1
 		add.w	d1,d0
 		lea	(Level_Layout).w,A2
-		move.b	(A2,d0),d0
+		move.b	(A2,d0.w),d0
 		lea	loc_48DD(pc),A2
 		moveq	#6,d1
 loc_4870:
@@ -4714,7 +4714,7 @@ loc_5260:
 		move.w	#$708,(Demo_Time_left).w
 		tst.b	(Debug_options_flag).w
 		beq.s	loc_533C
-		btst	#6,(Ctrl_1_Held).w
+		btst	#button_A,(Ctrl_1_Held).w
 		beq.s	loc_533C
 		move.b	#1,(Debug_mode_flag).w
 
@@ -8518,13 +8518,13 @@ loc_7CBE:
 loc_7CC8:
 		move.b	d1,(Camera_BG_Y_pos_diff).w
 		rts
-		btst	#0,(Ctrl_2_Held).w
+		btst	#button_up,(Ctrl_2_Held).w
 		beq.s	loc_7CE0
 		tst.w	(Camera_BG_Y_offset).w
 		beq.s	loc_7CE0
 		subq.w	#1,(Camera_BG_Y_offset).w
 loc_7CE0:
-		btst	#1,(Ctrl_2_Held).w
+		btst	#button_down,(Ctrl_2_Held).w
 		beq.s	loc_7CF4
 		cmpi.w	#$700,(Camera_BG_Y_offset).w
 		beq.s	loc_7CF4
@@ -12806,13 +12806,13 @@ Obj0F_Init:
 ; loc_B874:
 Obj0F_Main:
 		move.b	(Ctrl_1_Press).w,d0
-		btst	#5,d0		; is C pressed?
+		btst	#button_C,d0		; is C pressed?
 		beq.s	loc_B888	; if not,branch
 		addq.b	#1,$1A(a0)	; increment mappings by one
 		andi.b	#$F,$1A(a0)	; limit to $F mappings
 
 loc_B888:
-		btst	#4,d0		; is B pressed?
+		btst	#button_B,d0		; is B pressed?
 		beq.s	return_B894	; if not,branch
 		bchg	#0,(Two_player_mode+1).w	; clear this value and... crash the game?
 
@@ -13043,7 +13043,7 @@ loc_BDE4:
 		rts
 loc_BDF0:
 		move.b	(Ctrl_1_Press).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		bne.s	loc_BE10
 		btst	#0,$1A(a0)
 		bne.s	loc_BE34
@@ -17499,7 +17499,7 @@ Obj0D_SonicRun:
 		btst	#1,(MainCharacter+$22).w
 		bne.s	+
 		move.b	#1,(Control_Locked).w
-		move.w	#$800,(Ctrl_1_Logical).w
+		move.w	#button_right_mask<<8,(Ctrl_1_Logical).w
 +
 		tst.b	(MainCharacter).w
 		beq.s	+
@@ -18378,7 +18378,7 @@ loc_FCd4:
 Obj01_Control:
 		tst.w	(Debug_mode_flag).w		; is Debug Mode enabled?
 		beq.s	loc_FCFC			; if not,branch
-		btst	#4,(Ctrl_1_Press).w		; is button B pressed?
+		btst	#button_B,(Ctrl_1_Press).w		; is button B pressed?
 		beq.s	loc_FCFC			; if not,branch
 		move.w	#1,(Debug_placement_mode).w	; change Sonic into a ring/item
 		clr.b	(Control_Locked).w		; unlock control
@@ -18528,7 +18528,7 @@ Sonic_RecordPos:
 
 ; ---------------------------------------------------------------------------
 ; Seemingly an earlier subroutine to copy Sonic's status flags for Tails' AI,
-; also presnet in the Nick Arcade prototype
+; also present in the Nick Arcade prototype
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -18698,12 +18698,12 @@ Sonic_Move:
 		bne.w	Obj01_Traction			; if yes,branch
 		tst.w	$2E(a0)				; is Sonic's controls locked?
 		bne.w	Obj01_UpdateSpeedOnGround	; if yes,branch
-		btst	#2,(Ctrl_1_Held_Logical).w	; is left being pressed?
+		btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
 		beq.s	Obj01_NotLeft			; if not,branch
 		bsr.w	Sonic_MoveLeft
 ; loc_FFB0:
 Obj01_NotLeft:
-		btst	#3,(Ctrl_1_Held_Logical).w	; is right being pressed?
+		btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
 		beq.s	Obj01_NotRight		; if not,branch
 		bsr.w	Sonic_MoveRight
 ; loc_FFBC:
@@ -18764,14 +18764,14 @@ loc_10048:
 ; ===========================================================================
 ; loc_10050:
 Sonic_LookUp:
-		btst	#0,(Ctrl_1_Held_Logical).w	; is up being pressed?
+		btst	#button_up,(Ctrl_1_Held_Logical).w	; is up being pressed?
 		beq.s	Sonic_Duck		; if not,branch
 		move.b	#7,$1C(a0)		; use "looking up" animation
 		bra.s	Obj01_UpdateSpeedOnGround
 ; ===========================================================================
 ; loc_10060:
 Sonic_Duck:
-		btst	#1,(Ctrl_1_Held_Logical).w	; is down being pressed?
+		btst	#button_down,(Ctrl_1_Held_Logical).w	; is down being pressed?
 		beq.s	Obj01_UpdateSpeedOnGround	; if not,branch
 		move.b	#8,$1C(a0)		; use "ducking" animation
 ; ===========================================================================
@@ -18781,7 +18781,7 @@ Sonic_Duck:
 ; sub_1006E:
 Obj01_UpdateSpeedOnGround:
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#$C,d0
+		andi.b	#button_left_mask+button_right_mask,d0
 		bne.s	Obj01_Traction
 		move.w	$14(a0),d0
 		beq.s	Obj01_Traction
@@ -18912,9 +18912,15 @@ Sonic_TurnLeft:
 
 loc_1016C:
 		move.w	d0,$14(a0)
+	if FixBugs
+		move.b	$26(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	return_1019A
 		cmpi.w	#$400,d0
 		blt.s	return_1019A
@@ -18961,9 +18967,15 @@ Sonic_TurnRight:
 
 loc_101D8:
 		move.w	d0,$14(a0)
+	if FixBugs
+		move.b	$26(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	return_10206
 		cmpi.w	#-$400,d0
 		bgt.s	return_10206
@@ -18997,12 +19009,12 @@ Sonic_RollSpeed:
 		bne.w	Sonic_SetRollSpeeds
 		tst.w	$2E(a0)
 		bne.s	Sonic_ApplyRollSpeed
-		btst	#2,(Ctrl_1_Held_Logical).w	; is left being pressed?
+		btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
 		beq.s	loc_10234		; if not,branch
 		bsr.w	Sonic_RollLeft
 
 loc_10234:
-		btst	#3,(Ctrl_1_Held_Logical).w	; is right being pressed?
+		btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
 		beq.s	Sonic_ApplyRollSpeed	; if not,branch
 		bsr.w	Sonic_RollRight
 ; loc_10240:
@@ -19078,7 +19090,7 @@ Sonic_RollLeft:
 Sonic_BrakeRollingRight:
 		sub.w	d4,d0		; reduce rightward rolling speed
 		bhs.s	loc_102D8
-		move.w	#$FF80,d0
+		move.w	#-$80,d0
 
 loc_102D8:
 		move.w	d0,$14(a0)
@@ -19120,7 +19132,7 @@ Sonic_ChgJumpDir:
 		btst	#4,$22(a0)		; did Sonic jump from rolling?
 		bne.s	Obj01_Jump_ResetScr	; if yes,branch to skip midair control
 		move.w	$10(a0),d0
-		btst	#2,(Ctrl_1_Held_Logical).w
+		btst	#button_left,(Ctrl_1_Held_Logical).w
 		beq.s	+	; if not holding left,branch
 
 		bset	#0,$22(a0)
@@ -19131,7 +19143,7 @@ Sonic_ChgJumpDir:
 		bgt.s	+	; if new speed is less than the maximum,branch
 		move.w	d1,d0	; limit speed in air going left,even if Sonic was already going faster (speed limit/cap)
 +
-		btst	#3,(Ctrl_1_Held_Logical).w
+		btst	#button_right,(Ctrl_1_Held_Logical).w
 		beq.s	+	; if not holding right,branch
 
 		bclr	#0,$22(a0)
@@ -19258,9 +19270,9 @@ loc_1041E:
 		cmpi.w	#$80,d0		; is Sonic moving at $80 speed or faster?
 		blo.s	Obj01_NoRoll	; if not,branch
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#$C,d0		; is left/right being pressed?
+		andi.b	#button_left_mask+button_right_mask,d0		; is left/right being pressed?
 		bne.s	Obj01_NoRoll	; if yes,branch
-		btst	#1,(Ctrl_1_Held_Logical).w	; is down being pressed?
+		btst	#button_down,(Ctrl_1_Held_Logical).w	; is down being pressed?
 		bne.s	Obj01_ChkRoll	; if yes,branch
 ; return_10436: Sonic_NoRoll:
 Obj01_NoRoll:
@@ -19298,7 +19310,7 @@ return_10474:
 ; loc_10476:
 Sonic_Jump:
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#$70,d0		; is A,B or C pressed?
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0		; is A,B or C pressed?
 		beq.w	return_1051A	; if not,branch
 		moveq	#0,d0
 		move.b	$26(a0),d0
@@ -19368,7 +19380,7 @@ loc_1053A:
 		cmp.w	$12(a0),d1	; is Sonic going up faster than d1?
 		ble.s	return_1054E	; if not,branch
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#$70,d0		; is A/B/C pressed?
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0		; is A/B/C pressed?
 		bne.s	return_1054E	; if yes,branch
 		move.w	d1,$12(a0)	; immediately reduce Sonic's upward speed to d1
 
@@ -19398,7 +19410,7 @@ Sonic_CheckSpindash:
 		cmpi.b	#8,$1C(a0)
 		bne.s	return_10592
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.w	return_10592
 		move.b	#9,$1C(a0)
 		move.w	#SndID_Roll,d0
@@ -19412,7 +19424,7 @@ return_10592:
 ; loc_10594:
 Sonic_UpdateSpindash:
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		btst	#1,d0
+		btst	#button_down,d0
 		bne.s	Sonic_ChargingSpindash
 
 		move.b	#$E,$16(a0)
@@ -19433,7 +19445,7 @@ loc_105d2:
 ; loc_105DA:
 Sonic_ChargingSpindash:
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.w	loc_105E8
 		nop
 
@@ -19907,7 +19919,7 @@ Sonic_HurtStop:
 		move.w	d0,$14(a0)
 		move.b	#0,$1C(a0)
 		subq.b	#2,routine(a0)
-		move.w	#$78,$30(a0)
+		move.w	#120,$30(a0)
 +
 		rts
 ; End of function Obj01_Hurt
@@ -19972,7 +19984,7 @@ Obj01_Finished:
 ; ---------------------------------------------------------------------------
 ; loc_10A70:
 Obj01_ResetLevel:
-		move.w	#$3C,$3A(a0)
+		move.w	#60,$3A(a0)
 		tst.b	(Time_Over_flag).w
 		beq.s	return_10A9C
 		move.w	#0,$3A(a0)
@@ -20490,7 +20502,7 @@ Obj02_ExitChk:
 ; loc_10F96: Tails_Control2:
 TailsCPU_Control:
 		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#$7F,d0					; did the real player 2 hit something?
+		andi.b	#button_up_mask+button_down_mask+button_left_mask+button_right_mask+button_A_mask+button_B_mask+button_C_mask,d0	; did the real player 2 hit something?
 		beq.s	TailsCPU_Normal_HumanControl		; if not,branch
 		move.w	#0,(unk_F700).w				; clear this flag that is never set...
 		move.w	#60*5,(Tails_control_counter).w		; give player 2 control for 5 seconds
@@ -20683,12 +20695,12 @@ Tails_Move:
 		bne.w	Obj02_Traction
 		tst.w	$2E(a0)
 		bne.w	Obj02_UpdateSpeedOnGround
-		btst	#2,(Ctrl_2_Held).w	; is left being pressed?
+		btst	#button_left,(Ctrl_2_Held).w	; is left being pressed?
 		beq.s	Obj02_NotLeft		; if not,branch
 		bsr.w	Tails_MoveLeft
 ; loc_11134:
 Obj02_NotLeft:
-		btst	#3,(Ctrl_2_Held).w	; is right being pressed?
+		btst	#button_right,(Ctrl_2_Held).w	; is right being pressed?
 		beq.s	Obj02_NotRight		; if not,branch
 		bsr.w	Tails_MoveRight
 ; loc_11140:
@@ -20751,14 +20763,14 @@ Tails_BalanceDone:
 ; ---------------------------------------------------------------------------
 ; loc_111d4:
 Tails_LookUp:
-		btst	#0,(Ctrl_2_Held).w	; is up being pressed?
+		btst	#button_up,(Ctrl_2_Held).w	; is up being pressed?
 		beq.s	Tails_Duck		; if not,branch
 		move.b	#7,$1C(a0)		; use "looking up" animation
 		bra.s	Obj02_UpdateSpeedOnGround
 ; ---------------------------------------------------------------------------
 ; loc_111E4:
 Tails_Duck:
-		btst	#1,(Ctrl_2_Held).w		; is down being pressed?
+		btst	#button_down,(Ctrl_2_Held).w		; is down being pressed?
 		beq.s	Obj02_UpdateSpeedOnGround	; if not,branch
 		move.b	#8,$1C(a0)		; use "ducking" animation
 
@@ -20768,7 +20780,7 @@ Tails_Duck:
 ; loc_111F2:
 Obj02_UpdateSpeedOnGround:
 		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#$C,d0		; is left/right being pressed?
+		andi.b	#button_left_mask+button_right_mask,d0		; is left/right being pressed?
 		bne.s	Obj02_Traction	; if yes,branch
 		move.w	$14(a0),d0
 		beq.s	Obj02_Traction
@@ -20895,9 +20907,15 @@ Tails_TurnLeft:
 
 loc_112F0:
 		move.w	d0,$14(a0)
+	if FixBugs
+		move.b	$26(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	return_1131E
 		cmpi.w	#$400,d0
 		blt.s	return_1131E
@@ -20944,9 +20962,15 @@ Tails_TurnRight:
 
 loc_1135C:
 		move.w	d0,$14(a0)
+	if FixBugs
+		move.b	$26(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	return_1138A
 		cmpi.w	#-$400,d0
 		bgt.s	return_1138A
@@ -20978,12 +21002,12 @@ Tails_RollSpeed:
 		bne.w	Tails_SetRollSpeed
 		tst.w	$2E(a0)
 		bne.s	Tails_ApplyRollSpeed
-		btst	#2,(Ctrl_2_Held).w	; is left being pressed?
+		btst	#button_left,(Ctrl_2_Held).w	; is left being pressed?
 		beq.s	loc_113B8		; if not,branch
 		bsr.w	Tails_RollLeft
 
 loc_113B8:
-		btst	#3,(Ctrl_2_Held).w	; is right being pressed?
+		btst	#button_right,(Ctrl_2_Held).w	; is right being pressed?
 		beq.s	Tails_ApplyRollSpeed	; if not,branch
 		bsr.w	Tails_RollRight
 ; loc_113C4:
@@ -21056,7 +21080,7 @@ loc_11446:
 loc_11454:
 		sub.w	d4,d0
 		bhs.s	loc_1145C
-		move.w	#$FF80,d0
+		move.w	#-$80,d0
 loc_1145C:
 		move.w	d0,$0014(a0)
 		rts
@@ -21098,7 +21122,7 @@ Tails_ChgJumpDir: ; loc_11484:
 		btst	#$04,$0022(a0)
 		bne.s	loc_114CE
 		move.w	$0010(a0),d0
-		btst	#$02,(Ctrl_2_Held).w
+		btst	#button_left,(Ctrl_2_Held).w
 		beq.s	loc_114B4
 		bset	#$00,$0022(a0)
 		sub.w	d5,d0
@@ -21108,7 +21132,7 @@ Tails_ChgJumpDir: ; loc_11484:
 		bgt.s	loc_114B4
 		move.w	d1,d0
 loc_114B4:
-		btst	#$03,(Ctrl_2_Held).w
+		btst	#button_right,(Ctrl_2_Held).w
 		beq.s	loc_114CA
 		bclr	#$00,$0022(a0)
 		add.w	d5,d0
@@ -21118,7 +21142,7 @@ loc_114B4:
 loc_114CA:
 		move.w	d0,$0010(a0)
 loc_114CE:
-		cmpi.w	#$FC00,$0012(a0)
+		cmpi.w	#-$400,$0012(a0)
 		blo.s	loc_114FC
 		move.w	$0010(a0),d0
 		move.w	d0,d1
@@ -21208,9 +21232,9 @@ loc_11590:
 		cmpi.w	#$0080,d0
 		blo.s	loc_115A8
 		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#$0C,d0
+		andi.b	#button_left_mask+button_right_mask,d0
 		bne.s	loc_115A8
-		btst	#1,(Ctrl_2_Held).w
+		btst	#button_down,(Ctrl_2_Held).w
 		bne.s	loc_115AA
 loc_115A8:
 		rts
@@ -21242,7 +21266,7 @@ loc_115E6:
 ;===============================================================================
 Tails_Jump: ; loc_115E8:
 		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.w	loc_1168C
 		moveq	#0,d0
 		move.b	$0026(a0),d0
@@ -21298,15 +21322,15 @@ loc_1168E:
 Tails_JumpHeight: ; loc_11696:
 		tst.b	$003C(a0)
 		beq.s	loc_116C2
-		move.w	#$FC00,d1
+		move.w	#-$400,d1
 		btst	#$06,$0022(a0)
 		beq.s	loc_116AC
-		move.w	#$FE00,d1
+		move.w	#-$200,d1
 loc_116AC:
 		cmp.w	$0012(a0),d1
 		ble.s	loc_116C0
 		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		bne.s	loc_116C0
 		move.w	d1,$0012(a0)
 loc_116C0:
@@ -21332,7 +21356,7 @@ Tails_Spindash: ; loc_116d2:
 		cmpi.b	#$08,$001C(a0)
 		bne.s	loc_11704
 		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.w	loc_11704
 		move.b	#$09,$001C(a0)
 		move.w	#SndID_Roll,d0
@@ -21343,7 +21367,7 @@ loc_11704:
 		rts
 loc_11706:
 		move.b	(Ctrl_2_Held).w,d0
-		btst	#1,d0
+		btst	#button_down,d0
 		bne.s	loc_1174C
 		move.b	#$0E,$0016(a0)
 		move.b	#$07,$0017(a0)
@@ -21360,7 +21384,7 @@ loc_11744:
 		rts
 loc_1174C:
 		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.w	loc_1175A
 		nop
 loc_1175A:
@@ -21555,7 +21579,7 @@ loc_118CC:
 		tst.w	d1
 		bpl.s	loc_11944
 		move.b	$0012(a0),d2
-		addq.b	#$08, d2
+		addq.b	#$08,d2
 		neg.b	d2
 		cmp.b	d2,d1
 		bge.s	loc_118E4
@@ -25681,7 +25705,7 @@ Obj04_Action:
 		move.w	d1,$C(a0)
 		tst.b	$32(a0)
 		bne.s	Obj04_Animate
-		btst	#7,(Ctrl_1_Press).w	; is the Start button pressed?
+		btst	#button_start,(Ctrl_1_Press).w	; is the Start button pressed?
 		beq.s	Obj04_Display		; if not,branch
 		addq.b	#3,$1A(a0)		; use different frames
 		move.b	#1,$32(a0)		; stop animation
@@ -25717,7 +25741,7 @@ Obj04_Action2:
 		move.w	d1,$C(a0)
 		tst.b	$32(a0)
 		bne.s	Obj04_Animate2
-		btst	#7,(Ctrl_1_Press).w	; is the Start button pressed?
+		btst	#button_start,(Ctrl_1_Press).w	; is the Start button pressed?
 		beq.s	loc_151A8		; if not,branch
 		addq.b	#2,$1A(a0)		; use different frames
 		move.b	#1,$32(a0)		; stop animation
@@ -29233,7 +29257,7 @@ loc_18AF0:
 loc_18B8E:
 		move.l	A1,$003C(a0)
 loc_18B92:
-		btst	#$06,(Ctrl_2_Press).w
+		btst	#button_A,(Ctrl_2_Press).w
 		bne.s	loc_18BAC
 		lea	(ButtonVine_Trigger).w,A2
 		moveq	#0,d0
@@ -37792,7 +37816,7 @@ Obj8A_Init:
 		move.b	#$A,$1A(a0)
 		tst.b	(Hidden_credits_flag).w
 		beq.s	Obj8A_Display
-		cmpi.b	#$72,(Ctrl_1_Held).w
+		cmpi.b	#button_down_mask+button_A_mask+button_B_mask+button_C_mask,(Ctrl_1_Held).w
 		bne.s	Obj8A_Display
 		move.w	#$EEE,(Target_palette_line3).w
 		move.w	#$880,(Target_palette_line3+2).w
@@ -37916,7 +37940,7 @@ Obj3E_Switched:
 		clr.b	(Update_HUD_timer).w		; stop the timer
 		clr.b	(Current_Boss_ID).w		; lock screen position
 		move.b	#1,(Control_Locked).w		; lock controls
-		move.w	#$800,(Ctrl_1_Logical).w	; move Sonic to the right
+		move.w	#button_right_mask<<8,(Ctrl_1_Logical).w	; move Sonic to the right
 		clr.b	$25(a0)
 		bclr	#3,(MainCharacter+$22).w
 		bset	#1,(MainCharacter+$22).w
@@ -39100,7 +39124,7 @@ loc_21d64:
 loc_21DA4:
 		tst.w	(Debug_mode_flag).w
 		beq.s	loc_21DB8
-		btst	#4,(Ctrl_1_Press).w
+		btst	#button_B,(Ctrl_1_Press).w
 		beq.s	loc_21DB8
 		move.w	#1,(Debug_placement_mode).w
 loc_21DB8:
@@ -39135,16 +39159,16 @@ SonicInSS_Display: ; loc_21DFA:
 		jsr	(Sonic_Animate).l	; (loc_10AB2)
 		rts
 SonicInSS_Move: ; loc_21E20:
-		btst	#2,(Ctrl_1_Held_Logical).w
+		btst	#button_left,(Ctrl_1_Held_Logical).w
 		beq.s	loc_21E2C
 		bsr.w	SonicInSS_MoveLeft	; loc_21EB8
 loc_21E2C:
-		btst	#3,(Ctrl_1_Held_Logical).w
+		btst	#button_right,(Ctrl_1_Held_Logical).w
 		beq.s	loc_21E38
 		bsr.w	SonicInSS_MoveRight	; loc_21EE8
 loc_21E38:
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#$C,d0
+		andi.b	#button_left_mask+button_right_mask,d0
 		bne.s	loc_21E68
 		move.w	$14(a0),d0
 		beq.s	loc_21E68
@@ -39248,7 +39272,7 @@ loc_21F14:
 ;===============================================================================
 SonicInSS_Jump: ; loc_21F16:
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		beq.s	loc_21F58
 		move.b	(SpecialStage_angle).w,d0
 		andi.b	#$FC,d0
@@ -39285,7 +39309,7 @@ SonicInSS_Null: ; loc_21F5A:
 		cmp.w	$12(a0),d1
 		ble.s	loc_21F74
 		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#$70,d0
+		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
 		bne.s	loc_21F74
 		move.w	d1,$12(a0)
 loc_21F74:
@@ -41008,10 +41032,10 @@ Debug_Control:
 		moveq	#0,d4
 		move.w	#1,d1
 		move.b	(Ctrl_1_Press).w,d4
-		andi.w	#$F,d4
+		andi.w	#button_up_mask+button_down_mask+button_left_mask+button_right_mask,d4
 		bne.s	Debug_Move
 		move.b	(Ctrl_1_Held).w,d0
-		andi.w	#$F,d0
+		andi.w	#button_up_mask+button_down_mask+button_left_mask+button_right_mask,d0
 		bne.s	Debug_ContinueMoving
 		move.b	#$C,(Debug_Accel_Timer).w
 		move.b	#$F,(Debug_Speed).w
@@ -41077,9 +41101,9 @@ Debug_TimerNotOver:
 
 ; loc_23CBA:
 Debug_ControlObjects:
-		btst	#6,(Ctrl_1_Held).w
+		btst	#button_A,(Ctrl_1_Held).w
 		beq.s	Debug_SpawnObject
-		btst	#5,(Ctrl_1_Press).w
+		btst	#button_C,(Ctrl_1_Press).w
 		beq.s	Debug_CycleObjects
 		subq.b	#1,(Debug_object).w
 		bhs.s	BranchTo_LoadDebugObjectSprite
@@ -41088,7 +41112,7 @@ Debug_ControlObjects:
 ; ===========================================================================
 ; loc_23Cd6:
 Debug_CycleObjects:
-		btst	#6,(Ctrl_1_Press).w
+		btst	#button_A,(Ctrl_1_Press).w
 		beq.s	Debug_SpawnObject
 		; cycle forward in the object list
 		addq.b	#1,(Debug_object).w
@@ -41101,7 +41125,7 @@ BranchTo_LoadDebugObjectSprite:
 ; ===========================================================================
 ; loc_23CF2:
 Debug_SpawnObject:
-		btst	#5,(Ctrl_1_Press).w
+		btst	#button_C,(Ctrl_1_Press).w
 		beq.s	Debug_ExitDebugMode
 		; spawn object
 		jsr	(SingleObjLoad).l
@@ -41120,7 +41144,7 @@ Debug_SpawnObject:
 ; ===========================================================================
 ; loc_23d36:
 Debug_ExitDebugMode:
-		btst	#4,(Ctrl_1_Press).w
+		btst	#button_B,(Ctrl_1_Press).w
 		beq.s	return_23D9C
 		; exit debug mode
 		moveq	#0,d0
