@@ -448,7 +448,7 @@ ShowErrorMsg:
 		lea	(VDP_data_port).l,a6
 		move.l	#$78000003,(VDP_control_port).l
 		lea	(ArtUnc_DbgText).l,a0
-		move.w	#$27F,d1
+		move.w	#bytesToWcnt($500),d1
 ; loc_49A;
 Error_LoadGfx:
 		move.w	(a0)+,(a6)
@@ -1370,7 +1370,7 @@ ProcessDMAQueue_Done:
 ; Nemesis decompression to VRAM
 ; loc_15FC:
 NemDec:
-		movem.l	d0-d7/a0-a1/a3-a5,-(sp)
+		movem.l	d0-a1/a3-a5,-(sp)
 		lea	(NemDec_Output).l,a3
 		lea	(VDP_data_port).l,a4
 		bra.s	loc_1618
@@ -1381,7 +1381,7 @@ NemDec:
 ; input: a4 = starting address of destination
 ; loc_160E:
 NemDecToRAM:
-		movem.l	d0-d7/a0-a1/a3-a5,-(sp)
+		movem.l	d0-a1/a3-a5,-(sp)
 		lea	(NemDec_OutputRAM).l,a3
 
 loc_1618:
@@ -1402,7 +1402,7 @@ loc_1626:
 		move.b	(a0)+,d5
 		move.w	#$10,d6
 		bsr.s	loc_1646
-		movem.l	(sp)+,d0-d7/a0-a1/a3-a5
+		movem.l	(sp)+,d0-a1/a3-a5
 		rts
 loc_1646:
 		move.w	d6,d7
@@ -2425,7 +2425,7 @@ loc_2810:
 loc_281A:
 		cmpi.w	#$60,d0
 		bhs.s	loc_2824
-		move.w	(a0)+,(A1,d0)
+		move.w	(a0)+,(a1,d0.w)
 loc_2824:
 		addq.w	#2,d0
 		dbf	d1,loc_2810
@@ -2471,7 +2471,7 @@ loc_288E:
 		bne.s	loc_2898
 		addq.w	#2,d0
 loc_2898:
-		move.w	(a0),(a1,d0)
+		move.w	(a0),(a1,d0.w)
 		addq.w	#2,d0
 		dbf	d1,loc_288E
 loc_28A2:
@@ -2484,47 +2484,47 @@ Pal_Sega2: ; loc_28B2: ; "Sega" Logo Palette
 		dc.w $0EE4,$0EC0,$0EC0,$0EC0,$0EEC,$0EEA,$0EE4,$0EC0
 		dc.w $0EA0,$0E60,$0EEA,$0EE4,$0EC0,$0EA0,$0E80,$0E00
 PalLoad1: ; loc_28E2:
-		lea	(PalPointers).l,A1
+		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
-		adda.w	d0,A1
-		move.l	(a1)+,A2
-		move.w	(a1)+,A3
-		adda.w	#$80,A3
+		adda.w	d0,a1
+		move.l	(a1)+,a2
+		move.w	(a1)+,a3
+		adda.w	#$80,a3
 		move.w	(a1)+,d7
 loc_28F6:
 		move.l	(a2)+,(a3)+
 		dbf	d7,loc_28F6
 		rts
 PalLoad2: ;loc_28FE:
-		lea	(PalPointers).l,A1
+		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
-		adda.w	d0,A1
-		move.l	(a1)+,A2
-		move.w	(a1)+,A3
+		adda.w	d0,a1
+		move.l	(a1)+,a2
+		move.w	(a1)+,a3
 		move.w	(a1)+,d7
 loc_290E:
 		move.l	(a2)+,(a3)+
 		dbf	d7,loc_290E
 		rts
 PalLoad3_Water: ; loc_2916: ; Load Underwater palette routine
-		lea	(PalPointers).l,A1
+		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
-		adda.w	d0,A1
-		move.l	(a1)+,A2
-		move.w	(a1)+,A3
-		suba.w	#$80,A3
+		adda.w	d0,a1
+		move.l	(a1)+,a2
+		move.w	(a1)+,a3
+		suba.w	#$80,a3
 		move.w	(a1)+,d7
 loc_292A:
 		move.l	(a2)+,(a3)+
 		dbf	d7,loc_292A
 		rts
 PalLoad4_Water: ;loc_2932:
-		lea	(PalPointers).l,A1
+		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
-		adda.w	d0,A1
-		move.l	(a1)+,A2
-		move.w	(a1)+,A3
-		suba.w	#$100,A3
+		adda.w	d0,a1
+		move.l	(a1)+,a2
+		move.w	(a1)+,a3
+		suba.w	#$100,a3
 		move.w	(a1)+,d7
 loc_2946:
 		move.l	(a2)+,(a3)+
@@ -2781,20 +2781,20 @@ SegaScreen: ; loc_360C: ; SEGA Logo
 		bsr.w	EniDec
 		lea	(Chunk_Table).l,a1
 		move.l	#$65100003,d0
-		moveq	#$17,d1
-		moveq	#7,d2
+		moveq	#24-1,d1
+		moveq	#8-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 		lea	(Chunk_Table+$180).l,a1
 		move.l	#$40000003,d0
-		moveq	#$27,d1
-		moveq	#$1B,d2
+		moveq	#40-1,d1
+		moveq	#28-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 		tst.b	(Graphics_Flags).w
 		bmi.s	loc_36BE
 		lea	(Chunk_Table+$A40).l,a1
 		move.l	#$453A0003,d0
-		moveq	#2,d1
-		moveq	#1,d2
+		moveq	#3-1,d1
+		moveq	#2-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 loc_36BE:
 		moveq	#PalID_SEGA,d0
@@ -2803,7 +2803,7 @@ loc_36BE:
 		move.w	#0,(PalCycle_Timer).w
 		move.w	#0,(unk_F662).w
 		move.w	#0,(unk_F660).w
-		move.w	#$B4,(Demo_Time_left).w
+		move.w	#180,(Demo_Time_left).w
 		move.w	(VDP_Reg1_val).w,d0
 		ori.b	#$40,d0
 		move.w	d0,(VDP_control_port).l
@@ -2816,7 +2816,7 @@ Sega_WaitPalette: ; loc_36F0:
 		bsr.w	PlaySound
 		move.b	#VintID_SEGA,(Vint_routine).w
 		bsr.w	WaitForVint
-		move.w	#$B4,(Demo_Time_left).w
+		move.w	#180,(Demo_Time_left).w
 Sega_WaitEnd: ; loc_3718:
 		move.b	#VintID_PCM,(Vint_routine).w
 		bsr.w	WaitForVint
@@ -2854,6 +2854,7 @@ TitleScreen:
 		clr.b	(Water_fullscreen_flag).w
 		move.w	#$8C81,(a6)
 		bsr.w	ClearScreen
+
 		clearRAM Sprite_Table_Input,Sprite_Table_Input_End
 		clearRAM Object_RAM,Object_RAM_End
 		clearRAM Misc_Variables,Misc_Variables_End
@@ -2876,7 +2877,7 @@ TitleScreen:
 		lea	(VDP_data_port).l,a6
 		move.l	#$50000003,4(a6)
 		lea	(ArtUnc_DbgText).l,a5
-		move.w	#$28F,d1
+		move.w	#bytesToWcnt($520),d1
 
 loc_3818:
 		move.w	(a5)+,(a6)
@@ -2897,8 +2898,8 @@ loc_3818:
 		bsr.w	EniDec
 		lea	(Chunk_Table).l,a1
 		move.l	#$40000003,d0
-		moveq	#$27,d1
-		moveq	#$1B,d2
+		moveq	#40-1,d1
+		moveq	#28-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 		lea	(Chunk_Table).l,a1
 		lea	(Title_Screen_Bg_Mappings).l,a0
@@ -2906,8 +2907,8 @@ loc_3818:
 		bsr.w	EniDec
 		lea	(Chunk_Table).l,a1
 		move.l	#$60000003,d0
-		moveq	#$1F,d1
-		moveq	#$1B,d2
+		moveq	#32-1,d1
+		moveq	#28-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 		lea	(Chunk_Table).l,a1
 		lea	(Title_Screen_R_Bg_Mappings).l,a0
@@ -2915,8 +2916,8 @@ loc_3818:
 		bsr.w	EniDec
 		lea	(Chunk_Table).l,a1
 		move.l	#$60400003,d0
-		moveq	#$1F,d1
-		moveq	#$1B,d2
+		moveq	#32-1,d1
+		moveq	#28-1,d2
 		bsr.w	PlaneMapToVRAM_H40
 		moveq	#PalID_Title,d0
 		bsr.w	PalLoad1
@@ -2927,7 +2928,7 @@ loc_3818:
 		move.w	#$178,(Demo_Time_left).w
 		lea	(TitleScreen_Tails).w,a1
 		moveq	#0,d0
-		move.w	#$F,d1	; hilarious,they actually fixed the bug that caused the "PRESS START BUTTON" text to not display in Sonic 1
+		move.w	#bytesToLcnt(object_size),d1	; hilarious,they actually fixed the bug that caused the "PRESS START BUTTON" text to not display in Sonic 1
 
 loc_38EE:
 		move.l	d0,(a1)+
@@ -3030,7 +3031,7 @@ Title_ChkLevSel:
 		move.w	#$2700,sr
 		lea	(VDP_data_port).l,a6
 		move.l	#$60000003,(VDP_control_port).l
-		move.w	#bytesToLcnt($1000),d1
+		move.w	#bytesToLcnt(VRAM_Plane_Table_Size),d1
 ; loc_3A3E: LevelSelect_ClearVRAM:
 Title_ClrVram:
 		move.l	d0,(a6)
@@ -9449,14 +9450,14 @@ loc_87d4:
 		moveq	#0,d5
 		lea	$10(a1),A2
 loc_881E:
-		movem.l d4/d5,-(sp)
+		movem.l d4-d5,-(sp)
 		swap	d4
 		swap	d5
 		add.w	d2,d4
 		add.w	d3,d5
 		move.w	d5,(a2)+
 		move.w	d4,(a2)+
-		movem.l (sp)+,d4/d5
+		movem.l (sp)+,d4-d5
 		add.l	d0,d4
 		add.l	d1,d5
 		addq.w	#2,A2
@@ -13677,7 +13678,7 @@ loc_C936:
 		dc.w	$0001
 		dc.l	$F805200C,$2006FFF8
 loc_C940:
-		dc.w	$0000		   ; Filler
+		dc.w	$0000
 		nop
 ;===============================================================================
 ; Object 0x36 - Vertical Spikes
@@ -38462,13 +38463,13 @@ S1_SS_Show_Layout: ; loc_21508:
 		move.w	#$F,d7
 loc_21558:
 		movem.w d0-d2,-(sp)
-		movem.w d0/d1,-(sp)
+		movem.w d0-d1,-(sp)
 		neg.w	d0
 		muls.w	d2,d1
 		muls.w	d3,d0
 		move.l	d0,d6
 		add.l	d1,d6
-		movem.w (sp)+,d0/d1
+		movem.w (sp)+,d0-d1
 		muls.w	d2,d0
 		muls.w	d3,d1
 		add.l	d0,d1
@@ -38528,6 +38529,7 @@ loc_215CA:
 		add.w	d1,d1
 		adda.w	(A1,d1),A1
 		move.w	(a5)+,A3
+		; This still uses Sonic 1's format. However, DrawSprite_Loop is incompatible with the Sonic 1 mappings, resulting in the special stages crashing.
 		moveq	#0,d1
 		move.b	(a1)+,d1
 		subq.b	#1,d1
@@ -38539,7 +38541,7 @@ loc_21622:
 		lea	$70(a0),A0
 		dbf	d7,loc_215C6
 		move.b	d5,(Sprite_count).w
-		cmpi.b	#$50,d5
+		cmpi.b	#80,d5
 		beq.s	loc_21642
 		move.l	#0,(a2)
 		rts
@@ -38703,7 +38705,8 @@ loc_218C2:
 loc_218EA:
 		rts
 loc_218EC:
-		dc.b	$42,$43,$44,$45,$00,$00
+		dc.b	$42,$43,$44,$45,0
+		even
 loc_218F2:
 		subq.b	#1,2(a0)
 		bpl.s	loc_21920
@@ -38723,7 +38726,8 @@ loc_2191E:
 loc_21920:
 		rts
 loc_21922:
-		dc.b	$32,$33,$32,$33,$00,$00
+		dc.b	$32,$33,$32,$33,0
+		even
 loc_21928:
 		subq.b	#1,2(a0)
 		bpl.s	loc_21950
@@ -38740,7 +38744,8 @@ loc_21928:
 loc_21950:
 		rts
 loc_21952:
-		dc.b	$46,$47,$48,$49,$00,$00
+		dc.b	$46,$47,$48,$49,0
+		even
 loc_21958:
 		subq.b	#1,2(a0)
 		bpl.s	loc_21986
@@ -38760,7 +38765,8 @@ loc_21984:
 loc_21986:
 		rts
 loc_21988:
-		dc.b	$2B,$31,$2B,$31,$00,$00
+		dc.b	$2B,$31,$2B,$31,0
+		even
 loc_2198E:
 		subq.b	#1,2(a0)
 		bpl.s	loc_219C6
@@ -38780,7 +38786,8 @@ loc_2198E:
 loc_219C6:
 		rts
 loc_219C8:
-		dc.b	$46,$47,$48,$49,$00,$00
+		dc.b	$46,$47,$48,$49,0
+		even
 loc_219CE:
 		subq.b	#1,2(a0)
 		bpl.s	loc_219FA
@@ -38798,7 +38805,8 @@ loc_219CE:
 loc_219FA:
 		rts
 loc_219FC:
-		dc.b	$4B,$4C,$4D,$4E,$4B,$4C,$4D,$4E,$00,$00
+		dc.b	$4B,$4C,$4D,$4E,$4B,$4C,$4D,$4E,0
+		even
 S1SS_LayoutIndex: ; loc_21A06:
 		dc.l	Special_Stage_1	  ; loc_31CEA
 		dc.l	Special_Stage_2	  ; loc_31F64
@@ -38807,12 +38815,12 @@ S1SS_LayoutIndex: ; loc_21A06:
 		dc.l	Special_Stage_5	  ; loc_32BAC
 		dc.l	Special_Stage_6	  ; loc_3305C
 S1SS_StartLoc: ; loc_21A1E:
-		dc.l	$03d002E0	; Sonic Start Position in Special Stage 1
-		dc.l	$03280574	; Sonic Start Position in Special Stage 2
-		dc.l	$04E402E0	; Sonic Start Position in Special Stage 3
-		dc.l	$03Ad02E0	; Sonic Start Position in Special Stage 4
-		dc.l	$034006B8	; Sonic Start Position in Special Stage 5
-		dc.l	$049B0358	; Sonic Start Position in Special Stage 6
+		dc.w	$3D0,$2E0	; Sonic Start Position in Special Stage 1
+		dc.w	$328,$574	; Sonic Start Position in Special Stage 2
+		dc.w	$4E4,$2E0	; Sonic Start Position in Special Stage 3
+		dc.w	$3AD,$2E0	; Sonic Start Position in Special Stage 4
+		dc.w	$340,$6B8	; Sonic Start Position in Special Stage 5
+		dc.w	$49B,$358	; Sonic Start Position in Special Stage 6
 S1_Special_Stage_Load: ; loc_21A36:
 		moveq	#0,d0
 		move.b	(Current_Special_Stage).w,d0
@@ -38837,8 +38845,8 @@ loc_21A6C:
 loc_21A70:
 		lsl.w	#2,d0
 		lea	S1SS_StartLoc(pc,d0),A1 ; loc_21A1E
-		move.w	(a1)+,(MainCharacter+8).w
-		move.w	(a1)+,(MainCharacter+$C).w
+		move.w	(a1)+,(MainCharacter+x_pos).w
+		move.w	(a1)+,(MainCharacter+y_pos).w
 		move.l	S1SS_LayoutIndex(pc,d0),A0 ; loc_21A06
 		lea	(Chunk_Table+$4000),A1
 		move.w	#0,d0
@@ -39042,7 +39050,7 @@ loc_21Cd2:
 		dc.b	$F4,$0A,$00,$09,$F4		   ; Sonic 1 Mappings Format
 loc_21CD8:
 		dc.b	$00
-		dc.b	$00			 ; Filler
+		even
 SS_Red_White_Ball_Mappings: ; loc_21CDA:
 		dc.w	loc_21CE2-SS_Red_White_Ball_Mappings
 		dc.w	loc_21CE8-SS_Red_White_Ball_Mappings
@@ -39209,7 +39217,7 @@ loc_21E68:
 		add.l	d1,8(a0)
 		muls.w	$14(a0),d0
 		add.l	d0,$C(a0)
-		movem.l d0/d1,-(sp)
+		movem.l d0-d1,-(sp)
 		move.l	$C(a0),d2
 		move.l	8(a0),d3
 		bsr.w	loc_220A8
@@ -39220,7 +39228,7 @@ loc_21E68:
 		move.w	#0,$14(a0)
 		rts
 loc_21EB2:
-		movem.l (sp)+,d0/d1
+		movem.l (sp)+,d0-d1
 		rts
 
 ;===============================================================================
@@ -39539,7 +39547,11 @@ loc_22188:
 loc_2219C:
 		addq.b	#1,(Life_count).w
 		addq.b	#1,(Update_HUD_lives).w
+	if FixBugs
+		move.w	#MusID_ExtraLife,d0
+	else
 		move.w	#S1MusID_ExtraLife,d0
+	endif
 		jsr	(PlayMusic).l	; loc_14C0
 		moveq	#0,d4
 		rts
@@ -39562,7 +39574,11 @@ loc_221CC:
 		move.b	d4,(A2,d0)
 		addq.b	#1,(Emerald_count).w
 loc_221EA:
+	if FixBugs
+		move.w	#MusID_Emerald,d0
+	else
 		move.w	#S1MusID_Emerald,d0
+	endif
 		jsr	(PlaySound).l	; loc_14C6
 		moveq	#0,d4
 		rts
@@ -39950,7 +39966,7 @@ loc_225DC:
 		adda.w	#$20,a0
 		dbf	d1,loc_225A0
 loc_22614:
-		move.l	#Chunk_Table&$FFFFFF+$7C00,d1
+		move.l	#(Chunk_Table+$7C00)&$FFFFFF,d1
 		move.w	#$A300,d2
 		move.w	#$80,d3
 		jsr	(QueueDMATransfer).l	; loc_156C
