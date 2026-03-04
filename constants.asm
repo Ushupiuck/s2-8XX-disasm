@@ -1210,12 +1210,13 @@ HW_Expansion_SCtrl =		$A1001F
 ; ---------------------------------------------------------------------------
 ; VRAM and tile art base addresses.
 ; VRAM Reserved regions.
-VRAM_Plane_A_Name_Table                  = $C000	; Extends until $CFFF
-VRAM_Plane_B_Name_Table                  = $E000	; Extends until $EFFF
-VRAM_Plane_A_Name_Table_2P               = $A000	; Extends until $AFFF
-VRAM_Plane_B_Name_Table_2P               = $8000	; Extends until $8FFF
-VRAM_Plane_Table_Size                    = $1000	; 64 cells x 32 cells x 2 bytes per cell
-VRAM_Sprite_Attribute_Table              = $F800	; Extends until $FA7F
-VRAM_Sprite_Attribute_Table_Size         = $280	; 640 bytes
-VRAM_Horiz_Scroll_Table                  = $FC00	; Extends until $FF7F
-VRAM_Horiz_Scroll_Table_Size             = $380	; 224 lines * 2 bytes per entry * 2 PNTs
+VRAM_Plane_A_Name_Table				= $C000	; Extends until $CFFF
+VRAM_Plane_B_Name_Table				= $E000	; Extends until $EFFF
+VRAM_Plane_A_Name_Table_2P			= $A000	; Extends until $AFFF
+VRAM_Plane_B_Name_Table_2P			= $8000	; Extends until $8FFF
+VRAM_Plane_Window_Name_Table		= $A000 ; Extends until $FFFF
+VRAM_Plane_Table_Size				= $1000	; 64 cells x 32 cells x 2 bytes per cell
+VRAM_Sprite_Attribute_Table			= $F800	; Extends until $FA7F
+VRAM_Sprite_Attribute_Table_Size	= $280	; 640 bytes
+VRAM_Horiz_Scroll_Table				= $FC00	; Extends until $FF7F
+VRAM_Horiz_Scroll_Table_Size		= $380	; 224 lines * 2 bytes per entry * 2 PNTs
