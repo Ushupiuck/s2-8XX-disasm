@@ -48,4 +48,3 @@ SndB2_Drown_Death_Voices:
 	smpsVcDecayLevel    $04, $04, $02, $02
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $80, $12, $12, $2F
-

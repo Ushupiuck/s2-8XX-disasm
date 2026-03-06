@@ -33,4 +33,3 @@ SndAD_Get_Bubble_Voices:
 	smpsVcDecayLevel    $01, $01, $02, $02
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $80, $12, $12, $15
-

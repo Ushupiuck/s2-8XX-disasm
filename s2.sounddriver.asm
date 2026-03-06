@@ -2814,7 +2814,7 @@ loc_CCE:
 		ld	de,zTrack.len
 		add	ix,de
 		djnz	loc_CAF
-		ld	b,3
+		ld	b,MUSIC_PSG_TRACK_COUNT
 
 loc_CD7:
 		bit	7,(ix+zTrack.PlaybackControl)

@@ -39,4 +39,3 @@ SndCF_Signpost_Voices:
 	smpsVcDecayLevel    $0F, $0F, $00, $00
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $03, $0B, $0C
-

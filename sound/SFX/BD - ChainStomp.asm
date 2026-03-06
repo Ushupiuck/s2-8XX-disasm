@@ -57,4 +57,3 @@ SndBD_ChainStomp_Voices:
 	smpsVcDecayLevel    $02, $01, $02, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $01, $00, $0D
-

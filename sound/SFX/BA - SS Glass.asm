@@ -30,4 +30,3 @@ SndBA_SS_Glass_Voices:
 	smpsVcDecayLevel    $0F, $0F, $0F, $0F
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $1B, $00, $20
-
