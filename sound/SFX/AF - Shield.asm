@@ -30,4 +30,3 @@ SndAF_Shield_Voices:
 	smpsVcDecayLevel    $0B, $0B, $0B, $0B
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $14, $2C, $04
-

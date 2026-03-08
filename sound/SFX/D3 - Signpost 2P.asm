@@ -31,4 +31,3 @@ sndD3_Voices:
 	smpsVcDecayLevel    $0A, $0A, $0A, $0A
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $00, $00, $4D
-

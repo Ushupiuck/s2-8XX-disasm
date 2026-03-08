@@ -39,4 +39,3 @@ SndBE_Roll_Voices:
 	smpsVcDecayLevel    $00, $00, $00, $00
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $28, $00, $0D
-

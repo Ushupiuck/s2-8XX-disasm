@@ -43,4 +43,3 @@ sndDA_Voices:
 	smpsVcDecayLevel    $03, $03, $03, $04
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $A3, $80, $80, $7F
-

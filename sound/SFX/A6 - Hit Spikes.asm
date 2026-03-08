@@ -31,4 +31,3 @@ SndA6_Hit_Spikes_Voices:
 	smpsVcDecayLevel    $0A, $01, $00, $0F
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $0F, $20, $29
-

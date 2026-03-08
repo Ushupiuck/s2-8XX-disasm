@@ -30,4 +30,3 @@ SndBB_Door_Voices:
 	smpsVcDecayLevel    $0F, $0F, $0A, $00
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $0A, $00, $00
-

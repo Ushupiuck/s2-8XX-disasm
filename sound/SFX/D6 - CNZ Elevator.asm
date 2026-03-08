@@ -43,4 +43,3 @@ sndD6_Voices:
 	smpsVcDecayLevel    $0B, $0B, $0B, $0B
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $80, $1C, $00, $50
-

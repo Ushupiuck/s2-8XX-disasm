@@ -6,7 +6,12 @@
 ; they are all in units of bytes
 Size_of_DAC_samples =		$2723
 Size_of_SEGA_sound =		$6174
+	if FixBugs
+; To be on the safe side, we'll use a larger guess size.
+Size_of_Snd_driver_guess =	$E80 ; approximate post-compressed size of the Z80 sound driver
+	else
 Size_of_Snd_driver_guess =	$DF3 ; approximate post-compressed size of the Z80 sound driver
+	endif
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -133,7 +138,34 @@ objoff_28 =		subtype ; overlaps subtype, but a few objects use it for other thin
  enum objoff_30=$30,objoff_31=$31,objoff_32=$32,objoff_33=$33,objoff_34=$34,objoff_35=$35,objoff_36=$36,objoff_37=$37
  enum objoff_38=$38,objoff_39=$39,objoff_3A=$3A,objoff_3B=$3B,objoff_3C=$3C,objoff_3D=$3D,objoff_3E=$3E,objoff_3F=$3F
 
-object_size = $40
+; ---------------------------------------------------------------------------
+; property of all objects:
+object_size_bits =	6
+object_size =		1<<object_size_bits ; the size of an object
+next_object =		object_size
+
+; ---------------------------------------------------------------------------
+; Controller Buttons
+;
+; Buttons bit numbers
+button_up:			EQU	0
+button_down:			EQU	1
+button_left:			EQU	2
+button_right:			EQU	3
+button_B:			EQU	4
+button_C:			EQU	5
+button_A:			EQU	6
+button_start:			EQU	7
+; Buttons masks (1 << x == pow(2, x))
+button_up_mask:			EQU	1<<button_up	; $01
+button_down_mask:		EQU	1<<button_down	; $02
+button_left_mask:		EQU	1<<button_left	; $04
+button_right_mask:		EQU	1<<button_right	; $08
+button_B_mask:			EQU	1<<button_B	; $10
+button_C_mask:			EQU	1<<button_C	; $20
+button_A_mask:			EQU	1<<button_A	; $40
+button_start_mask:		EQU	1<<button_start	; $80
+
 ; ---------------------------------------------------------------------------
 ; Constants that can be used instead of hard-coded IDs for various things.
 ; The "id" function allows to remove elements from an array/table without having
@@ -362,8 +394,7 @@ MusID_HPZ =		id(zMusIDPtr_HPZ)
 MusID_NGHZ =		id(zMusIDPtr_NGHZ)
 MusID_DEZ =		id(zMusIDPtr_DEZ)
 MusID_SpecStg =		id(zMusIDPtr_SpecStg)
-MusID_LevelSel =	id(zMusIDPtr_LevelSel)		; according to the code that handles drowning, this was where
-							; the developers were planning to put the drowning theme
+MusID_LevelSel =	id(zMusIDPtr_LevelSel)		; according to the code that handles drowning, this was where the developers were planning to put the drowning theme
 MusID_LevelSelDup =	id(zMusIDPtr_LevelSelDup)
 MusID_FinalBoss =	id(zMusIDPtr_FinalBoss)
 MusID_CPZ =		id(zMusIDPtr_CPZ)
@@ -388,12 +419,14 @@ MusID_EmeraldDup2 =	id(zMusIDPtr_EmeraldDup2)
 MusID__End =		id(zMusIDPtr__End)
 
 ; Whenever the music references a slot that was its placement in Sonic 1
-S1MusID_LZ =		MusID_GHZ
-S1MusID_Invinc =	MusID_NGHZ
-S1MusID_ExtraLife =	MusID_DEZ
-S1MusID_Boss =		MusID_FinalBoss
-S1MusID_ActClear =	MusID_Boss
-S1MusID_Emerald =	MusID_BOZ
+S1MusID_LZ =		$82
+S1MusID_Invinc =	$87
+S1MusID_ExtraLife =	$88
+S1MusID_Boss =		$8C
+S1MusID_ActClear =	$8E
+S1MusID_Emerald =	$93
+S1SndID_Waterfall =	$D0
+S1MusID_Stop =		$E0
 
 ; Sound IDs
 offset :=	SoundIndex
@@ -1177,12 +1210,13 @@ HW_Expansion_SCtrl =		$A1001F
 ; ---------------------------------------------------------------------------
 ; VRAM and tile art base addresses.
 ; VRAM Reserved regions.
-VRAM_Plane_A_Name_Table                  = $C000	; Extends until $CFFF
-VRAM_Plane_B_Name_Table                  = $E000	; Extends until $EFFF
-VRAM_Plane_A_Name_Table_2P               = $A000	; Extends until $AFFF
-VRAM_Plane_B_Name_Table_2P               = $8000	; Extends until $8FFF
-VRAM_Plane_Table_Size                    = $1000	; 64 cells x 32 cells x 2 bytes per cell
-VRAM_Sprite_Attribute_Table              = $F800	; Extends until $FA7F
-VRAM_Sprite_Attribute_Table_Size         = $280	; 640 bytes
-VRAM_Horiz_Scroll_Table                  = $FC00	; Extends until $FF7F
-VRAM_Horiz_Scroll_Table_Size             = $380	; 224 lines * 2 bytes per entry * 2 PNTs
+VRAM_Plane_A_Name_Table				= $C000	; Extends until $CFFF
+VRAM_Plane_B_Name_Table				= $E000	; Extends until $EFFF
+VRAM_Plane_A_Name_Table_2P			= $A000	; Extends until $AFFF
+VRAM_Plane_B_Name_Table_2P			= $8000	; Extends until $8FFF
+VRAM_Plane_Window_Name_Table		= $A000 ; Extends until $FFFF
+VRAM_Plane_Table_Size				= $1000	; 64 cells x 32 cells x 2 bytes per cell
+VRAM_Sprite_Attribute_Table			= $F800	; Extends until $FA7F
+VRAM_Sprite_Attribute_Table_Size	= $280	; 640 bytes
+VRAM_Horiz_Scroll_Table				= $FC00	; Extends until $FF7F
+VRAM_Horiz_Scroll_Table_Size		= $380	; 224 lines * 2 bytes per entry * 2 PNTs

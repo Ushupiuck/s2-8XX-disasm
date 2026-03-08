@@ -30,4 +30,3 @@ SndB1_Electric_Voices:
 	smpsVcDecayLevel    $03, $0F, $02, $02
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $07, $34, $10, $05
-

@@ -65,4 +65,3 @@ SndB4_Bumper_Voices:
 	smpsVcDecayLevel    $05, $05, $05, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $00, $00, $07
-

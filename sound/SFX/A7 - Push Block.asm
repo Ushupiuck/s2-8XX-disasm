@@ -31,4 +31,3 @@ SndA7_Push_Block_Voices:
 	smpsVcDecayLevel    $02, $04, $02, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $0E, $0E, $0F
-

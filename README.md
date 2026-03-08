@@ -7,4 +7,5 @@ Credits:
 * SuperEgg - ASM files for music
 * OrionNavattan - fixed errors resulting from the switch to AS
 * AlexField - improved disassembly
+* MDT - ASM files for sfx D0 - E0
 * Filter - additional work in getting a more bit-perfect build

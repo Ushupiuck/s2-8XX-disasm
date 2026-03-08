@@ -35,4 +35,3 @@ sndD8_Voices:
 	smpsVcDecayLevel    $03, $03, $03, $04
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $20, $00, $17
-

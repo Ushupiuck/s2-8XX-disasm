@@ -46,4 +46,3 @@ SndBC_Teleport_Voices:
 	smpsVcDecayLevel    $02, $04, $02, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $0E, $12, $04, $09
-
