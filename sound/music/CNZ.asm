@@ -402,18 +402,18 @@ Mus_CNZ_PSG3:
 
 Mus_CNZ_Loop03:
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $10, $08
+	dc.b	nMaxPSG, $10, $08
 	smpsPSGvoice        fTone_01
-	dc.b	nA5, $18
+	dc.b	nMaxPSG, $18
 	smpsLoop            $00, $06, Mus_CNZ_Loop03
 	smpsPSGvoice        fTone_01
-	dc.b	nA5, $30, $18, $18
+	dc.b	nMaxPSG, $30, $18, $18
 
 Mus_CNZ_Loop04:
 	smpsPSGvoice        fTone_01
-	dc.b	nA5, $18
+	dc.b	nMaxPSG, $18
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $10, $08
+	dc.b	nMaxPSG, $10, $08
 	smpsLoop            $00, $44, Mus_CNZ_Loop04
 	dc.b	nRst, $30, nRst, nRst, $30, nRst
 	smpsJump            Mus_CNZ_Loop03

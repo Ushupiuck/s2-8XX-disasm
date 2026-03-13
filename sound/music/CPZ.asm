@@ -380,9 +380,9 @@ Mus_CPZ_PSG3:
 	smpsPSGform         $E7
 
 Mus_CPZ_Jump02:
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C, $06, nA5, nA5, nA5, nA5, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, nMaxPSG, nMaxPSG, nMaxPSG
 	smpsJump            Mus_CPZ_Jump02
 
 Mus_CPZ_Voices:

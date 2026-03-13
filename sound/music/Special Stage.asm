@@ -287,26 +287,26 @@ Mus_SpecStg_PSG3:
 	dc.b	nRst, $30, nRst, nRst, nRst, nRst, nRst
 
 Mus_SpecStg_Loop0D:
-	dc.b	nA5, $0C, $06, nA5, nA5, nA5, $0C, nA5, nA5, $06, nA5, nA5
-	dc.b	nA5, $0C, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, nMaxPSG, $0C, nMaxPSG, nMaxPSG, $06, nMaxPSG, nMaxPSG
+	dc.b	nMaxPSG, $0C, nMaxPSG
 	smpsLoop            $00, $03, Mus_SpecStg_Loop0D
-	dc.b	nA5, $0C, $06, nA5, nA5, nA5, $0C, nA5, nA5, $06, nA5, nA5
-	dc.b	nA5, $0C, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, nMaxPSG, $0C, nMaxPSG, nMaxPSG, $06, nMaxPSG, nMaxPSG
+	dc.b	nMaxPSG, $0C, nMaxPSG
 
 Mus_SpecStg_Loop0E:
-	dc.b	nA5, $12, nA5, $06, nA5, nA5, nA5, nA5, $0C, $06, $0C, $06
-	dc.b	$0C, $06, $0C, nA5, $06, nA5, nA5, $0C, $06, $0C, $06, $0C
-	dc.b	$06, $0C, $06, $0C, nA5, nA5, nA5, nA5, $24, nA5, $0C, nA5
-	dc.b	$06, nA5, nA5, $0C, nA5, nA5, nA5, $18, nA5, $0C, nA5
+	dc.b	nMaxPSG, $12, nMaxPSG, $06, nMaxPSG, nMaxPSG, nMaxPSG, nMaxPSG, $0C, $06, $0C, $06
+	dc.b	$0C, $06, $0C, nMaxPSG, $06, nMaxPSG, nMaxPSG, $0C, $06, $0C, $06, $0C
+	dc.b	$06, $0C, $06, $0C, nMaxPSG, nMaxPSG, nMaxPSG, nMaxPSG, $24, nMaxPSG, $0C, nMaxPSG
+	dc.b	$06, nMaxPSG, nMaxPSG, $0C, nMaxPSG, nMaxPSG, nMaxPSG, $18, nMaxPSG, $0C, nMaxPSG
 	smpsLoop            $00, $04, Mus_SpecStg_Loop0E
 
 Mus_SpecStg_Loop0F:
-	dc.b	nA5, $18, $06, nA5, $0C, nA5, nA5, $06, nA5, $0C, nA5, nA5
+	dc.b	nMaxPSG, $18, $06, nMaxPSG, $0C, nMaxPSG, nMaxPSG, $06, nMaxPSG, $0C, nMaxPSG, nMaxPSG
 	smpsLoop            $00, $04, Mus_SpecStg_Loop0F
 
 Mus_SpecStg_Loop10:
-	dc.b	nA5, $0C, $06, nA5, nA5, nA5, $0C, nA5, nA5, $06, nA5, nA5
-	dc.b	nA5, $0C, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, nMaxPSG, $0C, nMaxPSG, nMaxPSG, $06, nMaxPSG, nMaxPSG
+	dc.b	nMaxPSG, $0C, nMaxPSG
 	smpsLoop            $00, $04, Mus_SpecStg_Loop10
 	smpsJump            Mus_SpecStg_Loop0E
 

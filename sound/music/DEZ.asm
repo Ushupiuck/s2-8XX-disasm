@@ -208,14 +208,14 @@ Mus_DEZ_PSG3:
 	smpsPSGform         $E7
 
 Mus_DEZ_Jump05:
-	dc.b	nRst, $0C, nA5, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $0C, nA5
+	dc.b	nRst, $0C, nMaxPSG, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $0C, nMaxPSG
 	dc.b	$03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $18, nRst, $0C, nRst, $18
-	dc.b	nRst, $0C, nRst, nA5, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $0C
-	dc.b	nA5, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $18, nRst, $0C, nRst
+	dc.b	nRst, $0C, nRst, nMaxPSG, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $0C
+	dc.b	nMaxPSG, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09, nRst, $18, nRst, $0C, nRst
 	dc.b	$18, nRst, $0C
 
 Mus_DEZ_Loop03:
-	dc.b	nRst, $0C, nA5, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09
+	dc.b	nRst, $0C, nMaxPSG, $03, smpsNoAttack, $09, $03, smpsNoAttack, $09
 	smpsLoop            $00, $28, Mus_DEZ_Loop03
 	smpsJump            Mus_DEZ_Jump05
 
