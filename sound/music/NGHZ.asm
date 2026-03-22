@@ -308,10 +308,10 @@ Mus_NGHZ_PSG3:
 	smpsPSGvoice        fTone_02
 
 Mus_NGHZ_Loop08:
-	dc.b	nRst, $0C, nA5, $06, nRst, $07, nA5, $06, nRst, $11, nA5, $0C
-	dc.b	nRst, $06, nA5, $0C, nRst, $06, nA5, nRst
+	dc.b	nRst, $0C, nMaxPSG, $06, nRst, $07, nMaxPSG, $06, nRst, $11, nMaxPSG, $0C
+	dc.b	nRst, $06, nMaxPSG, $0C, nRst, $06, nMaxPSG, nRst
 	smpsLoop            $00, $13, Mus_NGHZ_Loop08
-	dc.b	nA5, $06, nA5, nA5, nRst, $12, nA5, $06, nA5, nA5, nRst, $2A
+	dc.b	nMaxPSG, $06, nMaxPSG, nMaxPSG, nRst, $12, nMaxPSG, $06, nMaxPSG, nMaxPSG, nRst, $2A
 	smpsJump            Mus_NGHZ_Loop08
 
 Mus_NGHZ_Voices:

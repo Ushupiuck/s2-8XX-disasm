@@ -309,50 +309,50 @@ Mus_GHZ_Loop0A:
 Mus_GHZ_PSG3:
 	smpsPSGform         $E7
 	smpsPSGvoice        fTone_02
-	dc.b	nRst, $0C, nA5, $18, nA5, nA5, nA5, $0C, nRst, $30, nRst
+	dc.b	nRst, $0C, nMaxPSG, $18, nMaxPSG, nMaxPSG, nMaxPSG, $0C, nRst, $30, nRst
 
 Mus_GHZ_Loop07:
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C, $06, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG
 	smpsLoop            $00, $07, Mus_GHZ_Loop07
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C
 	smpsPSGvoice        fTone_03
-	dc.b	nA5
+	dc.b	nMaxPSG
 	smpsPSGvoice        fTone_02
 
 Mus_GHZ_Loop08:
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C, $06, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG
 	smpsLoop            $00, $07, Mus_GHZ_Loop08
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
 	smpsPSGvoice        fTone_03
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $06, nA5
+	dc.b	nMaxPSG, $06, nMaxPSG
 
 Mus_GHZ_Loop09:
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
-	dc.b	nA5, $0C, nA5, $06, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
+	dc.b	nMaxPSG, $0C, nMaxPSG, $06, nMaxPSG
 	smpsLoop            $00, $03, Mus_GHZ_Loop09
-	dc.b	nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5
+	dc.b	nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
 	smpsPSGvoice        fTone_03
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5
-	dc.b	$0C, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5
-	dc.b	$0C, $06, nA5, nA5, $0C, $06, nA5
+	dc.b	nMaxPSG, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG
+	dc.b	$0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG
+	dc.b	$0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG
 	smpsPSGvoice        fTone_03
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $06, nA5, nA5, $0C, $06, nA5, nA5, $0C, $06, nA5, nA5
-	dc.b	$0C, $06, nA5
+	dc.b	nMaxPSG, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG, $0C, $06, nMaxPSG, nMaxPSG
+	dc.b	$0C, $06, nMaxPSG
 	smpsPSGvoice        fTone_03
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C
 	smpsPSGvoice        fTone_02
-	dc.b	nA5, $06, nA5
+	dc.b	nMaxPSG, $06, nMaxPSG
 	smpsPSGvoice        fTone_01
-	dc.b	nA5, $18, nA5, nA5, nA5
+	dc.b	nMaxPSG, $18, nMaxPSG, nMaxPSG, nMaxPSG
 	smpsPSGvoice        fTone_02
 	smpsJump            Mus_GHZ_Loop07
 

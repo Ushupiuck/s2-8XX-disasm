@@ -307,7 +307,7 @@ Mus_DHZ_PSG3:
 	dc.b	nRst, $30, nRst
 
 Mus_DHZ_Jump05:
-	dc.b	nA5, $0C, $08, $04
+	dc.b	nMaxPSG, $0C, $08, $04
 	smpsJump            Mus_DHZ_Jump05
 
 ; DAC Data

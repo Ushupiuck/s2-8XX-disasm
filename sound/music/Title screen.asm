@@ -73,7 +73,7 @@ Mus_Title_PSG3:
 
 Mus_Title_Loop00:
 	smpsNoteFill        $03
-	dc.b	nA5, $0C
+	dc.b	nMaxPSG, $0C
 	smpsNoteFill        $0C
 	dc.b	$0C
 	smpsNoteFill        $03
