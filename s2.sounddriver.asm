@@ -3299,11 +3299,11 @@ cfF9_FM1Mute:
 		ret
 ; ---------------------------------------------------------------------------
 zSFXPriority:
-		db 80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h,70h,70h,70h,60h	; A0
-		db 70h,70h,60h,70h,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h	; B0
-		db 70h,7Fh,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h	; C0
-		db 70h,70h,70h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h	; D0
-		db 80h,80h,80h,80h,90h,90h,90h,90h,90h							; E0
+		db 80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h,70h,70h,70h,60h,70h	; A0
+		db 70h,60h,70h,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,7Fh	; B0
+		db 60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h	; C0
+		db 80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h	; D0
+		db 90h,90h,90h,90h,90h							; E0
 
 dac_sample_pointer macro label
 	dw	zmake68kPtr(label)

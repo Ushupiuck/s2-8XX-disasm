@@ -422,6 +422,7 @@ MusID__End =		id(zMusIDPtr__End)
 S1MusID_LZ =		$82
 S1MusID_Invinc =	$87
 S1MusID_ExtraLife =	$88
+S1MusID_SpecStg =	$89
 S1MusID_Boss =		$8C
 S1MusID_ActClear =	$8E
 S1MusID_Emerald =	$93
