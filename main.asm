@@ -4700,7 +4700,7 @@ loc_5260:
 		bsr.w	S1_Pal_Cycle_Special_Stage
 		clr.w	(SpecialStage_angle).w
 		move.w	#$40,(SpecialStage_speed).w
-		move.w	#MusID_SpecStg,d0
+		move.w	#S1MusID_SpecStg,d0
 		bsr.w	PlayMusic
 		move.w	#0,(Demo_button_index).w
 		lea	(Demo_Index).l,a1
@@ -15997,6 +15997,7 @@ loc_E130:
 		dc.b	$00,$00,$01,$01,$04,$04,$05,$05,$08,$08,$09,$09,$0C,$0C,$0D,$0D
 loc_E140: ; Load Rings routine
 		clearRAM Ring_Positions,Ring_Positions_End
+
 		lea	(Ring_consumption_table).w,A1
 	if FixBugs
 		move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table),d1
@@ -16004,6 +16005,7 @@ loc_E140: ; Load Rings routine
 		; Coding error,that '-$40' shouldn't be there: only half of 'Ring_consumption_table' is cleared.
 		move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table-$40),d1
 	endif
+
 loc_E158:
 		move.l	d0,(a1)+
 		dbf	d1,loc_E158
@@ -17488,7 +17490,11 @@ Obj0D_ChkSparkle:
 		add.w	$C(a0),d0
 		move.w	d0,$C(a1)
 		move.l	#Obj25_MapUnc_B036,4(a1)
+	if FixBugs
+		move.w	#$26BC,2(a1)
+	else
 		move.w	#$27B2,2(a1)
+	endif
 		bsr.w	Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#2,$18(a1)
@@ -35579,8 +35585,9 @@ loc_1E63A:
 		dc.w	loc_1E646-loc_1E63A
 		dc.w	loc_1E6A4-loc_1E63A
 		dc.w	loc_1E6C8-loc_1E63A
-loc_1E640:
-		dc.w	$0000,$FCE0,$Fd1C
+		dc.w	0
+		dc.w	loc_1E31A-loc_1E63A
+		dc.w	loc_1E356-loc_1E63A
 loc_1E646:
 		addq.b	#2,routine(a0)
 		move.l	#Aquis_Mappings,mappings(a0) ; loc_1E4E0
