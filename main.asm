@@ -44525,27 +44525,31 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 ; leftovers from ToeJam & Earl REV00 and some source code remnants
 
 ; LevChunk_C2148:
-		binclude	"leftovers/Incomplete chunk data for earlier CNZ.bin"
+		binclude	"leftovers/mappings/128x128/cut-off/CNZ.bin"
+		even
 ; LevBlock_C943C:
-		binclude	"leftovers/Block data for earlier CPZ.bin"
+		binclude	"leftovers/mappings/16x16/CPZ.bin"
+		even
 ; ArtNem_CAA1C:
-		binclude	"leftovers/Art data for earlier CPZ.bin"
+		binclude	"leftovers/art/nemesis/CPZ primary.nem"
 		even
 ; ArtNem_CDFC6:
-		binclude	"leftovers/Initial animated tiles for earlier CPZ.bin"
+		binclude	"leftovers/art/nemesis/Initial animated tiles for earlier CPZ.nem"
 		even
 ; LevChunk_CE03A:
-		binclude	"leftovers/Chunk data for earlier CPZ.bin"
+		binclude	"leftovers/mappings/128x128/CPZ.bin"
+		even
 ; LevBlock_d603A:
-		binclude	"leftovers/Block data for earlier NGHZ.bin"
+		binclude	"leftovers/mappings/16x16/NGHZ.bin"
+		even
 ; ArtNem_d793A:
-		binclude	"leftovers/Art data for earlier NGHZ.bin"
+		binclude	"leftovers/art/nemesis/NGHZ primary.nem"
 		even
 ; ArtNem_DCEEA:
-		binclude	"leftovers/Initial animated tiles for earlier NGHZ.bin"
+		binclude	"leftovers/art/nemesis/Initial animated tiles for earlier NGHZ.nem"
 		even
 ; LevChunk_Dd04A:
-		binclude	"leftovers/Chunk data for earlier NGHZ.bin"
+		binclude	"leftovers/mappings/128x128/NGHZ.bin"
 
 	if PaddingOptimization=0
 		align 4
@@ -44560,13 +44564,14 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 ; leading up to Simon Wai) and somehow this set never got overwritten,fascinating
 
 ; ArtNem_E504A:
-		binclude	"leftovers/Art data for earlier earlier NGHZ.bin"
+		binclude	"leftovers/art/nemesis/cut-off/NGHZ primary.nem"
 		even
 ; ArtNem_E57E6:
-		binclude	"leftovers/Initial animated tiles for earlier NGHZ.bin"
+		binclude	"leftovers/art/nemesis/Initial animated tiles for earlier NGHZ.nem"
 		even
 ; LevChunk_E5946:
-		binclude	"leftovers/Uncompiled chunk data for NGHZ.bin"
+		binclude	"leftovers/mappings/128x128/cut-off/NGHZ.bin"
+		even
 
 ; ===========================================================================
 ; Moving the music and sound effects would cause them to break due to using
@@ -44583,6 +44588,7 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 ; ===========================================================================
 ; Unused duplicate Sega sound
 Sega_SndDup:	binclude	"sound/Unused Sega PCM.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
