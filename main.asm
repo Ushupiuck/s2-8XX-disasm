@@ -44508,9 +44508,11 @@ Nghz_Init_Sprites_Dyn_Reload: ; loc_BF408:	Waterfalls
 BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 		even
 
+	if PaddingOptimization=0
 ; For whatever reason,the assembler compiled the end of the NGHZ chunk data twice...
 ; word_C2138:
 		dc.w	$C00B,$F8C4,$C00B,$5200,$F8C0,$F80E,$F0,0
+	endif
 
 ; ===========================================================================
 ; Leftover data from an earlier build; CPZ's chunk data at this point more
