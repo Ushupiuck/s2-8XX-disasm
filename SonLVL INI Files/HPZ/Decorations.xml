@@ -2,11 +2,11 @@
 <ObjDef xmlns="http://www.sonicretro.org" Name="Decorations" Image="img1">
   <Images>
     <ImageFromMappings id="img1">
-      <ArtFile filename="../art/nemesis/HPZ bridge.bin" />
+      <ArtFile filename="../art/nemesis/HPZ bridge.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj11_HPZ.bin" frame="5" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="img2">
-      <ArtFile filename="../art/nemesis/Pulsing orb from HPZ.bin" />
+      <ArtFile filename="../art/nemesis/Pulsing orb from HPZ.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj71_a.bin" frame="1" startpal="3" />
     </ImageFromMappings>
   </Images>

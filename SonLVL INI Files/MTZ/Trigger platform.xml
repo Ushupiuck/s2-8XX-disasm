@@ -10,7 +10,7 @@
       <MapFile type="Binary" filename="../mappings/sprite/obj65_a.bin" frame="1" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="cog">
-      <ArtFile filename="../art/nemesis/Small cog from MTZ.bin" />
+      <ArtFile filename="../art/nemesis/Small cog from MTZ.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj65_b.bin" frame="0" startpal="3" />
     </ImageFromMappings>
   </Images>

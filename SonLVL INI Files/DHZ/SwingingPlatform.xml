@@ -3,23 +3,23 @@
   <Images>
     <ImageFromMappings id="platform">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../s2b.asm" label="Dhz_Swing_Platforms_Map_01" startpal="0" />
+      <MapFile type="ASM" filename="../main.asm" label="Dhz_Swing_Platforms_Map_01" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="platformwithspikes">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../s2b.asm" label="Dhz_Swing_Platforms_Map_04" startpal="0" />
+      <MapFile type="ASM" filename="../main.asm" label="Dhz_Swing_Platforms_Map_04" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="longchain">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../s2b.asm" label="Dhz_Swing_Platforms_Map_03" startpal="0" />
+      <MapFile type="ASM" filename="../main.asm" label="Dhz_Swing_Platforms_Map_03" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="link">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../s2b.asm" label="Dhz_Swing_Platforms_Map_02" startpal="0" />
+      <MapFile type="ASM" filename="../main.asm" label="Dhz_Swing_Platforms_Map_02" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="base">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../s2b.asm" label="Dhz_Swing_Platforms_Map_02" startpal="0" />
+      <MapFile type="ASM" filename="../main.asm" label="Dhz_Swing_Platforms_Map_02" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Properties>

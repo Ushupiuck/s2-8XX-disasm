@@ -43864,7 +43864,7 @@ FireBall: ; loc_739C6:
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Waterfall in GHZ			; ArtNem_73B3C: Ghz_Waterfall:
-ArtNem_GHZ_Waterfall:	binclude	"art/nemesis/GHZ waterfall tiles.bin"
+ArtNem_GHZ_Waterfall:	binclude	"art/nemesis/GHZ waterfall tiles.nem"
 		even
 
 Htz_Lava_Bubble: ; loc_73C42:
@@ -43873,22 +43873,22 @@ Htz_Lava_Bubble: ; loc_73C42:
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bridge in GHZ				; ArtNem_73D90: Ghz_Bridge:
-ArtNem_GHZ_Bridge:	binclude	"art/nemesis/GHZ bridge.bin"
+ArtNem_GHZ_Bridge:	binclude	"art/nemesis/GHZ bridge.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonally moving lift in HTZ		; ArtNem_73E68: Htz_Teleferic:
-ArtNem_HtzZipline:	binclude	"art/nemesis/HTZ zip-line platform.bin"
+ArtNem_HtzZipline:	binclude	"art/nemesis/HTZ zip-line platform.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; One way barrier from HTZ		; ArtNem_7415C: Htz_Automatic_Door:
-ArtNem_HtzValveBarrier:	binclude	"art/nemesis/One way barrier from HTZ.bin"
+ArtNem_HtzValveBarrier:	binclude	"art/nemesis/One way barrier from HTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ			; ArtNem_741d4: Htz_See_saw:
-ArtNem_HtzSeeSaw:	binclude	"art/nemesis/See-saw in HTZ.bin"
+ArtNem_HtzSeeSaw:	binclude	"art/nemesis/See-saw in HTZ.nem"
 		even
 
 Fireball_1: ; loc_7436C:
@@ -43897,7 +43897,7 @@ Fireball_1: ; loc_7436C:
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Rock from HTZ				; ArtNem_7447A: Htz_Rock:
-ArtNem_HtzRock:	binclude	"art/nemesis/Rock from HTZ.bin"
+ArtNem_HtzRock:	binclude	"art/nemesis/Rock from HTZ.nem"
 		even
 
 Htz_See_saw_badnick: ; loc_745B0:
@@ -43906,57 +43906,57 @@ Htz_See_saw_badnick: ; loc_745B0:
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large spinning wheel from MTZ		; ArtNem_7461C: Mz_Rotating_Gear:
-ArtNem_MtzWheel:	binclude	"art/nemesis/Large spinning wheel from MTZ.bin"
+ArtNem_MtzWheel:	binclude	"art/nemesis/Large spinning wheel from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Indent in large spinning wheel from MTZ	; ArtNem_74A74: Mz_Machine_Ball:
-ArtNem_MtzWheelIndent:	binclude	"art/nemesis/Large spinning wheel from MTZ - indent.bin"
+ArtNem_MtzWheelIndent:	binclude	"art/nemesis/Large spinning wheel from MTZ - indent.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spike block from MTZ			; ArtNem_74B1C: Mz_Block:
-ArtNem_MtzSpikeBlock:	binclude	"art/nemesis/MTZ spike block.bin"
+ArtNem_MtzSpikeBlock:	binclude	"art/nemesis/MTZ spike block.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Steam from MTZ			; ArtNem_74BEA: Mz_Steam:
-ArtNem_MtzSteam:	binclude	"art/nemesis/Steam from MTZ.bin"
+ArtNem_MtzSteam:	binclude	"art/nemesis/Steam from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spike from MTZ			; ArtNem_74CF4: Mz_Harpoon:
-ArtNem_MtzSpike:	binclude	"art/nemesis/Spike from MTZ.bin"
+ArtNem_MtzSpike:	binclude	"art/nemesis/Spike from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Similarly shaded blocks from MTZ	; ArtNem_74DB6: Mz_Screw_Nut:
-ArtNem_MtzAsstBlocks:	binclude	"art/nemesis/Similarly shaded blocks from MTZ.bin"
+ArtNem_MtzAsstBlocks:	binclude	"art/nemesis/Similarly shaded blocks from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lava bubble from MTZ			; ArtNem_74E2C: Mz_Lava_Bubble:
-ArtNem_MtzLavaBubble:	binclude	"art/nemesis/Lava bubble from MTZ.bin"
+ArtNem_MtzLavaBubble:	binclude	"art/nemesis/Lava bubble from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lava cup				; ArtNem_74EE2:
-ArtNem_LavaCup:	binclude	"art/nemesis/Lava cup from MTZ.bin"
+ArtNem_LavaCup:	binclude	"art/nemesis/Lava cup from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Paralellogram platform from MTZ	; ArtNem_74F52: Mz_Parallelogram_Elevator:
-ArtNem_MTZ_Platform:	binclude	"art/nemesis/Paralellogram platform from MTZ.bin"
+ArtNem_MTZ_Platform:	binclude	"art/nemesis/Paralellogram platform from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; End of a bolt and rope from MTZ	; ArtNem_751FE:
-ArtNem_BoltEnd_Rope:	binclude	"art/nemesis/Bolt end and rope from MTZ.bin"
+ArtNem_BoltEnd_Rope:	binclude	"art/nemesis/Bolt end and rope from MTZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Small cog from MTZ			; ArtNem_752A0: Mz_Mini_Gear:
-ArtNem_MtzCog:	binclude	"art/nemesis/Small cog from MTZ.bin"
+ArtNem_MtzCog:	binclude	"art/nemesis/Small cog from MTZ.nem"
 		even
 
 Mz_Teleport: ; Mz_Four_Block: ; loc_75382:
@@ -43964,24 +43964,24 @@ Mz_Teleport: ; Mz_Four_Block: ; loc_75382:
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bridge in HPZ				; ArtNem_7538E: Hpz_Bridge:
-ArtNem_HPZ_Bridge:	binclude	"art/nemesis/HPZ bridge.bin"
+ArtNem_HPZ_Bridge:	binclude	"art/nemesis/HPZ bridge.nem"
 		even
 ; ---------------------------------------------------------------------
 ; Waterfall in HPZ			; Artnem_75506: Hpz_Waterfall:
-ArtNem_HPZ_Waterfall:	binclude	"art/nemesis/HPZ waterfall tiles.bin"
+ArtNem_HPZ_Waterfall:	binclude	"art/nemesis/HPZ waterfall tiles.nem"
 		even
 ; ---------------------------------------------------------------------
 ; (meant to be breakable) emerald from HPZ	; Artnem_75868: Hpz_Emerald:
-ArtNem_HPZ_Emerald:	binclude	"art/nemesis/Emerald from HPZ.bin"
+ArtNem_HPZ_Emerald:	binclude	"art/nemesis/Emerald from HPZ.nem"
 		even
 ; ---------------------------------------------------------------------
 ; Collapsing platform from HPZ		; ArtNem_75ADA: Hpz_Platform:
-ArtNem_HPZPlatform:	binclude	"art/nemesis/Collapsing platform from HPZ.bin"
+ArtNem_HPZPlatform:	binclude	"art/nemesis/Collapsing platform from HPZ.nem"
 		even
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Glowing orb from HPZ			; ArtNem_75B8A: Hpz_Orbs_Comp:
-ArtNem_HPZOrb:		binclude	"art/nemesis/Pulsing orb from HPZ.bin"
+ArtNem_HPZOrb:		binclude	"art/nemesis/Pulsing orb from HPZ.nem"
 		even
 
 Hpz_Unknow_Platform: ; loc_75Dd6:
@@ -43990,87 +43990,87 @@ Hpz_Unknow_Platform: ; loc_75Dd6:
 ; ---------------------------------------------------------------------
 ; Nemesis compressed art
 ; Raising platform from OOZ		; ArtNem_75F70: OOz_Elevator:
-ArtNem_OOZElevator:	binclude	"art/nemesis/Rising platform from OOZ.bin"
+ArtNem_OOZElevator:	binclude	"art/nemesis/Rising platform from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spiked thing from OOZ			; ArtNem_76060: OOz_Giant_Spikeball:
-ArtNem_SpikyThing:	binclude	"art/nemesis/Spiked ball from OOZ.bin"
+ArtNem_SpikyThing:	binclude	"art/nemesis/Spiked ball from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Green platform over the burners in OOZ	; ArtNem_80274: OOz_Touch_Boost_Up:
-ArtNem_BurnerLid:	binclude	"art/nemesis/Burner platform from OOZ.bin"
+ArtNem_BurnerLid:	binclude	"art/nemesis/Burner platform from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Striped blocks from OOZ			; ArtNem_762EE: OOz_Break_Boost:
-ArtNem_StripedBlocksVert:	binclude	"art/nemesis/Striped blocks from OOZ.bin"
+ArtNem_StripedBlocksVert:	binclude	"art/nemesis/Striped blocks from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Oil splashing into oil in OOZ			; ArtNem_7635A: OOz_Oil:
-ArtNem_Oilfall:		binclude	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
+ArtNem_Oilfall:		binclude	"art/nemesis/Cascading oil hitting oil from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Cascading oil from OOZ			; ArtNem_764d6: OOz_Tube_Oil:
-ArtNem_Oilfall2:	binclude	"art/nemesis/Cascading oil from OOZ.bin"
+ArtNem_Oilfall2:	binclude	"art/nemesis/Cascading oil from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Ball thing from OOZ				; ArtNem_76602: OOz_Ball:
-ArtNem_OOZBall:		binclude	"art/nemesis/Ball on spring from OOZ.bin"
+ArtNem_OOZBall:		binclude	"art/nemesis/Ball on spring from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spinball from OOZ				; ArtNem_76722: OOz_Cannon:
-ArtNem_LaunchBall:	binclude	"art/nemesis/Transporter ball from OOZ.bin"
+ArtNem_LaunchBall:	binclude	"art/nemesis/Transporter ball from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Collapsing platform from OOZ			; ArtNem_76A12: OOz_Collapsing_Platform:
-ArtNem_OOZPlatform:	binclude	"art/nemesis/OOZ collapsing platform.bin"
+ArtNem_OOZPlatform:	binclude	"art/nemesis/OOZ collapsing platform.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonal and vertical weird spring from OOZ	; ArtNem_76CA6: OOz_Spring_Push_Boost:
-ArtNem_PushSpring:	binclude	"art/nemesis/Push spring from OOZ.bin"
+ArtNem_PushSpring:	binclude	"art/nemesis/Push spring from OOZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Swinging platform from OOZ			; ArtNem_76E68: OOz_Swing_Platform:
-ArtNem_OOZSwingPlat:	binclude	"art/nemesis/Swinging platform from OOZ.bin"
+ArtNem_OOZSwingPlat:	binclude	"art/nemesis/Swinging platform from OOZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large wooden box from DHZ			; ArtNem_7708A: Dhz_Box:
-ArtNem_Crate:	binclude	"art/nemesis/Large wooden box from DHZ.bin"
+ArtNem_Crate:	binclude	"art/nemesis/Large wooden box from DHZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Collapsing platform from DHZ			; ArtNem_772C8: Dhz_Collapsing_Platform:
-ArtNem_DHZCollapsePlat:	binclude	"art/nemesis/Collapsing platform from DHZ.bin"
+ArtNem_DHZCollapsePlat:	binclude	"art/nemesis/Collapsing platform from DHZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Switch that you pull on from DHZ (not yet programmed)		; ArtNem_77472: Dhz_Vines:
-ArtNem_VineSwitch:	binclude	"art/nemesis/Pull switch from DHZ.bin"
+ArtNem_VineSwitch:	binclude	"art/nemesis/Pull switch from DHZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Vine that lowers in DHZ (not yet programmed)	; ArtNem_7756A: Dhz_Vines_1:
-ArtNem_VinePulley:	binclude	"art/nemesis/Vine that lowers from DHZ.bin"
+ArtNem_VinePulley:	binclude	"art/nemesis/Vine that lowers from DHZ.nem"
 		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ; Log viewed from the end for folding gates in DHZ	; ArtNem_77614: Dhz_Bridge:
-ArtNem_DHZGateLog:	binclude	"art/nemesis/Drawbridge logs from DHZ.bin"
+ArtNem_DHZGateLog:	binclude	"art/nemesis/Drawbridge logs from DHZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Large moving platform from CPZ	; ArtNem_77684: Cpz_Elevator:
-ArtNem_CPZElevator:	binclude	"art/nemesis/Large moving platform from CNZ.bin"
+ArtNem_CPZElevator:	binclude	"art/nemesis/Large moving platform from CNZ.nem"
 		even
 
 Water_Surface: ; loc_777d2:
@@ -44079,12 +44079,12 @@ Water_Surface: ; loc_777d2:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Booster things in CPZ			; ArtNem_77942: Cpz_Speed_Booster:
-ArtNem_CPZBooster:	binclude	"art/nemesis/Speed booster from CPZ.bin"
+ArtNem_CPZBooster:	binclude	"art/nemesis/Speed booster from CPZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; CPZ droplet chain enemy		; ArtNem_779AA: Cpz_Worms:
-ArtNem_CPZDroplet:	binclude	"art/nemesis/CPZ worm enemy.bin"
+ArtNem_CPZDroplet:	binclude	"art/nemesis/CPZ worm enemy.nem"
 		even
 
 Cpz_Metal_Structure: ; loc_77A1C:
@@ -44093,27 +44093,27 @@ Cpz_Metal_Structure: ; loc_77A1C:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; CPZ metal block			; ArtNem_77C26:
-ArtNem_CPZMetalBlock:	binclude	"art/nemesis/CPZ large moving platform blocks.bin"
+ArtNem_CPZMetalBlock:	binclude	"art/nemesis/CPZ large moving platform blocks.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Yellow and black stripy tiles from DEZ	; ArtNem_77C66: Cpz_Automatic_Door:
-ArtNem_ConstructionStripes:	binclude	"art/nemesis/Stripy blocks from CPZ.bin"
+ArtNem_ConstructionStripes:	binclude	"art/nemesis/Stripy blocks from CPZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Yellow flipping platforms and stuff CPZ	; ArtNem_77Cd2: Cpz_Open_Close_Platform:
-ArtNem_CPZAnimatedBits:	binclude	"art/nemesis/Small yellow moving platform from CPZ.bin"
+ArtNem_CPZAnimatedBits:	binclude	"art/nemesis/Small yellow moving platform from CPZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Moving block from CPZ			; ArtNem_77EB4: Cpz_Platforms:
-ArtNem_CPZStairBlock:	binclude	"art/nemesis/Moving block from CPZ.bin"
+ArtNem_CPZStairBlock:	binclude	"art/nemesis/Moving block from CPZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Spring that covers tube in CPZ	; ArtNem_78074: Cpz_Spring_Tubes:
-ArtNem_CPZTubeSpring:	binclude	"art/nemesis/CPZ spintube exit cover.bin"
+ArtNem_CPZTubeSpring:	binclude	"art/nemesis/CPZ spintube exit cover.nem"
 		even
 
 Nghz_Water_Surface: ; loc_78270:
@@ -44125,7 +44125,7 @@ Nghz_Leaves: ; loc_78356:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Arrow shooter and arrow from ARZ	; ArtNem_783E2: Nghz_Arrow_Shooter:
-ArtNem_ArrowAndShooter:	binclude	"art/nemesis/Arrow shooter and arrow from NGHZ.bin"
+ArtNem_ArrowAndShooter:	binclude	"art/nemesis/Arrow shooter and arrow from NGHZ.nem"
 		even
 
 Nghz_Water_Splash: ; loc_78540:
@@ -44134,44 +44134,44 @@ Nghz_Water_Splash: ; loc_78540:
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Button				; ArtNem_78580: Switch:
-ArtNem_Button:	binclude	"art/nemesis/Button.bin"
+ArtNem_Button:	binclude	"art/nemesis/Button.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Vertical Spring			; ArtNem_78658: Vertical_Spring:
-ArtNem_VrtclSprng:	binclude	"art/nemesis/Vertical spring.bin"
+ArtNem_VrtclSprng:	binclude	"art/nemesis/Vertical spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Horizontal Spring			; ArtNem_78774: Horizontal_Spring:
-ArtNem_HrzntlSprng:	binclude	"art/nemesis/Horizontal spring.bin"
+ArtNem_HrzntlSprng:	binclude	"art/nemesis/Horizontal spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Diagonal Spring			; ArtNem_7883E: Diagonal_Spring:
-ArtNem_DignlSprng:	binclude	"art/nemesis/Diagonal spring.bin"
+ArtNem_DignlSprng:	binclude	"art/nemesis/Diagonal spring.nem"
 		even
 
 Head_up_display_Sprites: ; loc_78A12:
 		binclude	"data\sprites\hud.nem" ; Head-up display
 		even
 Head_up_display_Sonic: ; loc_78B1A:
-		binclude	"art/nemesis/Sonic lives counter.bin"
+		binclude	"art/nemesis/Sonic lives counter.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Ring					; ArtNem_78C30: Rings:
-ArtNem_Ring:	binclude	"art/nemesis/Ring.bin"
+ArtNem_Ring:	binclude	"art/nemesis/Ring.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Monitors and powerups			; ArtNem_78d24: Monitors:
-ArtNem_Powerups:	binclude	"art/nemesis/Monitor and contents.bin"
+ArtNem_Powerups:	binclude	"art/nemesis/Monitor and contents.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spikes				; ArtNem_7914E: Spikes:
-ArtNem_Spikes:	binclude	"art/nemesis/Spikes.bin"
+ArtNem_Spikes:	binclude	"art/nemesis/Spikes.nem"
 		even
 
 Enemy_Points_Spr: ; loc_7919E:
@@ -44180,22 +44180,22 @@ Enemy_Points_Spr: ; loc_7919E:
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Checkpoint (unused)			; ArtNem_79278: Lamp_Post:
-ArtNem_Checkpoint:	binclude	"art/nemesis/Checkpoint.bin"
+ArtNem_Checkpoint:	binclude	"art/nemesis/Checkpoint.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Singpost				; ArtNem_7931E: Signpost:
-ArtNem_Signpost:	binclude	"art/nemesis/Signpost.bin"
+ArtNem_Signpost:	binclude	"art/nemesis/Signpost.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Lever spring				; ArtNem_798F4: Diagonal_Spring_1:
-ArtNem_LeverSpring:	binclude	"art/nemesis/Lever spring.bin"
+ArtNem_LeverSpring:	binclude	"art/nemesis/Lever spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Long horizontal spike			; ArtNem_79A44: Dhz_Horizontal_Spikes:
-ArtNem_HorizSpike:	binclude	"art/nemesis/Long horizontal spike.bin"
+ArtNem_HorizSpike:	binclude	"art/nemesis/Long horizontal spike.nem"
 		even
 Air_Bubbles_Numbers: ; loc_79AC0:
 		binclude	"data\sprites\airbubls.nem"
@@ -44206,12 +44206,12 @@ Hpz_Crocobot: ; loc_7A11A:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Buzzer (not Bomber)			; ArtNem_7A4BC: Ghz_Buzzer_Bomber:
-ArtNem_Buzzer:	binclude	"art/nemesis/Buzzer enemy.bin"
+ArtNem_Buzzer:	binclude	"art/nemesis/Buzzer enemy.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Batbot (bat badnik from HPZ)		; ArtNem_7A6A2: Hpz_Batbot:
-ArtNem_Batbot:	binclude	"art/nemesis/Batbot enemy.bin"
+ArtNem_Batbot:	binclude	"art/nemesis/Batbot enemy.nem"
 		even
 OOz_Octus: ; loc_7A9F8:
 		binclude	"data\ooz\octus.nem"
@@ -44222,7 +44222,7 @@ Hpz_Rhinobot: ; loc_7Ad18:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Redz (red dinosaur badnik from HPZ)	; ArtNem_7A6A2: Hpz_Dinobot:
-ArtNem_Redz:	binclude	"art/nemesis/Redz enemy.bin"
+ArtNem_Redz:	binclude	"art/nemesis/Redz enemy.nem"
 		even
 Hpz_Piranha: ; loc_7B4EA:
 		binclude	"data\hpz\piranha.nem"
@@ -44242,17 +44242,17 @@ Bubble_Monster: ; loc_7C2F2:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Snail badnik from GHZ			; ArtNem_7C514: Ghz_Motobug:
-ArtNem_Snail:	binclude	"art/nemesis/Snail badnik from GHZ.bin"
+ArtNem_Snail:	binclude	"art/nemesis/Snail badnik from GHZ.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Bouncer badnik (unused at this point)	; ArtNem_7C710: Crawl:
-ArtNem_Crawl:	binclude	"art/nemesis/Crawl badnik.bin"
+ArtNem_Crawl:	binclude	"art/nemesis/Crawl badnik.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Fish badnik from GHZ			; ArtNem_7CA92: Ghz_Chopper
-ArtNem_Masher:	binclude	"art/nemesis/GHZ Pirahna badnik.bin"
+ArtNem_Masher:	binclude	"art/nemesis/GHZ Pirahna badnik.nem"
 		even
 Robotnik_Ship: ; loc_7CC9E:
 		binclude	"data\sprites\robotnik.nem"
@@ -44272,12 +44272,12 @@ Boss_Smoke: ; loc_7E03E:
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; GHZ Boss				; ArtNem_7E124: Ghz_Boss_Car:
-ArtNem_GHZBoss:	binclude	"art/nemesis/GHZ boss.bin"
+ArtNem_GHZBoss:	binclude	"art/nemesis/GHZ boss.nem"
 		even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; Helicopter blades for GHZ boss	; ArtNem_7E910: Ghz_Boss_Blades:
-ArtNem_EggChoppers:	binclude	"art/nemesis/Chopper blades for GHZ boss.bin"
+ArtNem_EggChoppers:	binclude	"art/nemesis/Chopper blades for GHZ boss.nem"
 		even
 Title_Cards: ; loc_7EA04:
 		binclude	"data\sprites\titlcard.nem" ; Title Cards
@@ -44334,7 +44334,7 @@ BM16_GHZ:	binclude	"mappings/16x16/GHZ.bin"
 ; ----------------------------------------------------------------------------------
 ; GHZ/HTZ main level patterns (Nemesis compression)
 ; ArtNem_81C00: Green_Hill_8x8_Tiles:
-ArtNem_GHZ:	binclude	"art/nemesis/GHZ and HTZ primary.bin"
+ArtNem_GHZ:	binclude	"art/nemesis/GHZ and HTZ primary.nem"
 		even
 ; ---------------------------------------------------------------------------------
 ; HTZ 16x16 block mappings (uncompressed)
@@ -44344,7 +44344,7 @@ BM16_HTZ_End:
 ; ----------------------------------------------------------------------------------
 ; HTZ secondary level patterns (Nemesis compression)
 ; ArtNem_85200: Hill_Top_8x8_Tiles:
-ArtNem_HTZ:	binclude	"art/nemesis/HTZ secondary.bin"
+ArtNem_HTZ:	binclude	"art/nemesis/HTZ secondary.nem"
 		even
 
 Htz_Init_Sprites_Dyn_Reload: ; loc_86626:
@@ -44361,7 +44361,7 @@ BM16_WZ:	binclude	"mappings/16x16/WZ.bin"
 ; ----------------------------------------------------------------------------------
 ; WZ main level patterns (Nemesis compression)
 ; ArtNem_8AB2E: Wood_8x8_Tiles:
-ArtNem_WZ:	binclude	"art/nemesis/WZ primary.bin"
+ArtNem_WZ:	binclude	"art/nemesis/WZ primary.nem"
 		even
 
 Waterfall: ; loc_8E6C6:
@@ -44378,12 +44378,12 @@ BM16_MTZ:	binclude	"mappings/16x16/MTZ.bin"
 ; ----------------------------------------------------------------------------------
 ; MTZ main level patterns (Nemesis compression)
 ; ArtNem_91160: Metropolis_8x8_Tiles:
-ArtNem_MTZ:	binclude	"art/nemesis/MTZ primary.bin"
+ArtNem_MTZ:	binclude	"art/nemesis/MTZ primary.nem"
 		even
 ; ----------------------------------------------------------------------------------
 ; Initial animated tiles for MTZ (Nemesis compression)
 ; ArtNem_94994: Mz_Init_Sprites_Dyn_Reload:
-ArtNem_MTZAnim:	binclude	"art/nemesis/Initial animated tiles for MTZ.bin"
+ArtNem_MTZAnim:	binclude	"art/nemesis/Initial animated tiles for MTZ.nem"
 		even
 ; ----------------------------------------------------------------------------------
 ; MTZ 128x128 block mappings (Kosinski compression)
@@ -44396,7 +44396,7 @@ BM16_HPZ:	binclude	"mappings/16x16/HPZ.bin"
 ; ----------------------------------------------------------------------------------
 ; HPZ main level patterns (Nemesis compression)
 ; ArtNem_98B76: Hidden_Palace_8x8_Tiles:
-ArtNem_HPZ:	binclude	"art/nemesis/HPZ primary.bin"
+ArtNem_HPZ:	binclude	"art/nemesis/HPZ primary.nem"
 		even
 
 Hpz_Init_Sprites_Dyn_Reload: ; loc_9B884: ;	 Orbs
@@ -44413,7 +44413,7 @@ BM16_OOZ:	binclude	"mappings/16x16/OOZ.bin"
 ; ----------------------------------------------------------------------------------
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_9Ed58: Oil_Ocean_8x8_Tiles:
-ArtNem_OOZ:	binclude	"art/nemesis/OOZ primary.bin"
+ArtNem_OOZ:	binclude	"art/nemesis/OOZ primary.nem"
 		even
 
 OOz_Init_Sprites_Dyn_Reload: ; loc_A186A: ;	 red ball,oil ...
@@ -44430,7 +44430,7 @@ BM16_DHZ:	binclude	"mappings/16x16/DHZ.bin"
 ; ----------------------------------------------------------------------------------
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_A5248: Dust_Hill_8x8_Tiles:
-ArtNem_DHZ:	binclude	"art/nemesis/DHZ primary.bin"
+ArtNem_DHZ:	binclude	"art/nemesis/DHZ primary.nem"
 		even
 ; ----------------------------------------------------------------------------------
 ; DHZ 128x128 block mappings (Kosinski compression)
@@ -44443,12 +44443,12 @@ BM16_CNZ:	binclude	"mappings/16x16/CNZ.bin"
 ; ----------------------------------------------------------------------------------
 ; CNZ main level patterns (Nemesis compression)
 ; ArtNem_ABF2A: Casino_Night_8x8_Tiles:
-ArtNem_CNZ:	binclude	"art/nemesis/CNZ primary.bin"
+ArtNem_CNZ:	binclude	"art/nemesis/CNZ primary.nem"
 		even
 ; ----------------------------------------------------------------------------------
 ; Turning cards in CNZ (Nemesis compression)
 ; ArtNem_AEF3C: Cnz_Cards:
-ArtNem_CNZCards:	binclude	"art/nemesis/Turning cards from CNZ.bin"
+ArtNem_CNZCards:	binclude	"art/nemesis/Turning cards from CNZ.nem"
 		even
 ; ----------------------------------------------------------------------------------
 ; CNZ 128x128 block mappings (Kosinski compression)
@@ -44461,7 +44461,7 @@ BM16_CPZ:	binclude	"mappings/16x16/CPZ.bin"
 ; ----------------------------------------------------------------------------------
 ; CPZ main level patterns (Nemesis compression)
 ; ArtNem_B2506: Chemical_Plant_8x8_Tiles:
-ArtNem_CPZ:	binclude	"art/nemesis/CPZ primary.bin"
+ArtNem_CPZ:	binclude	"art/nemesis/CPZ primary.nem"
 		even
 
 Cpz_Init_Sprites_Dyn_Reload: ; loc_B602E:
@@ -44478,7 +44478,7 @@ BM16_NGHZ:	binclude	"mappings/16x16/NGHZ.bin"
 ; ----------------------------------------------------------------------------------
 ; NGHZ main level patterns (Nemesis compression)
 ; ArtNem_B9E58: Neo_Green_Hill_8x8_Tiles:
-ArtNem_NGHZ:	binclude	"art/nemesis/NGHZ primary.bin"
+ArtNem_NGHZ:	binclude	"art/nemesis/NGHZ primary.nem"
 		even
 
 Nghz_Init_Sprites_Dyn_Reload: ; loc_BF408:	Waterfalls

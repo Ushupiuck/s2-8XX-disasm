@@ -11,7 +11,7 @@ namespace S2ObjectDefinitions.HPZ
 
 		public override void Init(ObjectData data)
 		{
-			byte[] artfile = ObjectHelper.OpenArtFile("../art/nemesis/HPZ bridge.bin", CompressionType.Nemesis);
+			byte[] artfile = ObjectHelper.OpenArtFile("../art/nemesis/HPZ bridge.nem", CompressionType.Nemesis);
 			byte[] mapfile = System.IO.File.ReadAllBytes("../mappings/sprite/obj11_HPZ.bin");
 			img = ObjectHelper.MapToBmp(artfile, mapfile, 0, 3);
 		}
