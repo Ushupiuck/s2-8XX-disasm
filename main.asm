@@ -2583,24 +2583,43 @@ PalPtr_SpecStg:	dc.l	Pal_SpecialStage
 		dc.w	$FB00,$1F
 
 Pal_SEGA:		binclude	"art/palettes/Sega screen.bin"
+		even
 Pal_Title:		binclude	"art/palettes/Title screen.bin"
+		even
 Pal_LevelSelect:	binclude	"art/palettes/Level select.bin"
+		even
 Pal_SonicTails:		binclude	"art/palettes/Sonic and Tails.bin"
+		even
 Pal_GHZ:		binclude	"art/palettes/GHZ.bin"
+		even
 Pal_WZ:			binclude	"art/palettes/WZ.bin"
+		even
 Pal_MTZ:		binclude	"art/palettes/MTZ.bin"
+		even
 Pal_HTZ:		binclude	"art/palettes/HTZ.bin"
+		even
 Pal_HPZ:		binclude	"art/palettes/HPZ.bin"
+		even
 Pal_HPZ_U:		binclude	"art/palettes/HPZ underwater.bin"
+		even
 Pal_OOZ:		binclude	"art/palettes/OOZ.bin"
+		even
 Pal_DHZ:		binclude	"art/palettes/DHZ.bin"
+		even
 Pal_CNZ:		binclude	"art/palettes/CNZ.bin"
+		even
 Pal_BLZ:		binclude	"art/palettes/BLZ.bin" ; duplicate of CNZ palette
+		even
 Pal_CPZ:		binclude	"art/palettes/CPZ.bin"
+		even
 Pal_CPZ_U:		binclude	"art/palettes/CPZ underwater.bin"
+		even
 Pal_NGHZ:		binclude	"art/palettes/NGHZ.bin"
+		even
 Pal_NGHZ_U:		binclude	"art/palettes/NGHZ underwater.bin"
+		even
 Pal_SpecialStage:	binclude	"art/palettes/Special Stage.bin"
+		even
 
 		nop
 ; ---------------------------------------------------------------------------
@@ -9280,7 +9299,9 @@ byte_8498:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj11_MapUnc_8598:	binclude	"mappings/sprite/obj11_HPZ.bin"	; HPZ bridge
+		even
 Obj11_MapUnc_85E0:	binclude	"mappings/sprite/obj11_GHZ.bin"	; GHZ bridge
+		even
 
 ;===============================================================================
 ; Object 0x15 - Swing Platforms - Dust Hill / Oil Ocean
@@ -9667,7 +9688,9 @@ loc_8AC0:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj15_MapUnc_8AD8:	binclude	"mappings/sprite/obj15_OOZ.bin"
+		even
 Obj15_MapUnc_8B0E:	binclude	"mappings/sprite/obj15_NGHZ.bin"
+		even
 Obj15_MapUnc_8B46:
 		dc.w	Dhz_Swing_Platforms_Map_01-Obj15_MapUnc_8B46
 		dc.w	Dhz_Swing_Platforms_Map_02-Obj15_MapUnc_8B46
@@ -9841,6 +9864,7 @@ Obj17_Display:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj17_MapUnc_8CDE:	binclude	"mappings/sprite/obj17.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -10131,7 +10155,9 @@ loc_9070:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj18_MapUnc_9078:	binclude	"mappings/sprite/obj18_GHZ.bin"
+		even
 Obj18_MapUnc_90d0:	binclude	"mappings/sprite/obj18_NGHZ.bin"
+		even
 ; ===========================================================================
 
 ;===============================================================================
@@ -10465,8 +10491,11 @@ loc_9828:
 		dc.b	$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10
 		dc.b	$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10
 Obj1A_MapUnc_9858:	binclude	"mappings/sprite/obj1A_HPZ.bin"
+		even
 Obj1A_MapUnc_9902:	binclude	"mappings/sprite/obj1A_OOZ.bin"
+		even
 Obj1A_MapUnc_9942:	binclude	"mappings/sprite/obj1F_DHZ.bin"
+		even
 
 ; ===========================================================================
 		nop
@@ -10594,11 +10623,17 @@ byte_9AF6:	dc.b	$7F, 6,$FD, 2
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj71_MapUnc_9AFA:	binclude	"mappings/sprite/obj71_a.bin"	; glowing orbs
+		even
 Obj1C_MapUnc_9B3A:	binclude	"mappings/sprite/obj1C_a.bin"	; level art
+		even
 Obj1C_MapUnc_9B52:	binclude	"mappings/sprite/obj1C_b.bin"	; NGHZ waterfall
+		even
 Obj1C_MapUnc_9B6A:	binclude	"mappings/sprite/obj1C_OOZ.bin"	; OOZ oil
+		even
 Obj1C_MapUnc_9B9A:	binclude	"mappings/sprite/obj1C_d.bin"	; MTZ thingy
+		even
 Obj71_MapUnc_9BBE:	binclude	"mappings/sprite/obj71_b.bin"	; MTZ lava bubble
+		even
 ; ===========================================================================
 		nop
 
@@ -10664,6 +10699,7 @@ loc_9C84:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj2A_MapUnc_9CAE:	binclude	"mappings/sprite/obj2A.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -10786,6 +10822,7 @@ Obj2D_Solid:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj2D_MapUnc_9E1E:	binclude	"mappings/sprite/obj2D.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -11085,7 +11122,9 @@ byte_A176:	dc.b	 9, 0, 0, 2, 2, 3, 2, 0, 0, 2, 2, 3, 2, 0, 0, 2
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 S1Obj1E_MapUnc_A18E:	binclude	"mappings/sprite/obj1E_S1.bin"	; Ball Hog
+		even
 Obj24_MapUnc_A1F6:	binclude	"mappings/sprite/obj24.bin"	; Buzz Bomber missile explosion
+		even
 
 ; can't split these two in any useful way...
 Obj27_MapUnc_A226:	offsetTable					; explosion from enemy
@@ -11633,9 +11672,13 @@ Obj29_Main:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj28_MapUnc_A816:	binclude	"mappings/sprite/obj28_a.bin"
+		even
 Obj28_MapUnc_A83A:	binclude	"mappings/sprite/obj28_b.bin"
+		even
 Obj28_MapUnc_A85E:	binclude	"mappings/sprite/obj28_c.bin"
+		even
 Obj29_MapUnc_A882:	binclude	"mappings/sprite/obj29.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -11872,6 +11915,7 @@ byte_AB47:	dc.b	  1, 5, 6,$FF
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 S1Obj1F_MapUnc_AB4C:	binclude	"mappings/sprite/obj1F_S1.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -12271,6 +12315,7 @@ byte_B030:	dc.b   5, 4, 5, 6, 7,$FC
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj25_MapUnc_B036:	binclude	"mappings/sprite/obj25.bin"
+		even
 
 Big_Ring_Mappings: ; loc_B09A:
 		dc.w	Big_Ring_Map_01-Big_Ring_Mappings
@@ -12715,6 +12760,7 @@ loc_B6CC:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj26_MapUnc_B6d2:	binclude	"mappings/sprite/obj26.bin"
+		even
 ; ===========================================================================
 		nop
 ; ===========================================================================
@@ -12824,6 +12870,7 @@ return_B894:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj0F_MapUnc_B896:	binclude	"mappings/sprite/obj0F.bin"
+		even
 
 ; ---------------------------------------------------------------------------
 ; (unknown) animation script
@@ -12835,7 +12882,9 @@ byte_B958:	dc.b	7,0,1,2,3,4,5,6,7,$FE,2,0,0,2,$1F,0
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 S1Obj0F_MapUnc_B96A:	binclude	"mappings/sprite/obj0F_S1.bin"	; "PRESS START BUTTON" text and TM; leftover from Sonic 1
+		even
 Obj0E_MapUnc_BAA2:	binclude	"mappings/sprite/obj0E.bin"	; Sonic and Tails on the title screen
+		even
 ; ===========================================================================
 		nop
 
@@ -13893,6 +13942,7 @@ loc_CB9E:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj36_MapUnc_CAB0:	binclude	"mappings/sprite/obj36.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -13937,6 +13987,7 @@ Obj3B_Main:
 ; Unused sprite mappings
 ; ---------------------------------------------------------------------------
 Obj3B_MapUnc_Cd66:	binclude	"mappings/sprite/obj3B.bin"
+		even
 ; ===========================================================================
 		align 4
 
@@ -14089,6 +14140,7 @@ Obj3C_FragmentSpeeds_RightToLeft:
 ; Unused sprite mappings
 ; ---------------------------------------------------------------------------
 Obj3C_MapUnc_CF04:	binclude	"mappings/sprite/obj3C.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -17601,6 +17653,7 @@ loc_F40B:	dc.b $0F,$00,$FF
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj0D_MapUnc_F40E:	binclude	"mappings/sprite/obj0D.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -24466,6 +24519,7 @@ loc_13D8C:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj79_MapUnc_13D8E:	binclude	"mappings/sprite/obj79.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -25306,6 +25360,7 @@ return_147CE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj03_MapUnc_147d0:	binclude	"mappings/sprite/obj03.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -25403,6 +25458,7 @@ byte_1498E:	dc.b	7, 4, 3, 2, 1, 0, $FE, 1
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj0B_MapUnc_14996:	binclude	"mappings/sprite/obj0B.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -25502,6 +25558,7 @@ loc_14Ad2:
 ; Unused sprite mappings
 ; ---------------------------------------------------------------------------
 Obj0C_MapUnc_14AE6:	binclude	"mappings/sprite/obj0C.bin"
+		even
 
 ; ===========================================================================
 		nop
@@ -25554,6 +25611,7 @@ Obj12_Main:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj12_MapUnc_14B62:	binclude	"mappings/sprite/obj12.bin"
+		even
 ; ===========================================================================
 		nop
 
@@ -25687,6 +25745,7 @@ Obj13_ChkDel2:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj13_MapUnc_14CF4:	binclude	"mappings/sprite/obj13.bin"
+		even
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -25789,10 +25848,12 @@ loc_151BE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj04_MapUnc_151C2:	binclude	"mappings/sprite/obj04_a.bin"
+		even
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
-Obj04_MapUnc_152B2:	binclude	"mappings/sprite/obj04_b.bin"	; took me awhile to realize I accidentally binclude'd the above mappings twice,oops
+Obj04_MapUnc_152B2:	binclude	"mappings/sprite/obj04_b.bin"
+		even
 
 ;===============================================================================
 ; Object 0x49 - Green Hill - Waterfalls
@@ -25856,6 +25917,7 @@ loc_153FC:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj49_MapUnc_15404:	binclude	"mappings/sprite/obj49.bin"
+		even
 ;===============================================================================
 ; Object 0x49 - Green Hill - Waterfalls
 ; [ End ]
@@ -25970,6 +26032,7 @@ loc_156B0:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj74_MapUnc_156B2:	binclude	"mappings/sprite/obj74.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_15720:
@@ -26682,7 +26745,9 @@ Obj14_FlatCol:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj14_MapUnc_15F54:	binclude	"mappings/sprite/obj14_a.bin"
+		even
 Obj14_MapUnc_15FE0:	binclude	"mappings/sprite/obj14_b.bin"
+		even
 
 ; ===========================================================================
 ; loc_15FF8:
@@ -26803,6 +26868,7 @@ Obj16_Fall:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj16_MapUnc_1611E:	binclude	"mappings/sprite/obj16.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_16204:
@@ -27004,6 +27070,7 @@ loc_163FE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj19_MapUnc_16412:	binclude	"mappings/sprite/obj19.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_16450:
@@ -27123,6 +27190,7 @@ loc_16562:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj1B_MapUnc_1658A:	binclude	"mappings/sprite/obj1B.bin"
+		even
 ; ===========================================================================
 ; loc_165A4:
 JmpTo2_MarkObjGone:
@@ -27239,6 +27307,7 @@ loc_166FE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj1D_MapUnc_16702:	binclude	"mappings/sprite/obj1D.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_16710:
@@ -28310,11 +28379,14 @@ loc_17862:
 ; Sprite mappings - Obj2F
 ; ---------------------------------------------------------------------------
 Obj2F_MapUnc_1786A:	binclude	"mappings/sprite/obj2F.bin"
+		even
 ; ---------------------------------------------------------------------------
 ; Sprite mappings - Obj32
 ; ---------------------------------------------------------------------------
 Obj32_MapUnc_179C2:	binclude	"mappings/sprite/obj32_HTZ.bin"	; HTZ rock
+		even
 Obj32_MapUnc_179F6:	binclude	"mappings/sprite/obj32_CPZ.bin" ; CPZ tube cover
+		even
 ; ===========================================================================
 		nop
 ; loc_17A1C:
@@ -28658,6 +28730,7 @@ loc_17EE0:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj33_MapUnc_17EE2:	binclude	"mappings/sprite/obj33.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_17EF8:
@@ -28800,6 +28873,7 @@ loc_1808C:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj43_MapUnc_1808E:	binclude	"mappings/sprite/obj43.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_180C4:
@@ -29222,6 +29296,7 @@ loc_185A0:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj45_MapUnc_185C2:	binclude	"mappings/sprite/obj45.bin"
+		even
 ; ===========================================================================
 
 ;===============================================================================
@@ -29403,6 +29478,7 @@ loc_18CF4:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj46_MapUnc_18CFA:	binclude	"mappings/sprite/obj46.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_18d6C:
@@ -29488,6 +29564,7 @@ loc_18E3A:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj47_MapUnc_18E3E:	binclude	"mappings/sprite/obj47.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_18E64:
@@ -29720,6 +29797,7 @@ loc_1912E:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj3D_MapUnc_1916E:	binclude	"mappings/sprite/obj3D.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_19218:
@@ -29947,6 +30025,7 @@ loc_194C8:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj48_MapUnc_194CA:	binclude	"mappings/sprite/obj48.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1964C:
@@ -30077,6 +30156,7 @@ loc_197BD:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj22_MapUnc_197C6:	binclude	"mappings/sprite/obj22.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1982C:
@@ -30714,6 +30794,7 @@ loc_1A2B0:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj2C_MapUnc_1A2BC:	binclude	"mappings/sprite/obj2C.bin"
+		even
 
 ; ===========================================================================
 ; loc_1A2EC:
@@ -30903,6 +30984,7 @@ loc_1A585:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj40_MapUnc_1A58A:	binclude	"mappings/sprite/obj40.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1A5B4:
@@ -31082,6 +31164,7 @@ loc_1A7FA:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj42_MapUnc_1A7FE:	binclude	"mappings/sprite/obj42.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1A890:
@@ -31213,6 +31296,7 @@ loc_1A9E4:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj64_MapUnc_1A9F0:	binclude	"mappings/sprite/obj64.bin"
+		even
 
 ;===============================================================================
 ; Object 0x64 - Metropolis - Pistons
@@ -31540,7 +31624,9 @@ loc_1AE26:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj65_MapUnc_1AE2C:	binclude	"mappings/sprite/obj65_a.bin"
+		even
 Obj65_MapUnc_1AE68:	binclude	"mappings/sprite/obj65_b.bin"
+		even
 
 ;===============================================================================
 ; Object 0x65 - Metropolis - Platform Over Gears
@@ -31695,6 +31781,7 @@ loc_1B068:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj66_MapUnc_1B084:	binclude	"mappings/sprite/obj66.bin"
+		even
 
 ;===============================================================================
 ; Object 0x66 - Metropolis - Springs on Walls
@@ -32186,6 +32273,7 @@ loc_1B6D8:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj68_MapUnc_1B6DC:	binclude	"mappings/sprite/obj68.bin"
+		even
 
 ;===============================================================================
 ; Object 0x68 - Metropolis - Block with Arrow
@@ -32418,6 +32506,7 @@ loc_1B9A2:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj69_MapUnc_1B9A6:	binclude	"mappings/sprite/obj69.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1BA10:
@@ -32608,6 +32697,7 @@ loc_1BC92:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj6A_MapUnc_1BCB0:	binclude	"mappings/sprite/obj6A.bin"
+		even
 ; ===========================================================================
 ; loc_1BCd4:
 JmpTo7_SingleObjLoad2:
@@ -32846,6 +32936,7 @@ loc_1BF34:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj6B_MapUnc_1BF4A:	binclude	"mappings/sprite/obj6B.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1BF58:
@@ -33087,6 +33178,7 @@ loc_1C278:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj6C_MapUnc_1C2AA:	binclude	"mappings/sprite/obj6C.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1C2C0:
@@ -33236,6 +33328,7 @@ JmpTo29_DeleteObject:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj6E_MapUnc_1C464:	binclude	"mappings/sprite/obj6E.bin"
+		even
 
 ;===============================================================================
 ; Object 0x6E - Metropolis - Machine
@@ -33396,6 +33489,7 @@ loc_1C6BE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj6F_MapUnc_1C7BE:	binclude	"mappings/sprite/obj6F.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1C844:
@@ -33529,6 +33623,7 @@ loc_1C9B6:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj70_MapUnc_1CA16:	binclude	"mappings/sprite/obj70.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1CBB8:
@@ -33765,6 +33860,7 @@ Obj73_SubObject:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj73_MapUnc_1CE1C:	binclude	"mappings/sprite/obj73.bin"
+		even
 ; ===========================================================================
 ; loc_1CE28:
 JmpTo12_DisplaySprite:
@@ -33925,6 +34021,7 @@ loc_1CFEC:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj75_MapUnc_1d00A:	binclude	"mappings/sprite/obj75.bin"
+		even
 ; ============================================================================
 		nop
 ; loc_1d040:
@@ -34069,6 +34166,7 @@ loc_1d1B8:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj76_MapUnc_1d1BA:	binclude	"mappings/sprite/obj76.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1d1F0:
@@ -34159,6 +34257,7 @@ loc_1d2DA:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj77_MapUnc_1d2E0:	binclude	"mappings/sprite/obj77.bin"
+		even
 ; ===========================================================================
 ; loc_1d3AC:
 JmpTo19_MarkObjGone:
@@ -34491,6 +34590,7 @@ loc_1d72A:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj7A_MapUnc_1d72C:	binclude	"mappings/sprite/obj7A.bin"
+		even
 ; ===========================================================================
 ; loc_1d738:
 JmpTo11_SingleObjLoad2:
@@ -34652,6 +34752,7 @@ loc_1D917:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj7B_MapUnc_1D920:	binclude	"mappings/sprite/obj7B.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_1D964:
@@ -35124,6 +35225,7 @@ loc_1DFC3:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj4F_MapUnc_1DFCA:	binclude	"mappings/sprite/obj4F.bin"
+		even
 
 ; ===========================================================================
 		align 4
@@ -35964,6 +36066,7 @@ loc_1EB05:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj4B_MapUnc_1EB0E:	binclude	"mappings/sprite/obj4B.bin"
+		even
 
 ;===============================================================================
 ; Object 0x4B - Green Hill - Buzz Bomber
@@ -36399,6 +36502,7 @@ loc_1F0FE:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj4C_MapUnc_1F106:	binclude	"mappings/sprite/obj4C.bin"
+		even
 ; ===========================================================================
 		align 4
 ; loc_1F2DC:
@@ -36657,6 +36761,7 @@ byte_1F692:	dc.b	7, 0,$FF
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj53_MapUnc_1F696:	binclude	"mappings/sprite/obj53.bin"
+		even
 
 ; ===========================================================================
 		align 4
@@ -36837,6 +36942,7 @@ loc_1F934:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj54_MapUnc_1F938:	binclude	"mappings/sprite/obj54.bin"
+		even
 
 ;===============================================================================
 ; Object 0x54 - Green Hill - Motobug
@@ -37852,6 +37958,7 @@ Obj8A_Display:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj8A_MapUnc_207C6:	binclude	"mappings/sprite/obj8A.bin"
+		even
 ; ===========================================================================
 		nop
 ; loc_20E54:
@@ -40534,6 +40641,7 @@ Obj21_Display2:
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj21_MapUnc_22E80:	binclude	"mappings/sprite/obj21.bin"
+		even
 
 ;===============================================================================
 ; AddPoints - Sub-routine
@@ -40991,10 +41099,13 @@ loc_2343C:
 		bra.s	loc_2342A
 loc_23448:
 		binclude	"data\sprites\bignumbr.dat"
+		even
 loc_23748:
 		binclude	"data\sprites\smallnum.dat"
+		even
 loc_23888:
 		binclude	"data\sprites\debugnum.dat"
+		even
 ; loc_23B68:
 JmpTo40_Adjust2PArtPointer:
 		jmp	(Adjust2PArtPointer).l
@@ -42206,6 +42317,7 @@ loc_24A0C:
 	if PaddingOptimization=0
 Unknow_Data_0x024A30:
 		binclude	"misc/24A30.bin"
+		even
 	else
 		align	$8000
 	endif
@@ -42214,75 +42326,99 @@ Unknow_Data_0x024A30:
 ; Animated flowers in GHZ and HTZ ; ArtUnc_28000: ArtUnc_28080: ArtUnc_21800: ArtUnc_28180:
 ;---------------------------------------------------------------------------------------
 ArtUnc_Flowers1:	binclude	"art/uncompressed/GHZ and HTZ flowers - 1.bin"
+		even
 ArtUnc_Flowers2:	binclude	"art/uncompressed/GHZ and HTZ flowers - 2.bin"
+		even
 ArtUnc_Flowers3:	binclude	"art/uncompressed/GHZ and HTZ flowers - 3.bin"
+		even
 ArtUnc_Flowers4:	binclude	"art/uncompressed/GHZ and HTZ flowers - 4.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Pulsing thing against checkered backing from GHZ ; ArtUnc_28200: Ghz_Dyn_Wall:
 ArtUnc_GHZPulseBall:	binclude	"art/uncompressed/Pulsing ball against checkered background (GHZ).bin"
+		even
 
 Hill_Top_Background:	 ; loc_28300:
 		binclude	"data\htz\backgnd.nem"
 		even
 Hill_Top_Background_Unc: ; loc_28C2A:
 		binclude	"data\htz\backgnd.dat"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Spinning metal cylinder patterns in MTZ	; ArtUnc_2902A: Mz_Spinnig_Cylinder:
 ArtUnc_MTZCylinder:	binclude	"art/uncompressed/Spinning metal cylinder (MTZ).bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Lava patterns in MTZ and HTZ			; ArtUnc_2A02A: Mz_Lava:
 ArtUnc_Lava:	binclude	"art/uncompressed/Lava.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Animated section of MTZ background		; ArtUnc_2A06A: Mz_Pistons:
 ArtUnc_MTZAnimBack:	binclude	"art/uncompressed/Animated section of MTZ background.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Unused spinning drills in MTZ			; ArtUnc_2A86A: Mz_Drills:
 ArtUnc_Drills:	binclude	"art/uncompressed/Spinning drills (MTZ).bin"
+		even
 
 HPz_Dyn_Background:		 ; loc_2B06A: Unused - Left over from previous build
 		binclude	"data\hpz\backgnd.dat"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Pulsing orb in HPZ				; ArtUnc_2B46A: HPz_Orbs:
 ArtUnc_HPZPulseOrb:	binclude	"art/uncompressed/Pulsing orb (HPZ).bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Pulsing ball in OOZ				; ArtUnc_2B76A: Ooz_Red_Balls:
 ArtUnc_OOZPulseBall:	binclude	"art/uncompressed/Pulsing ball (OOZ).bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Square rotating around ball in OOZ		; ArtUnc_2B8EA: ArtUnc_2BAEA:
 ArtUnc_OOZSquareBall1:	binclude	"art/uncompressed/Square rotating around ball in OOZ - 1.bin"
+		even
 ArtUnc_OOZSquareBall2:	binclude	"art/uncompressed/Square rotating around ball in OOZ - 2.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Oil in OOZ					; ArtUnc_2BCEA: ArtUnc_2C4EA:
 ArtUnc_Oil1:	binclude	"art/uncompressed/Oil - 1.bin"
+		even
 ArtUnc_Oil2:	binclude	"art/uncompressed/Oil - 2.bin"
+		even
 
 CPz_Dyn_Background:		 ; loc_2CCEA:
 		binclude	"data\cpz\backgnd.dat"
+		even
 NGHz_Water_Falls_1:		 ; loc_2CEEA:
 		binclude	"data\nghz\water_f1.dat"
+		even
 NGHz_Water_Falls_2:		 ; loc_2CFEA:
 		binclude	"data\nghz\water_f2.dat"
+		even
 NGHz_Water_Falls_3:		 ; loc_2d0EA:
 		binclude	"data\nghz\water_f3.dat"
+		even
 ;===============================================================================
 ; Colision Array
 ; [ Begin ]
 ;===============================================================================
 AngleMap: ; loc_2d1EA:
 		binclude	"level/collision/Curve and resistance mappings.bin"
+		even
 Colision_Array_1: ; loc_2d2EA:
 		binclude	"level/collision/Collision array 1.bin"
+		even
 Colision_Array_2: ; loc_2E2EA:
 		binclude	"level/collision/Collision array 2.bin"
+		even
 ;===============================================================================
 ; Colision Array
 ; [ End ]
@@ -42293,32 +42429,46 @@ Colision_Array_2: ; loc_2E2EA:
 ;===============================================================================
 Green_Hill_Colision_1:	   ; loc_2F2EA:
 		binclude	"level/collision/GHZ primary 16x16 collision index.bin"
+		even
 Green_Hill_Colision_2:	   ; loc_2F5EA:
 		binclude	"level/collision/GHZ secondary 16x16 collision index.bin"
+		even
 Wood_Colision:			   ; loc_2F8EA:
 		binclude	"level/collision/WZ 16x16 collision index.bin"
+		even
 Metropolis_Colision:	   ; loc_2FBEA:
 		binclude	"level/collision/MTZ 16x16 collision index.bin"
+		even
 Hidden_Palace_Colision_1:  ; loc_2FEEA:
 		binclude	"level/collision/HPZ primary 16x16 collision index.bin"
+		even
 Hidden_Palace_Colision_2:  ; loc_301EA:
 		binclude	"level/collision/HPZ secondary 16x16 collision index.bin"
+		even
 Oil_Ocean_Colision:		   ; loc_304EA:
 		binclude	"level/collision/OOZ 16x16 collision index.bin"
+		even
 Dust_Hill_Colision:		   ; loc_307EA:
 		binclude	"level/collision/DHZ 16x16 collision index.bin"
+		even
 Casino_Night_Colision_1:   ; loc_30AEA:
 		binclude	"level/collision/CNZ primary 16x16 collision index.bin"
+		even
 Casino_Night_Colision_2:   ; loc_30DEA:
 		binclude	"level/collision/CNZ secondary 16x16 collision index.bin"
+		even
 Chemical_Plant_Colision_1: ; loc_310EA:
 		binclude	"level/collision/CPZ primary 16x16 collision index.bin"
+		even
 Chemical_Plant_Colision_2: ; loc_313EA:
 		binclude	"level/collision/CPZ secondary 16x16 collision index.bin"
+		even
 Neo_Green_Hill_Colision_1: ; loc_316EA:
 		binclude	"level/collision/NGHZ primary 16x16 collision index.bin"
+		even
 Neo_Green_Hill_Colision_2: ; loc_319EA:
 		binclude	"level/collision/NGHZ secondary 16x16 collision index.bin"
+		even
 ;===============================================================================
 ; 16x16 Colision Index
 ; [ End ]
@@ -42329,16 +42479,22 @@ Neo_Green_Hill_Colision_2: ; loc_319EA:
 ;===============================================================================
 Special_Stage_1: ; loc_31CEA:
 		binclude	"misc/Special Stage 1 layout.bin"
+		even
 Special_Stage_2: ; loc_31F64:
 		binclude	"misc/Special Stage 2 layout.bin"
+		even
 Special_Stage_3: ; loc_32376:
 		binclude	"misc/Special Stage 3 layout.bin"
+		even
 Special_Stage_4: ; loc_326d2:
 		binclude	"misc/Special Stage 4 layout.bin"
+		even
 Special_Stage_5: ; loc_32BAC:
 		binclude	"misc/Special Stage 5 layout.bin"
+		even
 Special_Stage_6: ; loc_3305C:
 		binclude	"misc/Special Stage 6 layout.bin"
+		even
 ;===============================================================================
 ; Special Stage Layout
 ; [ End ]
@@ -42421,82 +42577,116 @@ Off_Level: zoneOrderedOffsetTable 2,4
 
 Ghz_1_Foreground:  ; loc_333d6:
 		binclude	"level/layout/GHZ_1.bin"
+		even
 Ghz_2_Foreground:  ; loc_33BD8:
 		binclude	"level/layout/GHZ_2.bin"
+		even
 Ghz_Background:	   ; loc_343DA:
 		binclude	"level/layout/GHZ_BG.bin"
+		even
 Null_Layout_1:	   ; loc_343E4:
 		dc.l 0
 Wz_1_Foreground:   ; loc_343E8:
 		binclude	"level/layout/WZ_1.bin"
+		even
 Wz_2_Foreground:   ; loc_34BEA:
 		binclude	"level/layout/WZ_2.bin"
+		even
 Wz_1_Background:   ; loc_353EC:
 		binclude	"level/layout/WZ_1_BG.bin"
+		even
 Wz_2_Background:   ; loc_35BEE:
 		binclude	"level/layout/WZ_2_BG.bin"
+		even
 Null_Layout_2:	   ; loc_363F0:
 		dc.l 0
 Mz_1_Foreground:   ; loc_363F4:
 		binclude	"level/layout/MTZ_1.bin"
+		even
 Mz_2_Foreground:   ; loc_36BF6:
 		binclude	"level/layout/MTZ_2.bin"
+		even
 Mz_Background:	   ; loc_373F8:
 		binclude	"level/layout/MTZ_BG.bin"
+		even
 Mz_3_Foreground:   ; loc_3741E:
 		binclude	"level/layout/MTZ_3.bin"
+		even
 Null_Layout_3:	   ; loc_37C20:
 		dc.l 0
 Htz_1_Foreground:  ; loc_37C24:
 		binclude	"level/layout/HTZ_1.bin"
+		even
 Htz_2_Foreground:  ; loc_38426:
 		binclude	"level/layout/HTZ_2.bin"
+		even
 Htz_1_Background:  ; loc_38C28:
 		binclude	"level/layout/HTZ_1_BG.bin"
+		even
 Htz_2_Background:  ; loc_3942A:
 		binclude	"level/layout/HTZ_2_BG.bin"
+		even
 Hpz_Foreground:	   ; loc_39C2C:
 		binclude	"level/layout/HPZ_1.bin"
+		even
 Hpz_Background:	   ; loc_3942E:
 		binclude	"level/layout/HPZ_BG.bin"
+		even
 Null_Layout_4:	   ; loc_3A478:
 		dc.l 0
 OOz_1_Foreground:  ; loc_3A47C:
 		binclude	"level/layout/OOZ_1.bin"
+		even
 OOz_2_Foreground:  ; loc_3AC7E:
 		binclude	"level/layout/OOZ_2.bin"
+		even
 OOz_Background:	   ; loc_3B480:
 		binclude	"level/layout/OOZ_BG.bin"
+		even
 Dhz_1_Foreground:  ; loc_3B49A:
 		binclude	"level/layout/DHZ_1.bin"
+		even
 Dhz_2_Foreground:  ; loc_3BC9C:
 		binclude	"level/layout/DHZ_2.bin"
+		even
 Dhz_Background:	   ; loc_3C49E:
 		binclude	"level/layout/DHZ_BG.bin"
+		even
 Cnz_1_Foreground:  ; loc_3C4B0:
 		binclude	"level/layout/CNZ_1.bin"
+		even
 Cnz_2_Foreground:  ; loc_3CCB2:
 		binclude	"level/layout/CNZ_2.bin"
+		even
 Cnz_1_Background:  ; loc_3d4B4:
 		binclude	"level/layout/CNZ_1_BG.bin"
+		even
 Cnz_2_Background:  ; loc_3DCB6:
 		binclude	"level/layout/CNZ_2_BG.bin"
+		even
 Cpz_1_Foreground:  ; loc_3DCC0:
 		binclude	"level/layout/CPZ_1.bin"
+		even
 Cpz_2_Foreground:  ; loc_3E4C2:
 		binclude	"level/layout/CPZ_2.bin"
+		even
 Cpz_Background:	   ; loc_3ECC4:
 		binclude	"level/layout/CPZ_BG.bin"
+		even
 Null_Layout_5:	   ; loc_3ECF0:
 		dc.l 0
 Nghz_1_Foreground: ; loc_3ECF4:
 		binclude	"level/layout/NGHZ_1.bin"
+		even
 Nghz_2_Foreground: ; loc_3F4F6:
 		binclude	"level/layout/NGHZ_2.bin"
+		even
 Nghz_1_Background: ; loc_3ECF8:
 		binclude	"level/layout/NGHZ_1_BG.bin"
+		even
 Nghz_2_Background: ; loc_404FA:
 		binclude	"level/layout/NGHZ_2_BG.bin"
+		even
 Null_Layout_6:	   ; loc_40CFC:
 		dc.l 0
 ;===============================================================================
@@ -42505,21 +42695,28 @@ Null_Layout_6:	   ; loc_40CFC:
 ;===============================================================================
 loc_40d00: ; Big Ring - Left Over from Sonic 1
 		binclude	"data\sprites\bigring.dat"
+		even
 loc_41940: ; Neo Green Hill Foreground Act 2 overwrite by Big Ring- Left Over from previous build ???
 		binclude	"data\nghz\fgunused.dat"
+		even
 loc_41B72: ; Neo Green Hill Background Act 1 - Left Over from previous build ???
 		binclude	"data\nghz\backact1.dat"
+		even
 loc_42374: ; Neo Green Hill Background Act 2 - Left Over from previous build ???
 		binclude	"data\nghz\bgunused.dat"
+		even
 loc_42B76: ; Filler for Null Level Layout - Left Over from previous build ???
 		dc.l 0
 loc_42B7A: ; Another Big Ring - Left Over from Sonic 1
 		binclude	"data\sprites\bigring.dat"
+		even
+
 	if PaddingOptimization=0
 Unknow_Pallete_0x0437BA: ; loc_437BA:
 		dc.w	$000,$262,$2A4,$4E8,$000,$EEE
 Unknow_Data_0x0437C6: ; loc_437C6:
 		binclude	"misc/437C6.bin"
+		even
 	endif
 ;===============================================================================
 ; Level Object Layout
@@ -42615,10 +42812,13 @@ Null_Objects_Layout:
 	if PaddingOptimization=0
 Unknow_Data_0x04634E: ; loc_4634E:
 		binclude	"misc/4634E.bin"
+		even
 Unknow_Pallete_0x0474AC:
 		binclude	"misc/474AC.bin"
+		even
 Unknow_Data_0x04760C:
 		binclude	"misc/4760C.bin"
+		even
 	endif
 ;===============================================================================
 ; Level Rings Layout
@@ -42663,47 +42863,69 @@ Rings_Layout: zoneOrderedOffsetTable 2,2
 	zoneTableEnd
 
 Ghz_1_Rings_Layout:	binclude	"level/rings/GHZ_1.bin"
+		even
 Ghz_2_Rings_Layout:	binclude	"level/rings/GHZ_2.bin"
+		even
 Id_0100_Rings_Layout: ; loc_483DC:
 		dc.w	$FFFF
 Id_0101_Rings_Layout: ; loc_483DE:
 		dc.w	$FFFF
 Wz_1_Rings_Layout:	binclude	"level/rings/WZ_1.bin"
+		even
 Wz_2_Rings_Layout:	binclude	"level/rings/WZ_2.bin"
+		even
 Id_0300_Rings_Layout: ; loc_483E4:
 		dc.w	$FFFF
 Id_0301_Rings_Layout: ; loc_483E6:
 		dc.w	$FFFF
 Mz_1_Rings_Layout:	binclude	"level/rings/MTZ_1.bin"
+		even
 Mz_2_Rings_Layout:	binclude	"level/rings/MTZ_2.bin"
+		even
 Mz_3_Rings_Layout:	binclude	"level/rings/MTZ_3.bin"
+		even
 Mz_4_Rings_Layout:	binclude	"level/rings/MTZ_4.bin"
+		even
 Id_0600_Rings_Layout: ; loc_483F0:
 		dc.w	$FFFF
 Id_0601_Rings_Layout: ; loc_483F2:
 		dc.w	$FFFF
 Htz_1_Rings_Layout:	binclude	"level/rings/HTZ_1.bin"
+		even
 Htz_2_Rings_Layout:	binclude	"level/rings/HTZ_2.bin"
+		even
 Hpz_1_Rings_Layout:	binclude	"level/rings/HPZ_1.bin"
+		even
 Hpz_2_Rings_Layout:	binclude	"level/rings/HPZ_2.bin"
+		even
 Id_0900_Rings_Layout: ; loc_487C8:
 		dc.w	$FFFF
 Id_0901_Rings_Layout: ; loc_487CA:
 		dc.w	$FFFF
 OOz_1_Rings_Layout:	binclude	"level/rings/OOZ_1.bin"
+		even
 OOz_2_Rings_Layout:	binclude	"level/rings/OOZ_2.bin"
+		even
 DHz_1_Rings_Layout:	binclude	"level/rings/DHZ_1.bin"
+		even
 DHz_2_Rings_Layout:	binclude	"level/rings/DHZ_2.bin"
+		even
 CNz_1_Rings_Layout:	binclude	"level/rings/CNZ_1.bin"
+		even
 CNz_2_Rings_Layout:	binclude	"level/rings/CNZ_2.bin"
+		even
 CPz_1_Rings_Layout:	binclude	"level/rings/CPZ_1.bin"
+		even
 CPz_2_Rings_Layout:	binclude	"level/rings/CPZ_2.bin"
+		even
 GCz_1_Rings_Layout:	  ; loc_48B94:
 		dc.w	$FFFF
 GCz_2_Rings_Layout:	  ; loc_48B96:
 		dc.w	$FFFF
 NGHz_1_Rings_Layout:	binclude	"level/rings/NGHZ_1.bin"
+		even
 NGHz_2_Rings_Layout:	binclude	"level/rings/NGHZ_2.bin"
+		even
 DEz_1_Rings_Layout:	  ; loc_48DB0:
 		dc.w	$FFFF
 DEz_2_Rings_Layout:	  ; loc_48DB2:
@@ -42715,19 +42937,25 @@ DEz_2_Rings_Layout:	  ; loc_48DB2:
 	if PaddingOptimization=0
 Unknow_Data_0x048DB4: ; loc_48DB4:
 		binclude	"misc/48DB4.bin"
+		even
 Rock_Splashing: ; loc_4B76C:
 		binclude	"data\sprites\rockspsh.dat"
+		even
 Unknow_Palett_0x04BAAC: ; loc_4BAAC:
 		binclude	"misc/4BAAC.bin"
+		even
 Unknow_Data_0x04BC4C: ; loc_4BC4C:
 		binclude	"misc/4BC4C.bin"
+		even
 Fire_In_Bowl: ; loc_4E86C:
 		binclude	"data\sprites\firebowl.dat"
+		even
 
 		dc.b	[$194]$FF
 
 Unknow_Data_0x04EE00: ; loc_4EE00:
 		binclude	"misc/4EE00.bin"
+		even
 
 		dc.b	[$468]$FF
 	else
@@ -42738,17 +42966,21 @@ Unknow_Data_0x04EE00: ; loc_4EE00:
 ; Patterns for Sonic  ; ArtUnc_50000:
 ;---------------------------------------------------------------------------------------
 ArtUnc_Sonic:	binclude	"art/uncompressed/Sonic's art.bin"
+		even
 ;--------------------------------------------------------------------------------------
 ; Sprite Mappings
 ; Sonic			; MapUnc_614C0: Sonic_Mappings:
 ;--------------------------------------------------------------------------------------
 MapUnc_Sonic:	binclude	"mappings/sprite/Sonic.bin"
+		even
 Tails_Sprites:	binclude	"data\sprites\tails.dat"
+		even
 ;--------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Sonic DPLCs			; MapRUnc_6DA4C: Sonic_Dyn_Script:
 ;--------------------------------------------------------------------------------------
 MapRUnc_Sonic:	binclude	"mappings/spriteDPLC/Sonic.bin"
+		even
 
 ArtNem_Shield: ; loc_6DF8E:
 		binclude	"data\sprites\shield.nem"
@@ -42758,6 +42990,7 @@ Invencibility_Stars: ; loc_6E114:
 		even
 Unused_Dust: ; loc_6E1FC:
 		binclude	"data\sprites\dust.dat"
+		even
 Tails_Mappings: ; loc_6FB3C:
 		dc.w	loc_6FC46-Tails_Mappings
 		dc.w	loc_6FC48-Tails_Mappings
