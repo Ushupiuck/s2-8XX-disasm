@@ -44331,6 +44331,7 @@ Bear: ; loc_80B04:
 ; GHZ 16x16 block mappings (uncompressed)
 ; LevBlock_80C60: Green_Hill_16x16_Map:
 BM16_GHZ:	binclude	"mappings/16x16/GHZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; GHZ/HTZ main level patterns (Nemesis compression)
 ; ArtNem_81C00: Green_Hill_8x8_Tiles:
@@ -44341,6 +44342,7 @@ ArtNem_GHZ:	binclude	"art/nemesis/GHZ and HTZ primary.nem"
 ; LevBlock_84A50: Hill_Top_16x16_Map:
 BM16_HTZ:	binclude	"mappings/16x16/HTZ.bin"
 BM16_HTZ_End:
+		even
 ; ----------------------------------------------------------------------------------
 ; HTZ secondary level patterns (Nemesis compression)
 ; ArtNem_85200: Hill_Top_8x8_Tiles:
@@ -44353,11 +44355,13 @@ Htz_Init_Sprites_Dyn_Reload: ; loc_86626:
 ; ----------------------------------------------------------------------------------
 ; EHZ/HTZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_8692E: Green_Hill_128x128_Map:
-BM128_GHZ:	binclude	"mappings/128x128/GHZ and HTZ.bin"
+BM128_GHZ:	binclude	"mappings/128x128/GHZ and HTZ.kos"
+		even
 ; ----------------------------------------------------------------------------------
 ; WZ 16x16 block mappings (uncompressed)
 ; LevBlock_89B8E: Wood_16x16_Map:
 BM16_WZ:	binclude	"mappings/16x16/WZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; WZ main level patterns (Nemesis compression)
 ; ArtNem_8AB2E: Wood_8x8_Tiles:
@@ -44370,11 +44374,13 @@ Waterfall: ; loc_8E6C6:
 ; ----------------------------------------------------------------------------------
 ; WZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_8E826: Wood_128x128_Map:
-BM128_WZ:	binclude	"mappings/128x128/WZ.bin"
+BM128_WZ:	binclude	"mappings/128x128/WZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; MTZ 16x16 block mappings (uncompressed)
 ; LevBlock_90456: Metropolis_16x16_Map:
 BM16_MTZ:	binclude	"mappings/16x16/MTZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; MTZ main level patterns (Nemesis compression)
 ; ArtNem_91160: Metropolis_8x8_Tiles:
@@ -44388,11 +44394,13 @@ ArtNem_MTZAnim:	binclude	"art/nemesis/Initial animated tiles for MTZ.nem"
 ; ----------------------------------------------------------------------------------
 ; MTZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_94C56: Metropolis_128x128_Map:
-BM128_MTZ:	binclude	"mappings/128x128/MTZ.bin"
+BM128_MTZ:	binclude	"mappings/128x128/MTZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; HPZ 16x16 block mappings (uncompressed)
 ; LevBlock_97596: Hidden_Palace_16x16_Map:
 BM16_HPZ:	binclude	"mappings/16x16/HPZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; HPZ main level patterns (Nemesis compression)
 ; ArtNem_98B76: Hidden_Palace_8x8_Tiles:
@@ -44405,11 +44413,13 @@ Hpz_Init_Sprites_Dyn_Reload: ; loc_9B884: ;	 Orbs
 ; ----------------------------------------------------------------------------------
 ; HPZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_9B9F8: Hidden_Palace_128x128_Map:
-BM128_HPZ:	binclude	"mappings/128x128/HPZ.bin"
+BM128_HPZ:	binclude	"mappings/128x128/HPZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; OOZ 16x16 block mappings (uncompressed)
 ; LevBlock_9d778: Oil_Ocean_16x16_Map:
 BM16_OOZ:	binclude	"mappings/16x16/OOZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_9Ed58: Oil_Ocean_8x8_Tiles:
@@ -44422,11 +44432,13 @@ OOz_Init_Sprites_Dyn_Reload: ; loc_A186A: ;	 red ball,oil ...
 ; ----------------------------------------------------------------------------------
 ; OOZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_A1A58: Oil_Ocean_128x128_Map:
-BM128_OOZ:	binclude	"mappings/128x128/OOZ.bin"
+BM128_OOZ:	binclude	"mappings/128x128/OOZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; DHZ 16x16 block mappings (uncompressed)
 ; LevBlock_A3F88: Dust_Hill_16x16_Map:
 BM16_DHZ:	binclude	"mappings/16x16/DHZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; OOZ main level patterns (Nemesis compression)
 ; ArtNem_A5248: Dust_Hill_8x8_Tiles:
@@ -44435,11 +44447,13 @@ ArtNem_DHZ:	binclude	"art/nemesis/DHZ primary.nem"
 ; ----------------------------------------------------------------------------------
 ; DHZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_A8B6A: Dust_Hill_128x128_Map:
-BM128_DHZ:	binclude	"mappings/128x128/DHZ.bin"
+BM128_DHZ:	binclude	"mappings/128x128/DHZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; CNZ 16x16 block mappings (uncompressed)
 ; LevBlock_AB5CA: Casino_Night_16x16_Map:
 BM16_CNZ:	binclude	"mappings/16x16/CNZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; CNZ main level patterns (Nemesis compression)
 ; ArtNem_ABF2A: Casino_Night_8x8_Tiles:
@@ -44453,11 +44467,13 @@ ArtNem_CNZCards:	binclude	"art/nemesis/Turning cards from CNZ.nem"
 ; ----------------------------------------------------------------------------------
 ; CNZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_AF026: Casino_Night_128x128_Map:
-BM128_CNZ:	binclude	"mappings/128x128/CNZ.bin"
+BM128_CNZ:	binclude	"mappings/128x128/CNZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; CPZ 16x16 block mappings (uncompressed)
 ; LevBlock_B0F26: Chemical_Plant_16x16_Map:
 BM16_CPZ:	binclude	"mappings/16x16/CPZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; CPZ main level patterns (Nemesis compression)
 ; ArtNem_B2506: Chemical_Plant_8x8_Tiles:
@@ -44470,11 +44486,13 @@ Cpz_Init_Sprites_Dyn_Reload: ; loc_B602E:
 ; ----------------------------------------------------------------------------------
 ; CPZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_B6058: Chemical_Plant_128x128_Map:
-BM128_CPZ:	binclude	"mappings/128x128/CPZ.bin"
+BM128_CPZ:	binclude	"mappings/128x128/CPZ.kos"
+		even
 ;-----------------------------------------------------------------------------------
 ; NGHZ 16x16 block mappings (uncompressed)
 ; LevBlock_B8558: Neo_Green_Hill_16x16_Map:
 BM16_NGHZ:	binclude	"mappings/16x16/NGHZ.bin"
+		even
 ; ----------------------------------------------------------------------------------
 ; NGHZ main level patterns (Nemesis compression)
 ; ArtNem_B9E58: Neo_Green_Hill_8x8_Tiles:
@@ -44487,7 +44505,8 @@ Nghz_Init_Sprites_Dyn_Reload: ; loc_BF408:	Waterfalls
 ; ----------------------------------------------------------------------------------
 ; NGHZ 128x128 block mappings (Kosinski compression)
 ; LevChunk_BF568: Neo_Green_Hill_128x128_Map:
-BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.bin"
+BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
+		even
 
 ; For whatever reason,the assembler compiled the end of the NGHZ chunk data twice...
 ; word_C2138:
