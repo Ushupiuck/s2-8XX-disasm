@@ -44525,27 +44525,27 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 ; leftovers from ToeJam & Earl REV00 and some source code remnants
 
 ; LevChunk_C2148:
-		binclude	"misc/leftovers/Incomplete chunk data for earlier CNZ.bin"
+		binclude	"leftovers/Incomplete chunk data for earlier CNZ.bin"
 ; LevBlock_C943C:
-		binclude	"misc/leftovers/Block data for earlier CPZ.bin"
+		binclude	"leftovers/Block data for earlier CPZ.bin"
 ; ArtNem_CAA1C:
-		binclude	"misc/leftovers/Art data for earlier CPZ.bin"
+		binclude	"leftovers/Art data for earlier CPZ.bin"
 		even
 ; ArtNem_CDFC6:
-		binclude	"misc/leftovers/Initial animated tiles for earlier CPZ.bin"
+		binclude	"leftovers/Initial animated tiles for earlier CPZ.bin"
 		even
 ; LevChunk_CE03A:
-		binclude	"misc/leftovers/Chunk data for earlier CPZ.bin"
+		binclude	"leftovers/Chunk data for earlier CPZ.bin"
 ; LevBlock_d603A:
-		binclude	"misc/leftovers/Block data for earlier NGHZ.bin"
+		binclude	"leftovers/Block data for earlier NGHZ.bin"
 ; ArtNem_d793A:
-		binclude	"misc/leftovers/Art data for earlier NGHZ.bin"
+		binclude	"leftovers/Art data for earlier NGHZ.bin"
 		even
 ; ArtNem_DCEEA:
-		binclude	"misc/leftovers/Initial animated tiles for earlier NGHZ.bin"
+		binclude	"leftovers/Initial animated tiles for earlier NGHZ.bin"
 		even
 ; LevChunk_Dd04A:
-		binclude	"misc/leftovers/Chunk data for earlier NGHZ.bin"
+		binclude	"leftovers/Chunk data for earlier NGHZ.bin"
 
 	if PaddingOptimization=0
 		align 4
@@ -44560,13 +44560,13 @@ BM128_NGHZ:	binclude	"mappings/128x128/NGHZ.kos"
 ; leading up to Simon Wai) and somehow this set never got overwritten,fascinating
 
 ; ArtNem_E504A:
-		binclude	"misc/leftovers/Art data for earlier earlier NGHZ.bin"
+		binclude	"leftovers/Art data for earlier earlier NGHZ.bin"
 		even
 ; ArtNem_E57E6:
-		binclude	"misc/leftovers/Initial animated tiles for earlier NGHZ.bin"
+		binclude	"leftovers/Initial animated tiles for earlier NGHZ.bin"
 		even
 ; LevChunk_E5946:
-		binclude	"misc/leftovers/Uncompiled chunk data for NGHZ.bin"
+		binclude	"leftovers/Uncompiled chunk data for NGHZ.bin"
 
 ; ===========================================================================
 ; Moving the music and sound effects would cause them to break due to using
