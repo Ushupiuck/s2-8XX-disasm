@@ -2,19 +2,19 @@
 <ObjDef xmlns="http://www.sonicretro.org" Name="Waterfall" Image="img1">
   <Images>
     <ImageFromMappings id="img1">
-      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.bin" />
+      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj49.bin" frame="1" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="img2">
-      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.bin" />
+      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj49.bin" frame="3" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="img3">
-      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.bin" />
+      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj49.bin" frame="5" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="img4">
-      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.bin" />
+      <ArtFile filename="../art/nemesis/GHZ waterfall tiles.nem" />
       <MapFile type="Binary" filename="../mappings/sprite/obj49.bin" frame="6" startpal="1" />
     </ImageFromMappings>
   </Images>
