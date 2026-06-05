@@ -42314,13 +42314,13 @@ NGHz_Water_Falls_3:		 ; loc_2d0EA:
 ; [ Begin ]
 ;===============================================================================
 AngleMap: ; loc_2d1EA:
-		binclude	"level/collision/Curve and resistance mappings.bin"
+		binclude	"collision/Curve and resistance mappings.bin"
 		even
 Colision_Array_1: ; loc_2d2EA:
-		binclude	"level/collision/Collision array 1.bin"
+		binclude	"collision/Collision array 1.bin"
 		even
 Colision_Array_2: ; loc_2E2EA:
-		binclude	"level/collision/Collision array 2.bin"
+		binclude	"collision/Collision array 2.bin"
 		even
 ;===============================================================================
 ; Colision Array
@@ -42331,46 +42331,46 @@ Colision_Array_2: ; loc_2E2EA:
 ; [ Begin ]
 ;===============================================================================
 Green_Hill_Colision_1:	   ; loc_2F2EA:
-		binclude	"level/collision/GHZ primary 16x16 collision index.bin"
+		binclude	"collision/GHZ primary 16x16 collision index.bin"
 		even
 Green_Hill_Colision_2:	   ; loc_2F5EA:
-		binclude	"level/collision/GHZ secondary 16x16 collision index.bin"
+		binclude	"collision/GHZ secondary 16x16 collision index.bin"
 		even
 Wood_Colision:			   ; loc_2F8EA:
-		binclude	"level/collision/WZ 16x16 collision index.bin"
+		binclude	"collision/WZ 16x16 collision index.bin"
 		even
 Metropolis_Colision:	   ; loc_2FBEA:
-		binclude	"level/collision/MTZ 16x16 collision index.bin"
+		binclude	"collision/MTZ 16x16 collision index.bin"
 		even
 Hidden_Palace_Colision_1:  ; loc_2FEEA:
-		binclude	"level/collision/HPZ primary 16x16 collision index.bin"
+		binclude	"collision/HPZ primary 16x16 collision index.bin"
 		even
 Hidden_Palace_Colision_2:  ; loc_301EA:
-		binclude	"level/collision/HPZ secondary 16x16 collision index.bin"
+		binclude	"collision/HPZ secondary 16x16 collision index.bin"
 		even
 Oil_Ocean_Colision:		   ; loc_304EA:
-		binclude	"level/collision/OOZ 16x16 collision index.bin"
+		binclude	"collision/OOZ 16x16 collision index.bin"
 		even
 Dust_Hill_Colision:		   ; loc_307EA:
-		binclude	"level/collision/DHZ 16x16 collision index.bin"
+		binclude	"collision/DHZ 16x16 collision index.bin"
 		even
 Casino_Night_Colision_1:   ; loc_30AEA:
-		binclude	"level/collision/CNZ primary 16x16 collision index.bin"
+		binclude	"collision/CNZ primary 16x16 collision index.bin"
 		even
 Casino_Night_Colision_2:   ; loc_30DEA:
-		binclude	"level/collision/CNZ secondary 16x16 collision index.bin"
+		binclude	"collision/CNZ secondary 16x16 collision index.bin"
 		even
 Chemical_Plant_Colision_1: ; loc_310EA:
-		binclude	"level/collision/CPZ primary 16x16 collision index.bin"
+		binclude	"collision/CPZ primary 16x16 collision index.bin"
 		even
 Chemical_Plant_Colision_2: ; loc_313EA:
-		binclude	"level/collision/CPZ secondary 16x16 collision index.bin"
+		binclude	"collision/CPZ secondary 16x16 collision index.bin"
 		even
 Neo_Green_Hill_Colision_1: ; loc_316EA:
-		binclude	"level/collision/NGHZ primary 16x16 collision index.bin"
+		binclude	"collision/NGHZ primary 16x16 collision index.bin"
 		even
 Neo_Green_Hill_Colision_2: ; loc_319EA:
-		binclude	"level/collision/NGHZ secondary 16x16 collision index.bin"
+		binclude	"collision/NGHZ secondary 16x16 collision index.bin"
 		even
 ;===============================================================================
 ; 16x16 Colision Index
