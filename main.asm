@@ -44874,7 +44874,8 @@ SoundDriverLoad:
 ; loc_EC03E: Sound_Driver_002:
 DecompressSoundDriver:
 		lea	Snd_Driver(pc),a6
-		move.w	#Snd_Driver_End-Snd_Driver,d7 ; patched (by fixpointer.exe) after compression since the exact size can't be known beforehand
+; WARNING: the build script needs editing if you rename this label
+movewZ80CompSize:	move.w	#Snd_Driver_End-Snd_Driver,d7 ; patched (by build.lua) after compression since the exact size can't be known beforehand
 		moveq	#0,d6		; the decompressor knows it's run out of descriptor bits when it starts reading 0's in bit 8
 		lea	(Z80_RAM).l,a5
 		moveq	#0,d5
@@ -45261,5 +45262,8 @@ Sfx_E0: 	include	"sound/SFX/E0 - Spin Dash Rev.asm"
 		cnop	-1,2<<lastbit(*-1)
 		even
 	endif
+
 EndOfRom:
+		; share these symbols externally (WARNING: don't rename, move or remove these labels!)
+		shared	movewZ80CompSize
 		END
