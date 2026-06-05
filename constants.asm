@@ -6,12 +6,7 @@
 ; they are all in units of bytes
 Size_of_DAC_samples =		$2723
 Size_of_SEGA_sound =		$6174
-	if FixBugs
-; To be on the safe side, we'll use a larger guess size.
-Size_of_Snd_driver_guess =	$E80 ; approximate post-compressed size of the Z80 sound driver
-	else
 Size_of_Snd_driver_guess =	$DF3 ; approximate post-compressed size of the Z80 sound driver
-	endif
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
