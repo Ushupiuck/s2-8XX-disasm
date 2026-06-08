@@ -3522,7 +3522,7 @@ Level_ChkWater:
 Level_ChkOil:
 		cmpi.b	#oil_ocean_zone,(Current_Zone).w
 		bne.s	Level_LoadObj
-		move.b	#7,(Object_RAM+object_size*$1E).w
+		move.b	#7,(Oil).w
 ; loc_43F4:
 Level_LoadObj:
 		jsr	(ObjectsManager).l
@@ -12715,7 +12715,7 @@ Obj34_MakeSprite:
 		move.b	#0,1(a1)
 		move.b	#0,$18(a1)
 		move.w	#$3C,$1E(a1)
-		lea	$40(a1),a1
+		lea	object_size(a1),a1
 		dbf	d1,Obj34_Loop
 
 ; loc_BBDC:
@@ -12934,7 +12934,7 @@ loc_BE86:
 		move.w	#$8580,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_BE60
 loc_BEAA:
 		moveq	#$10,d1
@@ -13140,7 +13140,7 @@ loc_C0A8:
 		move.w	#$8580,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_C0A8
 		moveq	#7,d0
 		move.b	(Emerald_count).w,d1
@@ -13267,7 +13267,7 @@ loc_C240:
 		move.w	#$8541,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_C240
 loc_C286:
 		move.b	$1A(a0),d0
@@ -13928,7 +13928,7 @@ Obj3C_MapUnc_CF04:	binclude	"mappings/sprite/obj3C.bin"
 ; loc_CDd0: Load_Objects:
 RunObjects:
 		lea	(Object_RAM).w,a0	; a0=object
-		moveq	#$7F,d7			; run the first $80 objects out of levels
+		moveq	#bytesToXcnt(Object_RAM_End-Object_RAM,object_size),d7			; run the first $80 objects out of levels
 		moveq	#0,d0
 		cmpi.b	#6,(MainCharacter+routine).w	; is Sonic dead?
 		bhs.s	RunObjectsWhenPlayerIsDead	; if yes,branch
@@ -13950,7 +13950,7 @@ RunObject:
 		moveq	#0,d0
 ; loc_CFF0:
 RunNextObject:
-		lea	$40(a0),a0	; load Obj address
+		lea	object_size(a0),a0	; load Obj address
 		dbf	d7,RunObject
 		rts
 ; ---------------------------------------------------------------------------
@@ -13973,7 +13973,7 @@ RunObjectDisplayOnly:
 		bsr.w	DisplaySprite
 
 loc_d010:
-		lea	$40(a0),a0	; load Obj address
+		lea	object_size(a0),a0	; load Obj address
 		dbf	d7,RunObjectDisplayOnly
 		rts
 ; End of function RunObjects
@@ -16405,7 +16405,7 @@ loc_E6AC:
 		move.l	d1,(a1)+
 		dbf	d0,loc_E6AC
 loc_E6B2:
-		lea	$40(a3),a3
+		lea	object_size(a3),a3
 		dbf	d2,loc_E696
 		moveq	#0,d2
 		movem.l (sp)+,a1/a3
@@ -33399,7 +33399,7 @@ loc_21AB0:
 loc_21AB2:
 		move.b	(a0)+,(a1)+
 		dbf	d2,loc_21AB2
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_21AB0
 		lea	(Chunk_Table+$4008),A1
 		lea	(loc_21AF2).l,A0
@@ -34146,7 +34146,7 @@ loc_2222E:
 loc_22238:
 		addq.w	#1,A1
 		dbf	d2,loc_2222E
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_2222C
 loc_22246:
 		clr.b	$3A(a0)
