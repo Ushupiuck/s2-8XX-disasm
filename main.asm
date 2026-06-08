@@ -3545,10 +3545,10 @@ Level_ChkWater:
 		move.w	#0,(Ctrl_1).w
 		tst.b	(Water_flag).w
 		beq.s	Level_ChkOil
-		move.b	#4,(Object_RAM+object_size*$1E).w
-		move.w	#$60,(Object_RAM+object_size*$1E+x_pos).w
-		move.b	#4,(Object_RAM+object_size*$1F).w
-		move.w	#$120,(Object_RAM+object_size*$1F+x_pos).w
+		move.b	#4,(WaterSurface1).w
+		move.w	#$60,(WaterSurface1+x_pos).w
+		move.b	#4,(WaterSurface2).w
+		move.w	#$120,(WaterSurface2+x_pos).w
 ; loc_43E6:
 Level_ChkOil:
 		cmpi.b	#oil_ocean_zone,(Current_Zone).w
@@ -3750,9 +3750,9 @@ UpdateWaterSurface:
 loc_4646:
 		move.w	d1,d0
 		addi.w	#$60,d0
-		move.w	d0,(Object_RAM+$780+x_pos).w
+		move.w	d0,(WaterSurface1+x_pos).w
 		addi.w	#$120,d1
-		move.w	d1,(Object_RAM+$7C0+x_pos).w
+		move.w	d1,(WaterSurface2+x_pos).w
 
 loc_4658:
 		rts
@@ -33023,7 +33023,7 @@ loc_214E0:
 		bra.w	loc_212B8
 Touch_d7: ; loc_214E4:
 		move.w	A0,d1
-		subi.w	#MainCharacter,d1
+		subi.w	#Object_RAM,d1
 		beq.s	loc_214F0
 		addq.b	#1,$21(a1)
 loc_214F0:

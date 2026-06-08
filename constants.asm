@@ -594,7 +594,9 @@ HeadsUpDisplay:			; HUD (still uses Sonic 1's HUD system at this point)
 				ds.b	object_size
 				ds.b	object_size
 				ds.b	object_size
+WaterSurface1:			; First water surface
 				ds.b	object_size
+WaterSurface2:			; Second water surface
 				ds.b	object_size
 Reserved_Object_RAM_End:
 
