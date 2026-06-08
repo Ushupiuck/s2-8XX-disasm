@@ -133,8 +133,6 @@ Sonic_MusicList:	zoneOrderedTable 1,1
 
 ; ===========================================================================
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_Fd76:
 Sonic_Display:
 		move.w	$30(a0),d0
@@ -189,8 +187,6 @@ Obj01_ExitChk:
 ; and input/status flags for Tails' AI to follow
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_FDFA: CopySonicMovesForTails:
 Sonic_RecordPos:
 		move.w	(Sonic_Pos_Record_Index).w,d0
@@ -208,8 +204,6 @@ Sonic_RecordPos:
 ; Seemingly an earlier subroutine to copy Sonic's status flags for Tails' AI,
 ; also present in the Nick Arcade prototype
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_FE1E: Unused_RecordPos:
 		move.w	(unk_EEE0).w,d0
@@ -234,8 +228,6 @@ return_FE4C:
 ; ---------------------------------------------------------------------------
 ; Subroutine for Sonic when he's underwater
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_FE4E:
 Sonic_Water:
@@ -363,8 +355,6 @@ loc_FF7E:
 ; ---------------------------------------------------------------------------
 ; Subroutine to make Sonic walk/run
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_FF88:
 Sonic_Move:
@@ -545,7 +535,6 @@ loc_10112:
 
 loc_10124:
 		add.w	d1,$12(a0)
-; ---------------------------------------------------------------------------
 
 loc_10128:
 		rts
@@ -669,8 +658,6 @@ return_10206:
 ; ---------------------------------------------------------------------------
 ; Subroutine to change Sonic's speed as he rolls
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10208:
 Sonic_RollSpeed:
@@ -800,8 +787,6 @@ Sonic_BrakeRollingLeft:
 ; Subroutine for moving Sonic left or right when he's in the air
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_10300:
 Sonic_ChgJumpDir:
 		move.w	(Sonic_top_speed).w,d6
@@ -874,8 +859,6 @@ return_1038A:
 ; Subroutine to prevent Sonic from leaving the boundaries of a level
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_1038C: Sonic_LevelBoundaries:
 Sonic_LevelBound:
 		move.l	x_pos(a0),d1
@@ -927,7 +910,7 @@ JmpTo_KillCharacter
 ; loc_103F8:
 Sonic_Boundary_Sides:
 		move.w	d0,x_pos(a0)
-		move.w	#0,$A(a0)
+		move.w	#0,x_pos+2(a0)
 		move.w	#0,$10(a0)
 		move.w	#0,$14(a0)
 		bra.s	Sonic_Boundary_CheckBottom
@@ -937,8 +920,6 @@ Sonic_Boundary_Sides:
 ; ---------------------------------------------------------------------------
 ; Subroutine allowing Sonic to start rolling when he's moving
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10410:
 Sonic_Roll:
@@ -986,8 +967,6 @@ return_10474:
 ; ---------------------------------------------------------------------------
 ; Subroutine allowing Sonic to jump
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10476:
 Sonic_Jump:
@@ -1046,8 +1025,6 @@ Sonic_RollJump:
 ; when the jump button is released
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_10524:
 Sonic_JumpHeight:
 		tst.b	$3C(a0)		; is Sonic jumping?
@@ -1082,8 +1059,6 @@ return_1055E:
 ; ---------------------------------------------------------------------------
 ; Subroutine to check for starting to charge a spindash
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10560: Sonic_Spindash:
 Sonic_CheckSpindash:
@@ -1140,8 +1115,6 @@ loc_105E8:
 ; Subroutine to slow Sonic walking up a slope
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_105EC:
 Sonic_SlopeResist:
 		move.b	$26(a0),d0
@@ -1173,8 +1146,6 @@ return_10620:
 ; ---------------------------------------------------------------------------
 ; Subroutine to push Sonic down a slope while he's rolling
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10622:
 Sonic_RollRepel:
@@ -1213,8 +1184,6 @@ return_1065C:
 ; Subroutine to push Sonic down a slope
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_1065E:
 Sonic_SlopeRepel:
 		nop
@@ -1249,8 +1218,6 @@ loc_1069A:
 ; Subroutine to return Sonic's angle to 0 as he jumps
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_106A0:
 Sonic_JumpAngle:
 		move.b	$26(a0),d0	; get Sonic's angle
@@ -1278,8 +1245,6 @@ Sonic_JumpAngleSet:
 ; ---------------------------------------------------------------------------
 ; Updates Sonic's secondary angle if he's tumbling
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_106BA:
 Sonic_JumpFlip:
@@ -1322,8 +1287,6 @@ return_106FE:
 ; ---------------------------------------------------------------------------
 ; Subroutine for Sonic to interact with the floor and walls when he's in the air
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10700: Sonic_Floor:
 Sonic_DoLevelCollision:
@@ -1534,8 +1497,6 @@ return_1090A:
 ; Subroutine to reset Sonic's mode when he lands on the floor
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_1090C:
 Sonic_ResetOnFloor:
 		btst	#4,$22(a0)
@@ -1700,8 +1661,6 @@ Obj01_Gone:
 ; Subroutine to animate Sonic's sprites
 ; See also: AnimateSprite
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10AB2:
 Sonic_Animate:
@@ -1980,8 +1939,6 @@ SonAni_0x1E:		dc.b $03,$3C,$FD,$00
 ; ---------------------------------------------------------------------------
 ; Sonic pattern loading subroutine
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10DDC: Load_Sonic_Dynamic_PLC:
 LoadSonicDynPLC:

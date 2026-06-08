@@ -506,8 +506,6 @@ ErrorMsg_Wait:
 ; Subroutine to load an error message
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_480:
 ShowErrorMsg:
 		lea	(VDP_data_port).l,a6
@@ -562,8 +560,6 @@ ErrTxt_Line1111Emu:	dc.b "LINE 1111 EMULATOR "
 ; ---------------------------------------------------------------------------
 ; Subroutine to load address of where the error occurred
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_5B2:
 ShowErrAddress:
@@ -799,8 +795,6 @@ loc_DB6:
 ; Subroutine to run a demo for an amount of time
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_E56: DemoTime:
 Do_Updates:
 		bsr.w	LoadTilesAsYouMove
@@ -980,7 +974,6 @@ loc_129A:
 ; ===========================================================================
 ; game code
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 ; Input our music/sound selection to the sound driver.
 ; loc_12AC:
 sndDriverInput:
@@ -1030,8 +1023,6 @@ loc_12F6:
 ; Subroutine to initialize joypads
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_12FC:
 JoypadInit:
 		stopZ80
@@ -1046,8 +1037,6 @@ JoypadInit:
 ; ---------------------------------------------------------------------------
 ; Subroutine to read joypad input,and send it to the RAM
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_132C:
 ReadJoypads:
@@ -1207,8 +1196,6 @@ JmpTo_SoundDriverLoad: ; JmpTo
 ; the Nick Arcade build confirm they are specific to music and sfx
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_14C0:
 PlayMusic:
 		move.b	d0,(Sound_Queue.Music0).w
@@ -1236,8 +1223,6 @@ PlaySound2:
 ; ---------------------------------------------------------------------------
 ; Subroutine to pause the game
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_14d2: Pause:
 PauseGame:
@@ -1319,8 +1304,6 @@ Pause_SlowMo:
 ; d2 = heigth
 ; a1 = source address
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_154C: ShowVDPGraphics: PlaneMapToVRAM:
 PlaneMapToVRAM_H40:
 		lea	(VDP_data_port).l,a6
@@ -1336,103 +1319,13 @@ PlaneMapToVRAM_H40:
 		rts
 ; End of function PlaneMapToVRAM_H40
 
-; ---------------------------------------------------------------------------
-; Subroutine for queueing VDP commands (seems to only queue transfers to VRAM),
-; to be issued the next time ProcessDMAQueue is called.
-; Can be called a maximum of 18 times before the buffer needs to be cleared
-; by issuing the commands (this subroutine DOES check for overflow)
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_154C: DMA_68KtoVRAM: QueueCopyToVRAM: QueueVDPCommand: Add_To_DMA_Queue:
-QueueDMATransfer:
-		movea.l	(VDP_Command_Buffer_Slot).w,a1
-		cmpa.w	#VDP_Command_Buffer_Slot,a1
-		beq.s	QueueDMATransfer_Done	; return if there's no more room in the buffer
-
-		; piece together some VDP commands and store them for later...
-		move.w	#$9300,d0	; command to specify DMA transfer length & $00FF
-		move.b	d3,d0
-		move.w	d0,(a1)+	; store command
-
-		move.w	#$9400,d0	; command to specify DMA transfer length & $FF00
-		lsr.w	#8,d3
-		move.b	d3,d0
-		move.w	d0,(a1)+	; store command
-
-		move.w	#$9500,d0	; command to specify source address & $0001FE
-		lsr.l	#1,d1
-		move.b	d1,d0
-		move.w	d0,(a1)+	; store command
-
-		move.w	#$9600,d0	; command to specify source address & $01FE00
-		lsr.l	#8,d1
-		move.b	d1,d0
-		move.w	d0,(a1)+	; store command
-
-		move.w	#$9700,d0	; command to specify source address & $FE0000
-		lsr.l	#8,d1
-		move.b	d1,d0
-		move.w	d0,(a1)+	; store command
-
-		andi.l	#$FFFF,d2	; command to specify destination address and begin DMA
-		lsl.l	#2,d2
-		lsr.w	#2,d2
-		swap	d2
-		ori.l	#$40000080,d2	; set bits to specify VRAM transfer
-		move.l	d2,(a1)+	; store command
-
-		move.l	a1,(VDP_Command_Buffer_Slot).w	; set the next free slot address
-		cmpa.w	#VDP_Command_Buffer_Slot,a1
-		beq.s	QueueDMATransfer_Done	; return if there's no more room in the buffer
-		move.w	#0,(a1)			; put a stop token at the end of the used part of the buffer
-; loc_15C8:
-QueueDMATransfer_Done:
-		rts
-; End of function QueueDMATransfer
-
-; ---------------------------------------------------------------------------
-; Subroutine for issuing all VDP commands that were queued
-; (by earlier calls to QueueDMATransfer)
-; Resets the queue when it's done
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_15CA: CopyToVRAM: IssueVDPCommands: Process_DMA: Process_DMA_Queue:
-ProcessDMAQueue:
-		lea	(VDP_control_port).l,a5
-		lea	(VDP_Command_Buffer).w,a1
-; loc_15d4:
-ProcessDMAQueue_Loop:
-		move.w	(a1)+,d0
-		beq.s	ProcessDMAQueue_Done	; branch if we reached a stop token
-		; issue a set of VDP commands
-		move.w	d0,(a5)			; transfer length
-		move.w	(a1)+,(a5)		; transfer length
-		move.w	(a1)+,(a5)		; source address
-		move.w	(a1)+,(a5)		; source address
-		move.w	(a1)+,(a5)		; source address
-		move.w	(a1)+,(a5)		; destination
-		move.w	(a1)+,(a5)		; destination
-		cmpa.w	#VDP_Command_Buffer_Slot,a1
-		bne.s	ProcessDMAQueue_Loop	; loop if we haven't reached end of buffer
-; loc_15EC:
-ProcessDMAQueue_Done:
-		move.w	#0,(VDP_Command_Buffer).w
-		move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
-		rts
-; End of function ProcessDMAQueue
-
+		include	"_Include/DMA Queue.asm"
 		include	"_Include/Decompression/Nemesis Decompression.asm"
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to load pattern load cues (aka to queue pattern load requests)
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; ARGUMENTS
 ; d0 = index of PLC list (see ArtLoadCues)
@@ -1478,8 +1371,6 @@ loc_1768:
 ; Subroutine to load pattern load cues (but after we clear it)
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_176E:
 LoadPLC2:
 		movem.l	a1-a2,-(sp)
@@ -1519,8 +1410,6 @@ ClearPLC:
 ; ---------------------------------------------------------------------------
 ; Subroutine to use graphics listed in a pattern load cue
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_17A8: RunPLC:
 RunPLC_RAM:
@@ -1639,8 +1528,6 @@ ProcessDPLC_Pop:
 ; rather than loading them into the queue first
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_18A8:
 RunPLC_ROM:
 		lea	(ArtLoadCues).l,a1
@@ -1671,8 +1558,6 @@ loc_18BA:
 ; ---------------------------------------------------------------------------
 ; Subroutine to cycle through selected palette entries
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_1F18:
 PalCycle_Load:
@@ -2045,8 +1930,6 @@ pal_2516:
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in from black
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_2596: Pal_FadeTo:
 Pal_FadeFromBlack:
@@ -2527,8 +2410,6 @@ Pal_SpecialStage:	binclude	"palettes/Special Stage.bin"
 ; ---------------------------------------------------------------------------
 ; Subroutine to perform vertical synchronization
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_31D8: DelayProgram:
 WaitForVint:
@@ -3633,15 +3514,15 @@ Level_ChkWater:
 		move.w	#0,(Ctrl_1).w
 		tst.b	(Water_flag).w
 		beq.s	Level_ChkOil
-		move.b	#4,(Object_RAM+object_size*$1E).w
-		move.w	#$60,(Object_RAM+object_size*$1E+x_pos).w
-		move.b	#4,(Object_RAM+object_size*$1F).w
-		move.w	#$120,(Object_RAM+object_size*$1F+x_pos).w
+		move.b	#4,(WaterSurface1).w
+		move.w	#$60,(WaterSurface1+x_pos).w
+		move.b	#4,(WaterSurface2).w
+		move.w	#$120,(WaterSurface2+x_pos).w
 ; loc_43E6:
 Level_ChkOil:
 		cmpi.b	#oil_ocean_zone,(Current_Zone).w
 		bne.s	Level_LoadObj
-		move.b	#7,(Object_RAM+object_size*$1E).w
+		move.b	#7,(Oil).w
 ; loc_43F4:
 Level_LoadObj:
 		jsr	(ObjectsManager).l
@@ -3824,8 +3705,6 @@ loc_4628:
 ; (the closest match to this subroutine in Sonic 1 is Obj1B_Action)
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_4630:	 Change_Water_Surface_Pos:
 UpdateWaterSurface:
 		tst.b	(Water_flag).w
@@ -3838,9 +3717,9 @@ UpdateWaterSurface:
 loc_4646:
 		move.w	d1,d0
 		addi.w	#$60,d0
-		move.w	d0,(Object_RAM+$780+x_pos).w
+		move.w	d0,(WaterSurface1+x_pos).w
 		addi.w	#$120,d1
-		move.w	d1,(Object_RAM+$7C0+x_pos).w
+		move.w	d1,(WaterSurface2+x_pos).w
 
 loc_4658:
 		rts
@@ -3849,8 +3728,6 @@ loc_4658:
 ; ---------------------------------------------------------------------------
 ; Subroutine to do special water effects
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_465A:
 WaterEffects:
@@ -4361,8 +4238,6 @@ Off_ColS: zoneOrderedTable 4,1
 ; ---------------------------------------------------------------------------
 ; Oscillating number subroutine
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_4B64:
 OscillateNumInit:
@@ -4997,8 +4872,6 @@ loc_58ED:
 ; ---------------------------------------------------------------------------
 ; Subroutine to load level boundaries and start locations
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_5904:
 LevelSizeLoad:
@@ -6968,8 +6841,6 @@ loc_6DEC:
 ; Used in Sonic 1 on its title screen
 ; ----------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_6DEE: LoadTilesAsYouMove_BGOnly:
 		lea	(VDP_control_port).l,a5
 		lea	(VDP_data_port).l,a6
@@ -6986,8 +6857,6 @@ loc_6DEC:
 ; ---------------------------------------------------------------------------
 ; Subroutine to display correct tiles as you move
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_6E1A:
 LoadTilesAsYouMove:
@@ -12846,7 +12715,7 @@ Obj34_MakeSprite:
 		move.b	#0,1(a1)
 		move.b	#0,$18(a1)
 		move.w	#$3C,$1E(a1)
-		lea	$40(a1),a1
+		lea	object_size(a1),a1
 		dbf	d1,Obj34_Loop
 
 ; loc_BBDC:
@@ -13065,7 +12934,7 @@ loc_BE86:
 		move.w	#$8580,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_BE60
 loc_BEAA:
 		moveq	#$10,d1
@@ -13271,7 +13140,7 @@ loc_C0A8:
 		move.w	#$8580,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_C0A8
 		moveq	#7,d0
 		move.b	(Emerald_count).w,d1
@@ -13398,7 +13267,7 @@ loc_C240:
 		move.w	#$8541,2(a1)
 		bsr.w	Adjust2PArtPointer2	  ; loc_DC4C
 		move.b	#0,1(a1)
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_C240
 loc_C286:
 		move.b	$1A(a0),d0
@@ -13983,8 +13852,6 @@ Obj3C_Fragment:
 ; Subroutine to break an object into its current sprite mappings
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_CE50:
 BreakObjectToPieces:
 		moveq	#0,d0
@@ -14058,12 +13925,10 @@ Obj3C_MapUnc_CF04:	binclude	"mappings/sprite/obj3C.bin"
 ; This runs the code of all the objects that are in object RAM
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_CDd0: Load_Objects:
 RunObjects:
 		lea	(Object_RAM).w,a0	; a0=object
-		moveq	#$7F,d7			; run the first $80 objects out of levels
+		moveq	#bytesToXcnt(Object_RAM_End-Object_RAM,object_size),d7			; run the first $80 objects out of levels
 		moveq	#0,d0
 		cmpi.b	#6,(MainCharacter+routine).w	; is Sonic dead?
 		bhs.s	RunObjectsWhenPlayerIsDead	; if yes,branch
@@ -14072,8 +13937,6 @@ RunObjects:
 ; ---------------------------------------------------------------------------
 ; This is THE place where each individual object's code gets called from
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_CFE0:
 RunObject:
@@ -14087,7 +13950,7 @@ RunObject:
 		moveq	#0,d0
 ; loc_CFF0:
 RunNextObject:
-		lea	$40(a0),a0	; load Obj address
+		lea	object_size(a0),a0	; load Obj address
 		dbf	d7,RunObject
 		rts
 ; ---------------------------------------------------------------------------
@@ -14110,7 +13973,7 @@ RunObjectDisplayOnly:
 		bsr.w	DisplaySprite
 
 loc_d010:
-		lea	$40(a0),a0	; load Obj address
+		lea	object_size(a0),a0	; load Obj address
 		dbf	d7,RunObjectDisplayOnly
 		rts
 ; End of function RunObjects
@@ -14280,8 +14143,6 @@ Obj_Null:
 ; and also applies gravity to its speed
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_d24E: ObjectMove:
 ObjectMoveAndFall:
 		move.l	x_pos(a0),d2		; load x position
@@ -14306,8 +14167,6 @@ ObjectMoveAndFall:
 ; This moves the object horizontally and vertically
 ; but does not apply gravity to it
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_d27A: SpeedToPos:
 ObjectMove:
@@ -14469,8 +14328,6 @@ Mark_DeleteP2:
 ; Subroutine to delete an object
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; sub_d3B4:
 DeleteObject:
 		move.l	a0,a1
@@ -14487,8 +14344,6 @@ DeleteObject2:
 ; ---------------------------------------------------------------------------
 ; Subroutine to display a sprite/object,when a0 is the object RAM
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_d3C2:
 DisplaySprite:
@@ -14510,8 +14365,6 @@ return_d3DE:
 ; ---------------------------------------------------------------------------
 ; Subroutine to display a sprite/object,when a1 is the object RAM
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_d3E0: DisplayA1Sprite:
 DisplaySprite2:
@@ -14637,8 +14490,6 @@ BldSpr_ScrPos:	dc.l	0			; NULL
 ; ---------------------------------------------------------------------------
 ; Subroutine to convert mappings (etc) to proper Megadrive sprites
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_d4DA:
 BuildSprites:
@@ -15764,8 +15615,6 @@ RingsManager_Main:
 ; Subroutine to handle ring collision
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_DF6C:
 Touch_Rings:
 		movea.w	(Ring_start_addr).w,a1
@@ -15845,8 +15694,6 @@ Touch_Rings_Done:
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw on-screen rings
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_E01C:
 BuildRings:
@@ -16134,6 +15981,12 @@ ObjectsManager_Init:
 
 -		clr.l	(a2)+
 		dbf	d0,-
+
+	if FixBugs
+	if (Obj_respawn_data_End-Obj_respawn_data)&2
+		clr.w	(a2)+
+	endif
+	endif
 
 		lea	(Object_Respawn_Table).w,a2
 		moveq	#0,d2
@@ -16552,7 +16405,7 @@ loc_E6AC:
 		move.l	d1,(a1)+
 		dbf	d0,loc_E6AC
 loc_E6B2:
-		lea	$40(a3),a3
+		lea	object_size(a3),a3
 		dbf	d2,loc_E696
 		moveq	#0,d2
 		movem.l (sp)+,a1/a3
@@ -16630,17 +16483,15 @@ loc_E770:
 ; Find an empty object array
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_E772:
 SingleObjLoad:
-		lea	($FFFFB800).w,a1
-		move.w	#$5F,d0
+		lea	(Dynamic_Object_RAM).w,a1
+		move.w	#bytesToXcnt(Dynamic_Object_RAM_End-Dynamic_Object_RAM,object_size),d0
 
 loc_E77A:
 		tst.b	(a1)
 		beq.s	return_E786
-		lea	$40(a1),a1
+		lea	object_size(a1),a1
 		dbf	d0,loc_E77A
 
 return_E786:
@@ -16653,12 +16504,10 @@ return_E786:
 ; Find an empty object array AFTER the current one in the table
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_E788:
 SingleObjLoad2:
 		move.l	a0,a1
-		move.w	#$d000,d0
+		move.w	#Dynamic_Object_RAM_End,d0
 		sub.w	a0,d0		; subtract current object location
 		lsr.w	#object_size_bits,d0		; divide by $40
 		subq.w	#1,d0		; keep from going over the object zone
@@ -16667,7 +16516,7 @@ SingleObjLoad2:
 loc_E796:
 		tst.b	(a1)
 		beq.s	return_E7A2
-		lea	$40(a1),a1
+		lea	object_size(a1),a1
 		dbf	d0,loc_E796
 
 return_E7A2:
@@ -16680,8 +16529,6 @@ return_E7A2:
 ; Find an empty object at or within < 12 slots after a3
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_E7A4:
 SingleObjLoad3:
 		movea.l	a3,a1
@@ -16690,7 +16537,7 @@ SingleObjLoad3:
 loc_E7AA:
 		tst.b	(a1)
 		beq.s	return_E7B6
-		lea	$40(a1),a1
+		lea	object_size(a1),a1
 		dbf	d0,loc_E7AA
 
 return_E7B6:
@@ -19597,8 +19444,6 @@ loc_135CA:
 
 RawColBlocks		= Colision_Array_1
 ConvRowColBlocks	= Colision_Array_1
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; return_135DA: FloorLog_Unk:
 ConvertCollisionArray:
@@ -32824,17 +32669,17 @@ TouchResponse: ; loc_21160:
 loc_2118A:
 		move.w	#$10,d4
 		add.w	d5,d5
-		lea	($FFFFB800).w,A1
-		move.w	#$5F,d6
+		lea	(Dynamic_Object_RAM).w,A1
+		move.w	#bytesToXcnt(Dynamic_Object_RAM_End-Dynamic_Object_RAM,object_size),d6
 loc_21198:
 		move.b	$20(a1),d0
 		bne.s	Touch_Height	; loc_211F8
 loc_2119E:
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d6,loc_21198
 		moveq	#0,d0
-Touch_Sizes: ; loc_211A8:
 		rts
+Touch_Sizes: ; loc_211A8:
 		dc.b	$14,$14,$0C,$14,$14,$0C,$04,$10,$0C,$12,$10,$10,$06,$06,$18,$0C
 		dc.b	$0C,$10,$10,$0C,$08,$08,$14,$10,$14,$08,$0E,$0E,$18,$18,$28,$10
 		dc.b	$10,$18,$08,$10,$20,$70,$40,$20,$80,$20,$20,$20,$08,$08,$04,$04
@@ -32844,7 +32689,7 @@ Touch_Sizes: ; loc_211A8:
 Touch_Height: ; loc_211F8:
 		andi.w	#$3F,d0
 		add.w	d0,d0
-		lea	Touch_Sizes(pc,d0),A2 ; loc_211A8
+		lea	Touch_Sizes-2(pc,d0),A2 ; loc_211A8
 		moveq	#0,d1
 		move.b	(a2)+,d1
 		move.w	x_pos(a1),d0
@@ -33105,7 +32950,7 @@ loc_214E0:
 		bra.w	loc_212B8
 Touch_d7: ; loc_214E4:
 		move.w	A0,d1
-		subi.w	#MainCharacter,d1
+		subi.w	#Object_RAM,d1
 		beq.s	loc_214F0
 		addq.b	#1,$21(a1)
 loc_214F0:
@@ -33554,7 +33399,7 @@ loc_21AB0:
 loc_21AB2:
 		move.b	(a0)+,(a1)+
 		dbf	d2,loc_21AB2
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_21AB0
 		lea	(Chunk_Table+$4008),A1
 		lea	(loc_21AF2).l,A0
@@ -34301,7 +34146,7 @@ loc_2222E:
 loc_22238:
 		addq.w	#1,A1
 		dbf	d2,loc_2222E
-		lea	$40(a1),A1
+		lea	object_size(a1),A1
 		dbf	d1,loc_2222C
 loc_22246:
 		clr.b	$3A(a0)
@@ -38319,8 +38164,6 @@ Sega_SndDup:	binclude	"leftovers/sound/PCM/Sega PCM.pcm"
 ; Subroutine to load the sound driver
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_EC000:
 SoundDriverLoad:
 		move.w	sr,-(sp)
@@ -38346,7 +38189,6 @@ SoundDriverLoad:
 		move.w	(sp)+,sr
 		rts
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 ; Handles the decompression of the sound driver (Saxman compression,an LZSS variant)
 ; https://segaretro.org/Saxman_compression
 

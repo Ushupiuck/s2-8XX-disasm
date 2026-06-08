@@ -579,7 +579,34 @@ BreathingBubbles:		; Sonic's breathing bubbles
 				ds.b	object_size
 HeadsUpDisplay:			; HUD (still uses Sonic 1's HUD system at this point)
 				ds.b	object_size
-				ds.b	$1C40 ; RESERVED FOR OBJECT RAM, DO NOT REMOVE!!!
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+				ds.b	object_size
+WaterSurface1:			; First water surface
+Oil:				; Oil at the bottom of OOZ
+				ds.b	object_size
+WaterSurface2:			; Second water surface
+				ds.b	object_size
+Reserved_Object_RAM_End:
+
+Dynamic_Object_RAM:		; Dynamic object RAM
+				ds.b	$60*object_size
+Dynamic_Object_RAM_End:
+; 2P mode reserves 6 'blocks' of 12 RAM slots at the end.
+Dynamic_Object_RAM_2P_End = Dynamic_Object_RAM_End - ($C * 6) * object_size
+
 Object_RAM_End:
 
 Primary_Collision:		ds.b	$600

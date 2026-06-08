@@ -96,8 +96,6 @@ Tails_MusicList:	zoneOrderedTable 1,1
 
 ; ===========================================================================
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_10F12:
 Tails_Display:
 		move.w	$30(a0),d0
@@ -151,8 +149,6 @@ Obj02_ExitChk:
 ; Tails' AI code; rather idiotic in this version,as it only really is
 ; programmed to copy Sonic's inputs and make no effort to correct itself
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_10F96: Tails_Control2:
 TailsCPU_Control:
@@ -250,8 +246,6 @@ TailsCPU_Normal_SonicOK:
 ; Subroutine to record Tails' previous positions for invincibility stars
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 ; loc_11056: Tails_RecordMoves:
 Tails_RecordPos:
 		move.w	(Tails_Pos_Record_Index).w,d0
@@ -338,8 +332,6 @@ Obj02_MdJump:
 ; ---------------------------------------------------------------------------
 ; Subroutine to make Tails walk/run
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1110C:
 Tails_Move:
@@ -641,8 +633,6 @@ return_1138A:
 ; ---------------------------------------------------------------------------
 ; Subroutine to change Tails' speed as he rolls
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1138C:
 Tails_RollSpeed:
@@ -1809,8 +1799,6 @@ Tails_Animate_0x1E: ; loc_11F10:
 ; Tails' Tails pattern loading subroutine
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
 
 ; loc_11F1A: Load_Tails_Tail_Dynamic_PLC:
 LoadTailsTailsDynPLC:
@@ -1831,8 +1819,6 @@ LoadTailsTailsDynPLC:
 ; ---------------------------------------------------------------------------
 ; Tails pattern loading subroutine
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_11F42: Load_Tails_Dynamic_PLC:
 LoadTailsDynPLC:
