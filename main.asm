@@ -42,6 +42,8 @@ AllOptimizations = 0
 ;	| If 1, enables all optimizations
 ZeroOffsetOptimization = 0|AllOptimizations
 ;	| If 1, makes a handful of zero-offset instructions smaller
+RemoveJmpTos = 0|AllOptimizations
+;	| If 1, many unnecessary JmpTos are removed, improving performance
 PaddingOptimization = 0|AllOptimizations
 ;	| If 1, removes about 33 KB of various superfluous padding
 useFullWaterTables = 0
@@ -1191,6 +1193,7 @@ ClearScreen:
 		startZ80
 		rts
 ; ===========================================================================
+
 ; loc_14B8:
 JmpTo_SoundDriverLoad: ; JmpTo
 		nop
@@ -2519,7 +2522,8 @@ Pal_NGHZ_U:		binclude	"palettes/NGHZ underwater.bin"
 Pal_SpecialStage:	binclude	"palettes/Special Stage.bin"
 		even
 
-		nop
+		jmpTos	; Empty
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to perform vertical synchronization
 ; ---------------------------------------------------------------------------
@@ -2667,7 +2671,8 @@ AngleData: ; loc_3508:
 		dc.b	$20
 		even
 
-		nop
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Sega Logo
 ; [ Begin ]
@@ -3643,7 +3648,7 @@ Level_LoadObj:
 		jsr	(RingsManager).l
 		jsr	(RunObjects).l
 		jsr	(BuildSprites).l
-		bsr.w	JmpTo_AniArt_Load
+		jsrto	JmpTo_AniArt_Load
 		moveq	#0,d0
 		tst.b	(Last_star_pole_hit).w
 		bne.s	Level_FromCheckpoint
@@ -3757,7 +3762,7 @@ loc_456A:
 loc_456E:
 		bsr.w	UpdateWaterSurface
 		jsr	(RingsManager).l
-		bsr.w	JmpTo_AniArt_Load
+		jsrto	JmpTo_AniArt_Load
 		bsr.w	PalCycle_Load
 		bsr.w	RunPLC_RAM
 		bsr.w	Oscillate_Num_Do
@@ -4556,10 +4561,8 @@ Demo_Chemical_Plant: ; loc_50F8: ; $07 - Chemical Plant Sonic Demo control
 		dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
 
 ; ===========================================================================
-; loc_51F8: JumpToDynamic_Art_Cues:
-JmpTo_AniArt_Load ; JmpTo
-		jmp	(AniArt_Load).l
-		align 4
+
+		jmpTos0	JmpTo_AniArt_Load
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -4988,7 +4991,9 @@ loc_58ED:
 ; Special Stage
 ; [ End ]
 ;===============================================================================
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to load level boundaries and start locations
 ; ---------------------------------------------------------------------------
@@ -8677,7 +8682,8 @@ DynResize_NGHz: ;loc_7Fd6:
 DynResize_DEz: ;loc_7FD8:
 		rts
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -9573,7 +9579,7 @@ loc_8A92:
 		beq.s	loc_8AC0
 		moveq	#0,d3
 		move.b	$19(a0),d3
-		bsr.w	JmpTo_ObjHitWallRight
+		jsrto	JmpTo_ObjHitWallRight
 		tst.w	d1
 		bpl.s	loc_8AC0
 		add.w	d1,x_pos(a0)
@@ -9618,19 +9624,8 @@ Dhz_Swing_Platforms_Map_04: ; loc_8B80:
 ; Object 0x15 - Swing Platforms - Dust Hill / Oil Ocean
 ; [ End ]
 ;===============================================================================
-		nop
 
-; NOTE:
-; These "JumpTo" blocks were presumably generated at the end of each source file by
-; compiler ProASM on the Amiga computers Sonic 2 was developed on. As a result,it
-; is theoretically possible to split the game in a similar way to how the actual
-; source files were.
-
-; loc_8B94:
-JmpTo_ObjHitWallRight:
-		jmp	(ObjHitWallRight).l
-
-		align 4
+		jmpTos	JmpTo_ObjHitWallRight
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -9769,7 +9764,8 @@ Obj17_Display:
 Obj17_MapUnc_8CDE:	binclude	"mappings/sprite/obj17.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ;===============================================================================
 ; Object 0x18 - Platforms
@@ -10401,7 +10397,8 @@ Obj1A_MapUnc_9942:	binclude	"mappings/sprite/obj1F_DHZ.bin"
 		even
 
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -10538,7 +10535,8 @@ Obj1C_MapUnc_9B9A:	binclude	"mappings/sprite/obj1C_d.bin"	; MTZ thingy
 Obj71_MapUnc_9BBE:	binclude	"mappings/sprite/obj71_b.bin"	; MTZ lava bubble
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -10727,7 +10725,8 @@ Obj2D_Solid:
 Obj2D_MapUnc_9E1E:	binclude	"mappings/sprite/obj2D.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -11583,7 +11582,8 @@ Obj28_MapUnc_A85E:	binclude	"mappings/sprite/obj28_c.bin"
 Obj29_MapUnc_A882:	binclude	"mappings/sprite/obj29.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -12287,7 +12287,9 @@ Big_Ring_Flash_Map_08: ; loc_B278:
 		dc.w	$0004
 		dc.l	$E00F0044,$0022FFE0,$E00F0844,$08220000
 		dc.l	$000F1044,$1022FFE0,$000F1844,$18220000
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Object 26 - Monitor
@@ -12665,7 +12667,9 @@ loc_B6CC:
 Obj26_MapUnc_B6d2:	binclude	"mappings/sprite/obj26.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
+
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Object 0E - Sonic and Tails on the title screen
@@ -12789,7 +12793,8 @@ S1Obj0F_MapUnc_B96A:	binclude	"mappings/sprite/obj0F_S1.bin"	; "PRESS START BUTT
 Obj0E_MapUnc_BAA2:	binclude	"mappings/sprite/obj0E.bin"	; Sonic and Tails on the title screen
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -13631,7 +13636,9 @@ loc_C936:
 		dc.l	$F805200C,$2006FFF8
 loc_C940:
 		dc.w	$0000
-		nop
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object 0x36 - Vertical Spikes
 ; [ Begin ]
@@ -13892,7 +13899,8 @@ Obj3B_Main:
 Obj3B_MapUnc_Cd66:	binclude	"mappings/sprite/obj3B.bin"
 		even
 ; ===========================================================================
-		align 4
+
+		jmpTos0	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -17305,7 +17313,9 @@ loc_F0E8:
 ; Object 0x41 - Springs
 ; [ End ]
 ;===============================================================================
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object 0x44
 ; [ Begin ]
@@ -17558,7 +17568,8 @@ loc_F40B:	dc.b $0F,$00,$FF
 Obj0D_MapUnc_F40E:	binclude	"mappings/sprite/obj0D.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ;===============================================================================
 ; Sub Routine SolidObject
@@ -17956,7 +17967,7 @@ loc_F888:
 		blo.w	loc_F7d0
 		move.l	A0,-(sp)
 		movea.l	A1,A0
-		jsr	(KillSonic).l				 ; loc_21422
+		jsr	(KillCharacter).l				 ; loc_21422
 		movea.l	(sp)+,A0
 		move.w	d6,d4
 		addi.b	#$0F,d4
@@ -18297,3895 +18308,11 @@ loc_FC44:
 		moveq	#0,d4
 		rts
 
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Object 01 - Sonic
-; ---------------------------------------------------------------------------
-; Sprite_FC48: Obj_0x01_Sonic:
-Obj01:
-		tst.w	(Debug_placement_mode).w; is Debug Mode being used?
-		beq.s	Obj01_Normal		; if not,branch
-		jmp	(DebugMode).l
-; ---------------------------------------------------------------------------
-; loc_FC54: Sonic_Normal:
-Obj01_Normal:
-		moveq	#0,d0
-		move.b	routine(a0),d0
-		move.w	Obj01_Index(pc,d0.w),d1
-		jmp	Obj01_Index(pc,d1.w)
-; ===========================================================================
-; loc_FC62: Sonic_Index:
-Obj01_Index:	offsetTable
-		offsetTableEntry.w Obj01_Init
-		offsetTableEntry.w Obj01_Control
-		offsetTableEntry.w Obj01_Hurt
-		offsetTableEntry.w Obj01_Dead
-		offsetTableEntry.w Obj01_Gone
-; ===========================================================================
-; loc_FC6C: Sonic_Main:
-Obj01_Init:
-		addq.b	#2,routine(a0)	; => Obj01_Control
-		move.b	#$13,$16(a0)	; this sets Sonic's collision height (2*pixels)
-		move.b	#9,$17(a0)
-		move.l	#MapUnc_Sonic,4(a0)
-		move.w	#$780,2(a0)
-		bsr.w	Adjust2PArtPointer
-		move.b	#2,$18(a0)
-		move.b	#$18,$19(a0)
-		move.b	#4,1(a0)
-		move.w	#$600,(Sonic_top_speed).w	; set Sonic's top speed
-		move.w	#$C,(Sonic_acceleration).w	; set Sonic's acceleration
-		move.w	#$80,(Sonic_deceleration).w	; set Sonic's deceleration
-		move.b	#$C,$3E(a0)
-		move.b	#$D,$3F(a0)
-		move.b	#0,$2C(a0)
-		move.b	#4,$2D(a0)
-		move.w	#0,(Sonic_Pos_Record_Index).w
-		move.w	#$3F,d2
+		include	"obj/01 Sonic.asm"
 
-loc_FCd4:
-		bsr.w	Sonic_RecordPos
-		move.w	#0,(a1,d0.w)
-		dbf	d2,loc_FCd4
+		jmpTos0	JmpTo_KillCharacter
 
-; ---------------------------------------------------------------------------
-; Normal state for Sonic
-; ---------------------------------------------------------------------------
-; loc_FCE2: Sonic_Control:
-Obj01_Control:
-		tst.w	(Debug_mode_flag).w		; is Debug Mode enabled?
-		beq.s	loc_FCFC			; if not,branch
-		btst	#button_B,(Ctrl_1_Press).w		; is button B pressed?
-		beq.s	loc_FCFC			; if not,branch
-		move.w	#1,(Debug_placement_mode).w	; change Sonic into a ring/item
-		clr.b	(Control_Locked).w		; unlock control
-		rts
-; -----------------------------------------------------------------------
-
-loc_FCFC:
-		tst.b	(Control_Locked).w	; are controls locked?
-		bne.s	loc_Fd08		; if yes,branch
-		move.w	(Ctrl_1).w,(Ctrl_1_Logical).w	; copy new held buttons to enable joypad control
-
-loc_Fd08:
-		btst	#0,$2A(a0)		; is Sonic interacting with another object that holds him in place or controls his movement somehow?
-		bne.s	Obj01_ControlsLock	; if yes,branch
-		moveq	#0,d0
-		move.b	$22(a0),d0
-		andi.w	#6,d0
-		move.w	Obj01_Modes(pc,d0.w),d1
-		jsr	Obj01_Modes(pc,d1.w)	; run Sonic's movement code
-; loc_Fd22: Sonic_ControlsLock:
-Obj01_ControlsLock:
-		bsr.s	Sonic_Display
-		bsr.w	Sonic_RecordPos
-		bsr.w	Sonic_Water
-		move.b	(Primary_Angle).w,$36(a0)
-		move.b	(Secondary_Angle).w,$37(a0)
-		tst.b	(WindTunnel_flag).w
-		beq.s	loc_Fd4A
-		tst.b	$1C(a0)
-		bne.s	loc_Fd4A
-		move.b	$1D(a0),$1C(a0)
-
-loc_Fd4A:
-		bsr.w	Sonic_Animate
-		tst.b	$2A(a0)
-		bmi.s	loc_Fd5A
-		jsr	(TouchResponse).l
-
-loc_Fd5A:
-		bra.w	LoadSonicDynPLC
-; ===========================================================================
-; loc_Fd5E:
-Obj01_Modes:	offsetTable
-		offsetTableEntry.w Obj01_MdNormal	; 0 - not airborne or rolling
-		offsetTableEntry.w Obj01_MdAir		; 2 - airborne
-		offsetTableEntry.w Obj01_MdRoll		; 4 - rolling
-		offsetTableEntry.w Obj01_MdJump		; 6 - jumping
-; ===========================================================================
-; byte_Fd66:
-Sonic_MusicList:	zoneOrderedTable 1,1
-	zoneTableEntry.b	MusID_GHZ	; GHZ
-	zoneTableEntry.b	MusID_GHZ	; OWZ
-	zoneTableEntry.b	MusID_MTZ	; WZ
-	zoneTableEntry.b	MusID_SSZ	; SSZ
-	zoneTableEntry.b	MusID_MTZ	; MTZ
-	zoneTableEntry.b	MusID_MTZ	; MTZ2
-	zoneTableEntry.b	MusID_BOZ	; BLZ
-	zoneTableEntry.b	MusID_HTZ	; HTZ
-	zoneTableEntry.b	MusID_HPZ	; HPZ
-	zoneTableEntry.b	MusID_RWZ	; RWZ
-	zoneTableEntry.b	MusID_OOZ	; OOZ
-	zoneTableEntry.b	MusID_DHZ	; DHZ
-	zoneTableEntry.b	MusID_CNZ	; CNZ
-	zoneTableEntry.b	MusID_CPZ	; CPZ
-	zoneTableEntry.b	MusID_CPZ	; GCZ
-	zoneTableEntry.b	MusID_NGHZ	; NGHZ
-	if FixBugs
-	zoneTableEntry.b	MusID_DEZ	; DEZ
-	else
-	; no *proper* entry for DEZ,so it instead uses the alignment to play sound $08
-	endif
-	zoneTableEnd
-	even
-
-; ===========================================================================
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_Fd76:
-Sonic_Display:
-		move.w	$30(a0),d0
-		beq.s	Obj01_Display
-		subq.w	#1,$30(a0)
-		lsr.w	#3,d0
-		bhs.s	Obj01_ChkInvin
-; loc_FD84:
-Obj01_Display:
-		jsr	(DisplaySprite).l
-; loc_FD8A:
-Obj01_ChkInvin:	; Checks if Sonic has run out of invincibility frames
-		tst.b	(Invincibility_flag).w
-		beq.s	Obj01_ChkShoes
-		tst.w	$32(a0)
-		beq.s	Obj01_ChkShoes
-		subq.w	#1,$32(a0)
-		bne.s	Obj01_ChkShoes
-		tst.b	(Current_Boss_ID).w
-		bne.s	Obj01_RmvInvin
-		cmpi.w	#$C,(Current_Air).w
-		blo.s	Obj01_RmvInvin
-		moveq	#0,d0
-		move.b	(Current_Zone).w,d0
-		lea	Sonic_MusicList(pc),a1
-		move.b	(a1,d0.w),d0
-		jsr	(PlayMusic).l
-; loc_FDBE:
-Obj01_RmvInvin:
-		move.b	#0,(Invincibility_flag).w
-; loc_FDC4:
-Obj01_ChkShoes:	; Checks if Sonic should still have the speed shoes
-		tst.b	(Speed_shoes).w
-		beq.s	Obj01_ExitChk
-		tst.w	$34(a0)
-		beq.s	Obj01_ExitChk
-		subq.w	#1,$34(a0)
-		bne.s	Obj01_ExitChk
-		move.w	#$600,(Sonic_top_speed).w
-		move.w	#$C,(Sonic_acceleration).w
-		move.w	#$80,(Sonic_deceleration).w
-		move.b	#0,(Speed_shoes).w
-		move.w	#MusID_SlowDown,d0	; restore music tempo
-		jmp	(PlayMusic).l
-; return_FDF8:
-Obj01_ExitChk:
-		rts
-; End of subroutine Sonic_Display
-
-; ---------------------------------------------------------------------------
-; Subroutine to record Sonic's previous positions for invincibility stars
-; and input/status flags for Tails' AI to follow
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_FDFA: CopySonicMovesForTails:
-Sonic_RecordPos:
-		move.w	(Sonic_Pos_Record_Index).w,d0
-		lea	(Sonic_Pos_Record_Buf).w,a1
-		lea	(a1,d0.w),a1
-		move.w	x_pos(a0),(a1)+
-		move.w	y_pos(a0),(a1)+
-		addq.b	#4,(Sonic_Pos_Record_Index+1).w
-		lea	(Sonic_Stat_Record_Buf).w,a1
-		move.w	(Ctrl_1).w,(a1,d0.w)
-		rts
-; End of function Sonic_RecordPos
-
-; ---------------------------------------------------------------------------
-; Seemingly an earlier subroutine to copy Sonic's status flags for Tails' AI,
-; also present in the Nick Arcade prototype
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_FE1E: Unused_RecordPos:
-		move.w	(unk_EEE0).w,d0
-		subq.b	#4,d0
-		lea	(unk_E600).w,a1
-		lea	(a1,d0.w),a2
-		move.w	x_pos(a0),d1
-		swap	d1
-		move.w	y_pos(a0),d1
-		cmp.l	(a2),d1
-		beq.s	return_FE4C
-		addq.b	#4,d0
-		lea	(a1,d0.w),a2
-		move.w	x_pos(a0),(a2)+
-		move.w	y_pos(a0),(a2)
-		addq.b	#4,(unk_EEE0+1).w
-
-return_FE4C:
-		rts
-; End of function Unused_RecordPos
-
-; ---------------------------------------------------------------------------
-; Subroutine for Sonic when he's underwater
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_FE4E:
-Sonic_Water:
-		tst.b	(Water_flag).w		; is this a water level?
-		bne.s	Obj01_InWater		; if not,branch
-
-return_FE54:
-		rts
-; ---------------------------------------------------------------------------
-; loc_FE56: Sonic_InLevelWithWater:
-Obj01_InWater:
-		move.w	(Water_Level_1).w,d0
-		cmp.w	y_pos(a0),d0		; is Sonic underwater?
-		bge.s	Obj01_OutWater		; if not,branch
-
-		bset	#6,$22(a0)		; set underwater flag
-		bne.s	return_FE54		; if already underwater,branch
-
-		bsr.w	ResumeMusic
-		move.b	#$A,(BreathingBubbles).w	; load Obj0A (Sonic's breathing bubbles) at $FFFFB340
-		move.b	#$81,(BreathingBubbles+$28).w
-		move.w	#$300,(Sonic_top_speed).w
-		move.w	#6,(Sonic_acceleration).w
-		move.w	#$40,(Sonic_deceleration).w
-		asr.w	$10(a0)
-		asr.w	$12(a0)			; memory operands can only be shifted one bit at a time
-		asr.w	$12(a0)
-		beq.s	return_FE54
-		move.b	#8,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
-		move.w	#SndID_Splash,d0			; splash sound
-		jmp	(PlaySound).l
-; ---------------------------------------------------------------------------
-; loc_FEA8: Sonic_NotInWater:
-Obj01_OutWater:
-		bclr	#6,$22(a0)	; clear underwater flag
-		beq.s	return_FE54	; if already cleared,branch
-		bsr.w	ResumeMusic
-		move.w	#$600,(Sonic_top_speed).w
-		move.w	#$C,(Sonic_acceleration).w
-		move.w	#$80,(Sonic_deceleration).w
-		asl.w	$12(a0)
-		beq.w	return_FE54
-		move.b	#8,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
-		cmpi.w	#-$1000,$12(a0)
-		bgt.s	loc_FEE2
-		move.w	#-$1000,$12(a0)		; limit upwards y-velocity when exiting out of water
-
-loc_FEE2:
-		move.w	#SndID_Splash,d0			; splash sound
-		jmp	(PlaySound).l
-; End of subroutine Sonic_Water
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Start of subroutine Obj01_MdNormal
-; Called if Sonic is neither airborne nor rolling this frame
-; ---------------------------------------------------------------------------
-; loc_FEEC: Sonic_MdNormal:
-Obj01_MdNormal:
-		bsr.w	Sonic_CheckSpindash
-		bsr.w	Sonic_Jump
-		bsr.w	Sonic_SlopeResist
-		bsr.w	Sonic_Move
-		bsr.w	Sonic_Roll
-		bsr.w	Sonic_LevelBound
-		jsr	(ObjectMove).l
-		bsr.w	AnglePos
-		bsr.w	Sonic_SlopeRepel
-		rts
-; End of subroutine Obj01_MdNormal
-
-; ===========================================================================
-; Start of subroutine Obj01_MdAir
-; Called if Sonic is airborne,but not in a ball (thus,probably not jumping)
-; loc_FF14: Sonic_MdJump
-Obj01_MdAir:
-		bsr.w	Sonic_JumpHeight
-		bsr.w	Sonic_ChgJumpDir
-		bsr.w	Sonic_LevelBound
-		jsr	(ObjectMoveAndFall).l
-		btst	#6,$22(a0)	; is Sonic underwater?
-		beq.s	loc_FF34	; if not,branch
-		subi.w	#$28,$12(a0)	; reduce gravity by $28 ($38-$28=$10)
-
-loc_FF34:
-		bsr.w	Sonic_JumpAngle
-		bsr.w	Sonic_DoLevelCollision
-		rts
-; End of subroutine Obj01_MdAir
-
-; ===========================================================================
-; Start of subroutine Obj01_MdRoll
-; Called if Sonic is in a ball,but not airborne (thus,probably rolling)
-; loc_FF3E: Sonic_MdRoll:
-Obj01_MdRoll:
-		bsr.w	Sonic_Jump
-		bsr.w	Sonic_RollRepel
-		bsr.w	Sonic_RollSpeed
-		bsr.w	Sonic_LevelBound
-		jsr	(ObjectMove).l
-		bsr.w	AnglePos
-		bsr.w	Sonic_SlopeRepel
-		rts
-; End of subroutine Obj01_MdRoll
-
-; ===========================================================================
-; Start of subroutine Obj01_MdJump (an Obj01_MdAir clone)
-; Called if Sonic is in a ball and airborne (he could be jumping but not necessarily)
-; loc_FF5E: Sonic_MdJump2:
-Obj01_MdJump:
-		bsr.w	Sonic_JumpHeight
-		bsr.w	Sonic_ChgJumpDir
-		bsr.w	Sonic_LevelBound
-		jsr	(ObjectMoveAndFall).l
-		btst	#6,$22(a0)	; is Sonic underwater?
-		beq.s	loc_FF7E	; if not,branch
-		subi.w	#$28,$12(a0)	; reduce gravity by $28 ($38-$28=$10)
-
-loc_FF7E:
-		bsr.w	Sonic_JumpAngle
-		bsr.w	Sonic_DoLevelCollision
-		rts
-; End of subroutine Obj01_MdJump
-
-; ---------------------------------------------------------------------------
-; Subroutine to make Sonic walk/run
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_FF88:
-Sonic_Move:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		move.w	(Sonic_deceleration).w,d4
-
-		tst.b	(Sliding_flag).w		; is Sonic sliding?
-		bne.w	Obj01_Traction			; if yes,branch
-		tst.w	$2E(a0)				; is Sonic's controls locked?
-		bne.w	Obj01_UpdateSpeedOnGround	; if yes,branch
-		btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
-		beq.s	Obj01_NotLeft			; if not,branch
-		bsr.w	Sonic_MoveLeft
-; loc_FFB0:
-Obj01_NotLeft:
-		btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
-		beq.s	Obj01_NotRight		; if not,branch
-		bsr.w	Sonic_MoveRight
-; loc_FFBC:
-Obj01_NotRight:
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0				; is Sonic on a slope?
-		bne.w	Obj01_UpdateSpeedOnGround	; if yes,branch
-		tst.w	$14(a0)				; is Sonic moving?
-		bne.w	Obj01_UpdateSpeedOnGround	; if yes,branch
-		bclr	#5,$22(a0)
-		move.b	#5,$1C(a0)	; use "standing" animation
-		; check how close/far Sonic is from the edge
-		btst	#3,$22(a0)	; is Sonic on the edge?
-		beq.s	Sonic_Balance	; if yes,branch
-		moveq	#0,d0
-		move.b	$3D(a0),d0
-		lsl.w	#6,d0
-		lea	(MainCharacter).w,a1
-		lea	(a1,d0.w),a1
-		tst.b	$22(a1)
-		bmi.s	Sonic_LookUp
-		moveq	#0,d1
-		move.b	$19(a1),d1
-		move.w	d1,d2
-		add.w	d2,d2
-		subq.w	#4,d2
-		add.w	x_pos(a0),d1
-		sub.w	x_pos(a1),d1
-		cmpi.w	#4,d1
-		blt.s	Sonic_BalanceOnObjLeft
-		cmp.w	d2,d1
-		bge.s	Sonic_BalanceOnObjRight
-		bra.s	Sonic_LookUp
-; ===========================================================================
-; loc_1001E:
-Sonic_Balance:
-		jsr	(ChkFloorEdge).l
-		cmpi.w	#$C,d1
-		blt.s	Sonic_LookUp
-		cmpi.b	#3,$36(a0)
-		bne.s	loc_1003A
-; loc_10032:
-Sonic_BalanceOnObjRight:
-		bclr	#0,$22(a0)
-		bra.s	loc_10048
-
-loc_1003A:
-		cmpi.b	#3,$37(a0)
-		bne.s	Sonic_LookUp
-; loc_10042:
-Sonic_BalanceOnObjLeft:
-		bset	#0,$22(a0)
-
-loc_10048:
-		move.b	#6,$1C(a0)
-		bra.s	Obj01_UpdateSpeedOnGround
-; ===========================================================================
-; loc_10050:
-Sonic_LookUp:
-		btst	#button_up,(Ctrl_1_Held_Logical).w	; is up being pressed?
-		beq.s	Sonic_Duck		; if not,branch
-		move.b	#7,$1C(a0)		; use "looking up" animation
-		bra.s	Obj01_UpdateSpeedOnGround
-; ===========================================================================
-; loc_10060:
-Sonic_Duck:
-		btst	#button_down,(Ctrl_1_Held_Logical).w	; is down being pressed?
-		beq.s	Obj01_UpdateSpeedOnGround	; if not,branch
-		move.b	#8,$1C(a0)		; use "ducking" animation
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; updates Sonic's speed on the ground
-; ---------------------------------------------------------------------------
-; sub_1006E:
-Obj01_UpdateSpeedOnGround:
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#button_left_mask+button_right_mask,d0
-		bne.s	Obj01_Traction
-		move.w	$14(a0),d0
-		beq.s	Obj01_Traction
-		bmi.s	Obj01_SettleLeft
-
-; slow down when facing right and not pressing a direction
-; Obj01_SettleRight:
-		sub.w	d5,d0
-		bhs.s	loc_10088
-		move.w	#0,d0
-
-loc_10088:
-		move.w	d0,$14(a0)
-		bra.s	Obj01_Traction
-; ---------------------------------------------------------------------------
-; slow down when facing left and not pressing a direction
-; loc_1008E:
-Obj01_SettleLeft:
-		add.w	d5,d0
-		bhs.s	loc_10096
-		move.w	#0,d0
-
-loc_10096:
-		move.w	d0,$14(a0)
-
-; increase or decrease speed on the ground
-; loc_1009A:
-Obj01_Traction:
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	$14(a0),d1
-		asr.l	#8,d1
-		move.w	d1,$10(a0)
-		muls.w	$14(a0),d0
-		asr.l	#8,d0
-		move.w	d0,$12(a0)
-
-; stops Sonic from running through walls that meet the ground
-; loc_100B8:
-Obj01_CheckWallsOnGround:
-		move.b	$26(a0),d0
-		addi.b	#$40,d0
-		bmi.s	loc_10128
-		move.b	#$40,d1		; rotate 90 degress clockwise
-		tst.w	$14(a0)		; is Sonic moving?
-		beq.s	loc_10128	; if not,branch
-		bmi.s	loc_100d0	; if negative,branch
-		neg.w	d1		; rotate COUNTER-clockwise
-
-loc_100d0:
-		move.b	$26(a0),d0
-		add.b	d1,d0
-		move.w	d0,-(sp)
-		bsr.w	Sonic_WalkSpeed
-		move.w	(sp)+,d0
-		tst.w	d1
-		bpl.s	loc_10128
-		asl.w	#8,d1
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		beq.s	loc_10124
-		cmpi.b	#$40,d0
-		beq.s	loc_10112
-		cmpi.b	#$80,d0
-		beq.s	loc_1010C
-		add.w	d1,$10(a0)
-		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_1010C:
-		sub.w	d1,$12(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_10112:
-		sub.w	d1,$10(a0)
-		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_10124:
-		add.w	d1,$12(a0)
-; ---------------------------------------------------------------------------
-
-loc_10128:
-		rts
-; End of subroutine Sonic_Move
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1012A:
-Sonic_MoveLeft:
-		move.w	$14(a0),d0
-		beq.s	loc_10132	; is Sonic starting to move to the right?
-		bpl.s	Sonic_TurnLeft	; if not,branch
-
-loc_10132:
-		bset	#0,$22(a0)
-		bne.s	loc_10146
-		bclr	#5,$22(a0)
-		move.b	#1,$1D(a0)	; force walking animation to restart if it's already in-progress
-
-loc_10146:
-		sub.w	d5,d0		; add acceleration to the left
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0		; compare new speed with top speed
-		bgt.s	loc_10158	; if new speed is less than the maximum,branch
-		add.w	d5,d0		; remove this frame's acceleration change
-		cmp.w	d1,d0		; compare speed with top speed
-		ble.s	loc_10158	; if speed was already greater than the maximum,branch
-		move.w	d1,d0		; limit speed on ground going left
-
-loc_10158:
-		move.w	d0,$14(a0)
-		move.b	#0,$1C(a0)	; use walking animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_10164:
-Sonic_TurnLeft:
-		sub.w	d4,d0
-		bhs.s	loc_1016C
-		move.w	#-$80,d0
-
-loc_1016C:
-		move.w	d0,$14(a0)
-	if FixBugs
-		move.b	$26(a0),d1
-		addi.b	#$20,d1
-		andi.b	#$C0,d1
-	else
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-	endif
-		bne.s	return_1019A
-		cmpi.w	#$400,d0
-		blt.s	return_1019A
-		move.b	#$D,$1C(a0)	; use "stopping" animation
-		bclr	#0,$22(a0)
-		move.w	#SndID_Skidding,d0
-		jsr	(PlaySound).l
-
-return_1019A:
-		rts
-; End of subroutine Sonic_MoveLeft
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1019C:
-Sonic_MoveRight:
-		move.w	$14(a0),d0
-		bmi.s	Sonic_TurnRight	; if Sonic is already moving to the left,branch
-		bclr	#0,$22(a0)
-		beq.s	loc_101B6
-		bclr	#5,$22(a0)
-		move.b	#1,$1D(a0)	; force walking animation to restart if it's already in-progress
-
-loc_101B6:
-		add.w	d5,d0		; add acceleration to the right
-		cmp.w	d6,d0		; compare new speed with top speed
-		blt.s	loc_101C4	; if new speed is less than the maximum,branch
-		sub.w	d5,d0		; remove this frame's acceleration change
-		cmp.w	d6,d0		; compare speed with top speed
-		bge.s	loc_101C4	; if speed was already greater than the maximum,branch
-		move.w	d6,d0		; limit speed on ground going right
-
-loc_101C4:
-		move.w	d0,$14(a0)
-		move.b	#0,$1C(a0)	; use walking animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_101d0:
-Sonic_TurnRight:
-		add.w	d4,d0
-		bhs.s	loc_101D8
-		move.w	#$80,d0
-
-loc_101D8:
-		move.w	d0,$14(a0)
-	if FixBugs
-		move.b	$26(a0),d1
-		addi.b	#$20,d1
-		andi.b	#$C0,d1
-	else
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-	endif
-		bne.s	return_10206
-		cmpi.w	#-$400,d0
-		bgt.s	return_10206
-		move.b	#$D,$1C(a0)	; use "stopping" animation
-		bset	#0,$22(a0)
-		move.w	#SndID_Skidding,d0
-		jsr	(PlaySound).l
-
-return_10206:
-		rts
-; End of subroutine Sonic_MoveRight
-
-; ---------------------------------------------------------------------------
-; Subroutine to change Sonic's speed as he rolls
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10208:
-Sonic_RollSpeed:
-		move.w	(Sonic_top_speed).w,d6
-		asl.w	#1,d6
-		move.w	(Sonic_acceleration).w,d5
-		asr.w	#1,d5	; natural roll deceleration = 1/2 normal acceleration
-		; These two lines are unchanged from Sonic 1,the final would replace
-		; them with "move.w #$20,d4",which made Sonic decelerate much faster
-		; underwater,but they forgot to apply the change to Tails
-		move.w	(Sonic_deceleration).w,d4
-		asr.w	#2,d4
-		tst.b	(Sliding_flag).w
-		bne.w	Sonic_SetRollSpeeds
-		tst.w	$2E(a0)
-		bne.s	Sonic_ApplyRollSpeed
-		btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
-		beq.s	loc_10234		; if not,branch
-		bsr.w	Sonic_RollLeft
-
-loc_10234:
-		btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
-		beq.s	Sonic_ApplyRollSpeed	; if not,branch
-		bsr.w	Sonic_RollRight
-; loc_10240:
-Sonic_ApplyRollSpeed:
-		move.w	$14(a0),d0
-		beq.s	Sonic_CheckRollStop
-		bmi.s	Sonic_ApplyRollSpeedLeft
-
-; Sonic_ApplyRollSpeedRight:
-		sub.w	d5,d0
-		bhs.s	loc_10250
-		move.w	#0,d0
-
-loc_10250:
-		move.w	d0,$14(a0)
-		bra.s	Sonic_CheckRollStop
-; ---------------------------------------------------------------------------
-; loc_10256:
-Sonic_ApplyRollSpeedLeft:
-		add.w	d5,d0
-		bhs.s	loc_1025E
-		move.w	#0,d0
-
-loc_1025E:
-		move.w	d0,$14(a0)
-; loc_10262:
-Sonic_CheckRollStop:
-		tst.w	$14(a0)
-		bne.s	Sonic_SetRollSpeeds
-		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
-		move.b	#5,$1C(a0)
-		subq.w	#5,y_pos(a0)
-; ---------------------------------------------------------------------------
-; loc_10284:
-Sonic_SetRollSpeeds:
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	$14(a0),d0
-		asr.l	#8,d0
-		move.w	d0,$12(a0)	; set y velocity based on $14 and angle
-		muls.w	$14(a0),d1
-		asr.l	#8,d1
-		cmpi.w	#$1000,d1
-		ble.s	loc_102A8
-		move.w	#$1000,d1	; limit Sonic's speed rolling right
-
-loc_102A8:
-		cmpi.w	#-$1000,d1
-		bge.s	loc_102B2
-		move.w	#-$1000,d1	; limit Sonic's speed rolling left
-
-loc_102B2:
-		move.w	d1,$10(a0)	; set x velocity based on $14 and angle
-		bra.w	Obj01_CheckWallsOnGround
-; End of function Sonic_RollSpeed
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_102BA:
-Sonic_RollLeft:
-		move.w	$14(a0),d0
-		beq.s	+
-		bpl.s	Sonic_BrakeRollingRight
-+
-		bset	#0,$22(a0)
-		move.b	#2,$1C(a0)	; use "rolling" animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_102d0:
-Sonic_BrakeRollingRight:
-		sub.w	d4,d0		; reduce rightward rolling speed
-		bhs.s	loc_102D8
-		move.w	#-$80,d0
-
-loc_102D8:
-		move.w	d0,$14(a0)
-		rts
-; End of function Sonic_RollLeft
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_102DE:
-Sonic_RollRight:
-		move.w	$14(a0),d0
-		bmi.s	Sonic_BrakeRollingLeft
-		bclr	#0,$22(a0)
-		move.b	#2,$1C(a0)	; use "rolling" animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_102F2:
-Sonic_BrakeRollingLeft:
-		add.w	d4,d0		; reduce leftward rolling speed
-		bhs.s	+
-		move.w	#$80,d0
-+
-		move.w	d0,$14(a0)
-		rts
-; End of subroutine Sonic_RollRight
-
-; ---------------------------------------------------------------------------
-; Subroutine for moving Sonic left or right when he's in the air
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10300:
-Sonic_ChgJumpDir:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		asl.w	#1,d5
-		btst	#4,$22(a0)		; did Sonic jump from rolling?
-		bne.s	Obj01_Jump_ResetScr	; if yes,branch to skip midair control
-		move.w	$10(a0),d0
-		btst	#button_left,(Ctrl_1_Held_Logical).w
-		beq.s	+	; if not holding left,branch
-
-		bset	#0,$22(a0)
-		sub.w	d5,d0	; add acceleration to the left
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0	; compare new speed with top speed
-		bgt.s	+	; if new speed is less than the maximum,branch
-		move.w	d1,d0	; limit speed in air going left,even if Sonic was already going faster (speed limit/cap)
-+
-		btst	#button_right,(Ctrl_1_Held_Logical).w
-		beq.s	+	; if not holding right,branch
-
-		bclr	#0,$22(a0)
-		add.w	d5,d0	; accelerate right in the air
-		cmp.w	d6,d0	; compare new speed to top speed
-		blt.s	+	; if new speed is less than maximum,branch
-		move.w	d6,d0	; limit speed in air going right,even if Sonic was already going faster (speed limit/cap)
-; Obj01_JumpMove:
-+		move.w	d0,$10(a0)
-
-; loc_1034A: Obj01_ResetScr2:
-Obj01_Jump_ResetScr:
-		cmpi.w	#$60,(Camera_Y_pos_bias).w	; is screen in its default position?
-		beq.s	Sonic_JumpPeakDecelerate	; if yes,branch
-		bhs.s	+			; depending on the sign of the difference,
-		addq.w	#4,(Camera_Y_pos_bias).w	; either add 2
-+		subq.w	#2,(Camera_Y_pos_bias).w	; or subtract 2
-
-; loc_1035C:
-Sonic_JumpPeakDecelerate:
-		cmpi.w	#-$400,$12(a0)	; is Sonic moving faster than -$400 upwards?
-		blo.s	return_1038A	; if yes,branch
-		move.w	$10(a0),d0
-		move.w	d0,d1
-		asr.w	#5,d1		; d1 = x_velocity / 32
-		beq.s	return_1038A	; return of d1 is 0
-		bmi.s	Sonic_JumpPeakDecelerateLeft	; branch if moving left
-
-; Sonic_JumpPeakDecelerateRight:
-		sub.w	d1,d0	; reduce x velocity by d1
-		bhs.s	+
-		move.w	#0,d0
-+
-		move.w	d0,$10(a0)
-		rts
-;-------------------------------------------------------------
-; loc_1037E:
-Sonic_JumpPeakDecelerateLeft:
-		sub.w	d1,d0	; reduce x velocity by d1
-		blo.s	+
-		move.w	#0,d0
-+
-		move.w	d0,$10(a0)
-
-return_1038A:
-		rts
-; End of subroutine Sonic_ChgJumpDir
-
-; ---------------------------------------------------------------------------
-; Subroutine to prevent Sonic from leaving the boundaries of a level
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1038C: Sonic_LevelBoundaries:
-Sonic_LevelBound:
-		move.l	x_pos(a0),d1
-		move.w	$10(a0),d0
-		ext.l	d0
-		asl.l	#8,d0
-		add.l	d0,d1
-		swap	d1
-		move.w	(Camera_Min_X_pos).w,d0
-		addi.w	#$10,d0
-		cmp.w	d1,d0		; has Sonic touched the left boundary?
-		bhi.s	Sonic_Boundary_Sides	; if yes,branch
-		move.w	(Camera_Max_X_pos).w,d0
-		addi.w	#320-24,d0	; screen width - Sonic's width_pixels
-		tst.b	(Current_Boss_ID).w
-		bne.s	loc_103BA
-		addi.w	#$40,d0
-
-loc_103BA:
-		cmp.w	d1,d0		; has Sonic touched the right boundary?
-		bls.s	Sonic_Boundary_Sides	; if yes,branch
-; loc_103BE:
-Sonic_Boundary_CheckBottom:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$E0,d0
-		cmp.w	y_pos(a0),d0
-		blt.s	Sonic_Boundary_Bottom
-		rts
-; ===========================================================================
-; loc_103CE:
-Sonic_Boundary_Bottom:
-		bra.w	JmpTo_KillSonic
-; ---------------------------------------------------------------------------
-; Leftover from Sonic 1,which would transport the player to SBZ3/LZ4 upon
-; reaching a certain position; its ID is different,for whatever reason
-		cmpi.w	#death_egg_zone_act_2,(Current_ZoneAndAct).w	; is it DEZ2?
-		bne.w	JmpTo_KillSonic			; if not,branch
-		cmpi.w	#$2000,(MainCharacter+8).w		; is Sonic beyond x position $2000?
-		blo.w	JmpTo_KillSonic			; if not,branch
-		clr.b	(Last_star_pole_hit).w
-		move.w	#1,(Level_Inactive_flag).w
-		move.w	#labyrinth_zone_act_4,(Current_ZoneAndAct).w	; restart in OWZ4
-		rts
-; ===========================================================================
-; loc_103F8:
-Sonic_Boundary_Sides:
-		move.w	d0,x_pos(a0)
-		move.w	#0,$A(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$14(a0)
-		bra.s	Sonic_Boundary_CheckBottom
-; End of function Sonic_LevelBound
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Subroutine allowing Sonic to start rolling when he's moving
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10410:
-Sonic_Roll:
-		tst.b	(Sliding_flag).w
-		bne.s	Obj01_NoRoll
-		move.w	$14(a0),d0
-		bpl.s	loc_1041E
-		neg.w	d0
-
-loc_1041E:
-		cmpi.w	#$80,d0		; is Sonic moving at $80 speed or faster?
-		blo.s	Obj01_NoRoll	; if not,branch
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#button_left_mask+button_right_mask,d0		; is left/right being pressed?
-		bne.s	Obj01_NoRoll	; if yes,branch
-		btst	#button_down,(Ctrl_1_Held_Logical).w	; is down being pressed?
-		bne.s	Obj01_ChkRoll	; if yes,branch
-; return_10436: Sonic_NoRoll:
-Obj01_NoRoll:
-		rts
-; ---------------------------------------------------------------------------
-; loc_10438:
-Obj01_ChkRoll:
-		btst	#2,$22(a0)
-		beq.s	Obj01_DoRoll
-		rts
-; ---------------------------------------------------------------------------
-; loc_10442: Sonic_DoRoll:
-Obj01_DoRoll:
-		bset	#2,$22(a0)
-		move.b	#$E,$16(a0)
-		move.b	#7,$17(a0)
-		move.b	#2,$1C(a0)	; use "rolling" animation
-		addq.w	#5,y_pos(a0)
-		move.w	#SndID_Roll,d0
-		jsr	(PlaySound).l	; play rolling sound
-		tst.w	$14(a0)
-		bne.s	return_10474
-		move.w	#$200,$14(a0)
-
-return_10474:
-		rts
-; End of function Sonic_Roll
-
-; ---------------------------------------------------------------------------
-; Subroutine allowing Sonic to jump
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10476:
-Sonic_Jump:
-		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0		; is A,B or C pressed?
-		beq.w	return_1051A	; if not,branch
-		moveq	#0,d0
-		move.b	$26(a0),d0
-		addi.b	#$80,d0
-		bsr.w	loc_136F2
-		cmpi.w	#6,d1		; does Sonic have enough room to jump?
-		blt.w	return_1051A	; if not,branch
-		move.w	#$680,d2
-		btst	#6,$22(a0)	; is Sonic underwater?
-		beq.s	+		; if not,branch
-		move.w	#$380,d2	; reduce jump speed
-+
-		moveq	#0,d0
-		move.b	$26(a0),d0
-		subi.b	#$40,d0
-		jsr	(CalcSine).l
-		muls.w	d2,d1
-		asr.l	#8,d1
-		add.w	d1,$10(a0)	; make Sonic jump (in X... this adds nothing on level ground)
-		muls.w	d2,d0
-		asr.l	#8,d0
-		add.w	d0,$12(a0)	; make Sonic jump (in Y)
-		bset	#1,$22(a0)
-		bclr	#5,$22(a0)
-		addq.l	#4,sp
-		move.b	#1,$3C(a0)
-		clr.b	$38(a0)
-		move.w	#SndID_Jump,d0
-		jsr	(PlaySound).l	; play jumping sound
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
-		btst	#2,$22(a0)
-		bne.s	Sonic_RollJump
-		move.b	#$E,$16(a0)
-		move.b	#7,$17(a0)
-		move.b	#2,$1C(a0)	; use "jumping" animation
-		bset	#2,$22(a0)
-		addq.w	#5,y_pos(a0)
-
-return_1051A:
-		rts
-; ---------------------------------------------------------------------------
-; loc_1051C:
-Sonic_RollJump:
-		bset	#4,$22(a0)	; set the rolling+jumping flag
-		rts
-; End of function Sonic_Jump
-
-; ---------------------------------------------------------------------------
-; Subroutine letting Sonic control the height of the jump
-; when the jump button is released
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10524:
-Sonic_JumpHeight:
-		tst.b	$3C(a0)		; is Sonic jumping?
-		beq.s	Sonic_UpVelCap	; if not,branch
-
-		move.w	#-$400,d1
-		btst	#6,$22(a0)	; is Sonic underwater?
-		beq.s	loc_1053A	; if not,branch
-		move.w	#-$200,d1
-
-loc_1053A:
-		cmp.w	$12(a0),d1	; is Sonic going up faster than d1?
-		ble.s	return_1054E	; if not,branch
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0		; is A/B/C pressed?
-		bne.s	return_1054E	; if yes,branch
-		move.w	d1,$12(a0)	; immediately reduce Sonic's upward speed to d1
-
-return_1054E:
-		rts
-; ---------------------------------------------------------------------------
-; loc_10550:
-Sonic_UpVelCap:
-		cmpi.w	#-$FC0,$12(a0)	; is Sonic moving up really fast?
-		bge.s	return_1055E	; if not,branch
-		move.w	#-$FC0,$12(a0)	; cap upward speed
-
-return_1055E:
-		rts
-; End of subroutine Sonic_JumpHeight
-
-; ---------------------------------------------------------------------------
-; Subroutine to check for starting to charge a spindash
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10560: Sonic_Spindash:
-Sonic_CheckSpindash:
-		tst.b	$39(a0)
-		bne.s	Sonic_UpdateSpindash
-		cmpi.b	#8,$1C(a0)
-		bne.s	return_10592
-		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		beq.w	return_10592
-		move.b	#9,$1C(a0)
-		move.w	#SndID_Roll,d0
-		jsr	(PlaySound).l
-		addq.l	#4,sp
-		move.b	#1,$39(a0)
-
-return_10592:
-		rts
-; ===========================================================================
-; loc_10594:
-Sonic_UpdateSpindash:
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		btst	#button_down,d0
-		bne.s	Sonic_ChargingSpindash
-
-		move.b	#$E,$16(a0)
-		move.b	#7,$17(a0)
-		move.b	#2,$1C(a0)
-		addq.w	#5,y_pos(a0)
-		move.b	#0,$39(a0)
-		move.w	#$2000,(Horiz_scroll_delay_val).w
-		move.w	#$800,$14(a0)
-		btst	#0,$22(a0)
-		beq.s	loc_105d2
-		neg.w	$14(a0)
-
-loc_105d2:
-		bset	#2,$22(a0)
-		rts
-; ===========================================================================
-; loc_105DA:
-Sonic_ChargingSpindash:
-		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		beq.w	loc_105E8
-		nop
-
-loc_105E8:
-		addq.l	#4,sp
-		rts
-; End of function Sonic_CheckSpindash
-
-; ---------------------------------------------------------------------------
-; Subroutine to slow Sonic walking up a slope
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_105EC:
-Sonic_SlopeResist:
-		move.b	$26(a0),d0
-		addi.b	#$60,d0
-		cmpi.b	#$C0,d0
-		bhs.s	return_10620
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	#$20,d0
-		asr.l	#8,d0
-		tst.w	$14(a0)
-		beq.s	return_10620
-		bmi.s	loc_1061C
-		tst.w	d0
-		beq.s	return_1061A
-		add.w	d0,$14(a0)
-
-return_1061A:
-		rts
-; ---------------------------------------------------------------------------
-
-loc_1061C:
-		add.w	d0,$14(a0)
-
-return_10620:
-		rts
-; End of subroutine Sonic_SlopeResist
-
-; ---------------------------------------------------------------------------
-; Subroutine to push Sonic down a slope while he's rolling
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10622:
-Sonic_RollRepel:
-		move.b	$26(a0),d0
-		addi.b	#$60,d0
-		cmpi.b	#$C0,d0
-		bhs.s	return_1065C
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	#$50,d0
-		asr.l	#8,d0
-		tst.w	$14(a0)
-		bmi.s	loc_10652
-		tst.w	d0
-		bpl.s	loc_1064C
-		asr.l	#2,d0
-
-loc_1064C:
-		add.w	d0,$14(a0)
-		rts
-; ===========================================================================
-
-loc_10652:
-		tst.w	d0
-		bmi.s	loc_10658
-		asr.l	#2,d0
-
-loc_10658:
-		add.w	d0,$14(a0)
-
-return_1065C:
-		rts
-; End of function Sonic_RollRepel
-
-; ---------------------------------------------------------------------------
-; Subroutine to push Sonic down a slope
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1065E:
-Sonic_SlopeRepel:
-		nop
-		tst.b	$38(a0)
-		bne.s	return_10698
-		tst.w	$2E(a0)
-		bne.s	loc_1069A
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		beq.s	return_10698
-		move.w	$14(a0),d0
-		bpl.s	+
-		neg.w	d0
-+
-		cmpi.w	#$280,d0
-		bhs.s	return_10698
-		clr.w	$14(a0)
-		bset	#1,$22(a0)
-		move.w	#$1E,$2E(a0)
-
-return_10698:
-		rts
-; ===========================================================================
-
-loc_1069A:
-		subq.w	#1,$2E(a0)
-		rts
-; End of function Sonic_SlopeRepel
-
-; ---------------------------------------------------------------------------
-; Subroutine to return Sonic's angle to 0 as he jumps
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_106A0:
-Sonic_JumpAngle:
-		move.b	$26(a0),d0	; get Sonic's angle
-		beq.s	Sonic_JumpFlip	; if already 0,branch
-		bpl.s	loc_106B0	; if higher than 0,branch
-
-		addq.b	#2,d0		; increase angle
-		bhs.s	BranchTo_Sonic_JumpAngleSet
-		moveq	#0,d0
-; loc_106AE:
-BranchTo_Sonic_JumpAngleSet:
-		bra.s	Sonic_JumpAngleSet
-; ===========================================================================
-
-loc_106B0:
-		subq.b	#2,d0		; decrease angle
-		bhs.s	Sonic_JumpAngleSet
-		moveq	#0,d0
-; loc_106B6:
-Sonic_JumpAngleSet:
-		move.b	d0,$26(a0)
-; End of function Sonic_JumpAngle
-	; continue straight to Sonic_JumpFlip
-
-; ---------------------------------------------------------------------------
-; Updates Sonic's secondary angle if he's tumbling
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_106BA:
-Sonic_JumpFlip:
-		move.b	$27(a0),d0
-		beq.s	return_106FE
-		tst.w	$14(a0)
-		bmi.s	Sonic_JumpLeftFlip
-; loc_106C6:
-Sonic_JumpRightFlip:
-		move.b	$2D(a0),d1
-		add.b	d1,d0
-		bhs.s	BranchTo_Sonic_JumpFlipSet
-		subq.b	#1,$2C(a0)
-		bhs.s	BranchTo_Sonic_JumpFlipSet
-		move.b	#0,$2C(a0)
-		moveq	#0,d0
-; loc_106DC:
-BranchTo_Sonic_JumpFlipSet:
-		bra.s	Sonic_JumpFlipSet
-; ===========================================================================
-; loc_106DE:
-Sonic_JumpLeftFlip:
-		tst.b	$29(a0)
-		bne.s	Sonic_JumpRightFlip
-		move.b	$2D(a0),d1
-		sub.b	d1,d0
-		bhs.s	Sonic_JumpFlipSet
-		subq.b	#1,$2C(a0)
-		bhs.s	Sonic_JumpFlipSet
-		move.b	#0,$2C(a0)
-		moveq	#0,d0
-; loc_106FA:
-Sonic_JumpFlipSet:
-		move.b	d0,$27(a0)
-
-return_106FE:
-		rts
-; End of function Sonic_JumpAngle
-
-; ---------------------------------------------------------------------------
-; Subroutine for Sonic to interact with the floor and walls when he's in the air
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10700: Sonic_Floor:
-Sonic_DoLevelCollision:
-		move.l	#Primary_Collision,(Collision_addr).w
-		cmpi.b	#$C,$3E(a0)
-		beq.s	loc_10718
-		move.l	#Secondary_Collision,(Collision_addr).w
-
-loc_10718:
-		move.b	$3F(a0),d5
-		move.w	$10(a0),d1
-		move.w	$12(a0),d2
-		jsr	(CalcAngle).l
-		move.b	d0,$2B(a0)
-		subi.b	#$20,d0
-		andi.b	#$C0,d0
-		cmpi.b	#$40,d0
-		beq.w	Sonic_HitLeftWall
-		cmpi.b	#$80,d0
-		beq.w	Sonic_HitCeilingAndWalls
-		cmpi.b	#$C0,d0
-		beq.w	Sonic_HitRightWall
-		bsr.w	Sonic_HitWall
-		tst.w	d1
-		bpl.s	loc_10760
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)
-
-loc_10760:
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	loc_10772
-		add.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)
-
-loc_10772:
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	return_107EA
-		move.b	$12(a0),d2
-		addq.b	#8,d2
-		neg.b	d2
-		cmp.b	d2,d1
-		bge.s	loc_1078A
-		cmp.b	d2,d0
-		blt.s	return_107EA
-
-loc_1078A:
-		add.w	d1,y_pos(a0)
-		move.b	d3,$26(a0)
-		bsr.w	Sonic_ResetOnFloor
-		move.b	#0,$1C(a0)
-		move.b	d3,d0
-		addi.b	#$20,d0
-		andi.b	#$40,d0
-		bne.s	loc_107C8
-		move.b	d3,d0
-		addi.b	#$10,d0
-		andi.b	#$20,d0
-		beq.s	loc_107BA
-		asr.w	$12(a0)
-		bra.s	loc_107DC
-; ===========================================================================
-
-loc_107BA:
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
-		rts
-; ===========================================================================
-
-loc_107C8:
-		move.w	#0,$10(a0)	; stop Sonic since he hit a wall
-		cmpi.w	#$FC0,$12(a0)
-		ble.s	loc_107DC
-		move.w	#$FC0,$12(a0)
-
-loc_107DC:
-		move.w	$12(a0),$14(a0)
-		tst.b	d3
-		bpl.s	return_107EA
-		neg.w	$14(a0)
-
-return_107EA:
-		rts
-; ===========================================================================
-; loc_107EC:
-Sonic_HitLeftWall:
-		bsr.w	Sonic_HitWall
-		tst.w	d1
-		bpl.s	Sonic_HitCeiling
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)	; stop Sonic since he hit a wall
-		move.w	$12(a0),$14(a0)
-		rts
-; ===========================================================================
-; loc_10806:
-Sonic_HitCeiling:
-		bsr.w	Sonic_DontRunOnWalls
-		tst.w	d1
-		bpl.s	Sonic_HitFloor
-		sub.w	d1,y_pos(a0)
-		tst.w	$12(a0)
-		bpl.s	return_1081E
-		move.w	#0,$12(a0)	; stop Sonic since he hit a ceiling
-
-return_1081E:
-		rts
-; ===========================================================================
-; loc_10820:
-Sonic_HitFloor:
-		tst.w	$12(a0)
-		bmi.s	return_1084C
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	return_1084C
-		add.w	d1,y_pos(a0)
-		move.b	d3,$26(a0)
-		bsr.w	Sonic_ResetOnFloor
-		move.b	#0,$1C(a0)
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
-
-return_1084C:
-		rts
-; ===========================================================================
-; loc_1084E:
-Sonic_HitCeilingAndWalls:
-		bsr.w	Sonic_HitWall
-		tst.w	d1
-		bpl.s	+
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)	; stop Sonic since he hit a wall
-+
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	+
-		add.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)	; stop Sonic since he hit a wall
-+
-		bsr.w	Sonic_DontRunOnWalls
-		tst.w	d1
-		bpl.s	return_108A8
-		sub.w	d1,y_pos(a0)
-		move.b	d3,d0
-		addi.b	#$20,d0
-		andi.b	#$40,d0
-		bne.s	loc_10892
-		move.w	#0,$12(a0)	; stop Sonic since he hit a ceiling
-		rts
-; ===========================================================================
-
-loc_10892:
-		move.b	d3,$26(a0)
-		bsr.w	Sonic_ResetOnFloor
-		move.w	$12(a0),$14(a0)
-		tst.b	d3
-		bpl.s	return_108A8
-		neg.w	$14(a0)
-
-return_108A8:
-		rts
-; ===========================================================================
-; loc_108AA:
-Sonic_HitRightWall:
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	Sonic_HitCeiling2
-		add.w	d1,x_pos(a0)
-		move.w	#0,$10(a0)	; stop Sonic since he hit a wall
-		move.w	$12(a0),$14(a0)
-		rts
-; ===========================================================================
-; identical to Sonic_HitCeiling...
-; loc_108C4:
-Sonic_HitCeiling2:
-		bsr.w	Sonic_DontRunOnWalls
-		tst.w	d1
-		bpl.s	Sonic_HitFloor2
-		sub.w	d1,y_pos(a0)
-		tst.w	$12(a0)
-		bpl.s	return_108DC
-		move.w	#0,$12(a0)	; stop Sonic since he hit a ceiling
-
-return_108DC:
-		rts
-; ===========================================================================
-; identical to Sonic_HitFloor...
-loc_108DE:
-Sonic_HitFloor2:
-		tst.w	$12(a0)
-		bmi.s	return_1090A
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	return_1090A
-		add.w	d1,y_pos(a0)
-		move.b	d3,$26(a0)
-		bsr.w	Sonic_ResetOnFloor
-		move.b	#0,$1C(a0)
-		move.w	#0,$12(a0)	; stop Sonic since he hit a ceiling
-		move.w	$10(a0),$14(a0)
-
-return_1090A:
-		rts
-; End of function Sonic_DoLevelCollision
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Subroutine to reset Sonic's mode when he lands on the floor
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1090C:
-Sonic_ResetOnFloor:
-		btst	#4,$22(a0)
-		beq.s	loc_1091A
-		nop
-		nop
-		nop
-
-loc_1091A:
-		bclr	#5,$22(a0)
-		bclr	#1,$22(a0)
-		bclr	#4,$22(a0)
-		btst	#2,$22(a0)
-		beq.s	loc_10950
-		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
-		move.b	#0,$1C(a0)
-		subq.w	#5,y_pos(a0)
-
-loc_10950:
-		move.b	#0,$3C(a0)
-		move.w	#0,(Chain_Bonus_counter).w
-		move.b	#0,$27(a0)
-		move.b	#0,$29(a0)
-		rts
-; End of function Sonic_ResetOnFloor
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Sonic when he gets hurt
-; ---------------------------------------------------------------------------
-; loc_1096A: Sonic_Hurt:
-Obj01_Hurt:
-		tst.b	$25(a0)
-		bmi.w	Sonic_HurtInstantRecover
-		jsr	(ObjectMove).l
-		addi.w	#$30,$12(a0)
-		btst	#6,$22(a0)
-		beq.s	loc_1098C
-		subi.w	#$20,$12(a0)
-
-loc_1098C:
-		bsr.w	Sonic_HurtStop
-		bsr.w	Sonic_LevelBound
-		bsr.w	Sonic_RecordPos
-		bsr.w	Sonic_Animate
-		bsr.w	LoadSonicDynPLC
-		jmp	(DisplaySprite).l
-; ===========================================================================
-; loc_109A6:
-Sonic_HurtStop:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$E0,d0
-		cmp.w	y_pos(a0),d0
-		blo.w	JmpTo_KillSonic
-		bsr.w	Sonic_DoLevelCollision
-		btst	#1,$22(a0)
-		bne.s	+	; rts
-		moveq	#0,d0
-		move.w	d0,$12(a0)
-		move.w	d0,$10(a0)
-		move.w	d0,$14(a0)
-		move.b	#0,$1C(a0)
-		subq.b	#2,routine(a0)
-		move.w	#120,$30(a0)
-+
-		rts
-; End of function Obj01_Hurt
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Subroutine to make Sonic recover control after getting hit but before landing
-; ---------------------------------------------------------------------------
-; loc_109E2:
-Sonic_HurtInstantRecover:
-		subq.b	#2,routine(a0)
-		move.b	#0,$25(a0)
-		bsr.w	Sonic_RecordPos
-		bsr.w	Sonic_Animate
-		bsr.w	LoadSonicDynPLC
-		jmp	(DisplaySprite).l
-; End of function Sonic_HurtInstantRecover
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Sonic when he dies
-; ---------------------------------------------------------------------------
-; loc_109FE: Sonic_Death:
-Obj01_Dead:
-		bsr.w	CheckGameOver
-		jsr	(ObjectMoveAndFall).l
-		bsr.w	Sonic_RecordPos
-		bsr.w	Sonic_Animate
-		bsr.w	LoadSonicDynPLC
-		jmp	(DisplaySprite).l
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10A1A: Sonic_GameOver:
-CheckGameOver:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$100,d0
-		cmp.w	y_pos(a0),d0
-		bhs.w	return_10A9C
-		move.w	#-$38,$12(a0)
-		addq.b	#2,routine(a0)
-		clr.b	(Update_HUD_timer).w
-		addq.b	#1,(Update_HUD_lives).w
-		subq.b	#1,(Life_count).w
-		bne.s	Obj01_ResetLevel
-		move.w	#0,$3A(a0)
-		move.b	#$39,(GameOver_GameText).w
-		move.b	#$39,(GameOver_OverText).w
-		move.b	#1,(GameOver_OverText+$1A).w
-		clr.b	(Time_Over_flag).w
-; loc_10A5E:
-Obj01_Finished:
-		move.w	#MusID_GameOver,d0
-		jsr	(PlayMusic).l
-		moveq	#PLCID_GameOver,d0
-		jmp	(LoadPLC).l
-; End of function CheckGameOver
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Sonic when the level is restarted
-; ---------------------------------------------------------------------------
-; loc_10A70:
-Obj01_ResetLevel:
-		move.w	#60,$3A(a0)
-		tst.b	(Time_Over_flag).w
-		beq.s	return_10A9C
-		move.w	#0,$3A(a0)
-		move.b	#$39,(TimeOver_TimeText).w
-		move.b	#$39,(TimeOver_OverText).w
-		move.b	#2,(TimeOver_TimeText+$1A).w
-		move.b	#3,(TimeOver_OverText+$1A).w
-		bra.s	Obj01_Finished
-
-return_10A9C:
-		rts
-; End of function Obj01_ResetLevel
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Sonic when he's offscreen and waiting for the level to restart
-; ---------------------------------------------------------------------------
-; loc_10A9E: Sonic_ResetLevel:
-Obj01_Gone:
-		tst.w	$3A(a0)
-		beq.s	+
-		subq.w	#1,$3A(a0)
-		bne.s	+
-		move.w	#1,(Level_Inactive_flag).w
-+
-		rts
-; End of function Obj01_Gone
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Subroutine to animate Sonic's sprites
-; See also: AnimateSprite
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10AB2:
-Sonic_Animate:
-		lea	(SonicAniData).l,a1
-		moveq	#0,d0
-		move.b	$1C(a0),d0
-		cmp.b	$1D(a0),d0	; has the animation changed?
-		beq.s	SAnim_Do	; if not,branch
-		move.b	d0,$1D(a0)	; set previous animation
-		move.b	#0,$1B(a0)	; reset animation frame
-		move.b	#0,$1E(a0)	; reset animation duration
-		bclr	#5,$22(a0)	; clear 'pushing' flag
-; loc_10ADA:
-SAnim_Do:
-		add.w	d0,d0
-		adda.w	(a1,d0.w),a1	; calculate address of appropriate animation script
-		move.b	(a1),d0
-		bmi.s	SAnim_WalkRun	; if animation is walk/run/roll/jump,branch
-		move.b	$22(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,1(a0)
-		or.b	d1,1(a0)
-		subq.b	#1,$1E(a0)	; subtract 1 from frame duration
-		bpl.s	SAnim_Delay	; if time remains,branch
-		move.b	d0,$1E(a0)	; load frame duration
-; loc_10B00:
-SAnim_Do2:
-		moveq	#0,d1
-		move.b	$1B(a0),d1	; load current frame number
-		move.b	1(a1,d1.w),d0	; read sprite number from script
-		cmpi.b	#$F0,d0
-		bhs.s	SAnim_End_FF	; if animation is complete,branch
-; loc_10B10:
-SAnim_Next:
-		move.b	d0,$1A(a0)	; load sprite number
-		addq.b	#1,$1B(a0)	; go to next frame
-; return_10B18:
-SAnim_Delay:
-		rts
-; ===========================================================================
-; loc_10B1A:
-SAnim_End_FF:
-		addq.b	#1,d0		; is the end flag = $FF?
-		bne.s	SAnim_End_FE	; if not,branch
-		move.b	#0,$1B(a0)	; restart the animation
-		move.b	1(a1),d0	; read sprite number
-		bra.s	SAnim_Next
-; ===========================================================================
-; loc_10B2A:
-SAnim_End_FE:
-		addq.b	#1,d0		; is the end flag = $FE?
-		bne.s	SAnim_End_FD	; if not,branch
-		move.b	2(a1,d1.w),d0	; read the next byte in the script
-		sub.b	d0,$1B(a0)	; jump back d0 bytes in the script
-		sub.b	d0,d1
-		move.b	1(a1,d1.w),d0	; read sprite number
-		bra.s	SAnim_Next
-; ===========================================================================
-; loc_10B3E:
-SAnim_End_FD:
-		addq.b	#1,d0		; is the end flag = $FD?
-		bne.s	SAnim_End	; if not,branch
-		move.b	2(a1,d1.w),$1C(a0)	; read next byte,run that animation
-; return_10B48:
-SAnim_End:
-		rts
-; ===========================================================================
-; loc_10B4A:
-SAnim_WalkRun:
-		subq.b	#1,$1E(a0)	; is the start flag = $FF?
-		bpl.s	SAnim_Delay	; if not,branch
-		addq.b	#1,d0		; is animation walking/running?
-		bne.w	SAnim_Roll	; if not,branch
-		moveq	#0,d0
-		move.b	$27(a0),d0
-		bne.w	SAnim_Tumble
-		moveq	#0,d1
-		move.b	$26(a0),d0	; get Sonic's angle
-		move.b	$22(a0),d2
-		andi.b	#1,d2		; is Sonic mirrored horizontally?
-		bne.s	+		; if yes,branch
-		not.b	d0		; reverse angle
-+
-		addi.b	#$10,d0		; add $10 to angle
-		bpl.s	+		; if angle is 0-$7F,branch
-		moveq	#3,d1
-+
-		andi.b	#$FC,1(a0)
-		eor.b	d1,d2
-		or.b	d2,1(a0)
-		btst	#5,$22(a0)
-		bne.w	SAnim_Push
-		lsr.b	#4,d0		; divide angle by 16
-		andi.b	#6,d0		; angle must be 0,2,4 or 6
-		move.w	$14(a0),d2	; get Sonic's "speed" for animation purposes
-		bpl.s	+
-		neg.w	d2
-+
-		lea	(SonAni_Run).l,a1	; use running animation
-		cmpi.w	#$600,d2		; is Sonic at running speed?
-		bhs.s	+			; if yes,branch
-		lea	(SonAni_Walk).l,a1	; use walking animation
-+
-		move.b	d0,d1
-		lsr.b	#1,d1
-		add.b	d1,d0
-		add.b	d0,d0
-		add.b	d0,d0
-		move.b	d0,d3
-		neg.w	d2
-		addi.w	#$800,d2
-		bpl.s	+
-		moveq	#0,d2
-+
-		lsr.w	#8,d2
-		lsr.w	#1,d2
-		move.b	d2,$1E(a0)	; modify frame duration
-		bsr.w	SAnim_Do2
-		add.b	d3,$1A(a0)	; modify frame number
-		rts
-; ===========================================================================
-; loc_10BD8:
-SAnim_Tumble:
-		move.b	$27(a0),d0
-		moveq	#0,d1
-		move.b	$22(a0),d2
-		andi.b	#1,d2
-		bne.s	SAnim_Tumble_Left
-
-		andi.b	#$FC,1(a0)
-		addi.b	#$B,d0
-		divu.w	#$16,d0
-		addi.b	#$9B,d0
-		move.b	d0,$1A(a0)
-		move.b	#0,$1E(a0)
-		rts
-; ===========================================================================
-; loc_10C06:
-SAnim_Tumble_Left:
-		andi.b	#$FC,1(a0)
-		tst.b	$29(a0)
-		beq.s	loc_10C1E
-		ori.b	#1,1(a0)
-		addi.b	#$B,d0
-		bra.s	loc_10C2A
-; ===========================================================================
-
-loc_10C1E:
-		ori.b	#3,1(a0)
-		neg.b	d0
-		addi.b	#$8F,d0
-
-loc_10C2A:
-		divu.w	#$16,d0
-		addi.b	#$9B,d0
-		move.b	d0,$1A(a0)
-		move.b	#0,$1E(a0)
-		rts
-; ===========================================================================
-; loc_10C3E:
-SAnim_Roll:
-		addq.b	#1,d0		; is the start flag = $FE?
-		bne.s	SAnim_Push	; if not,branch
-		move.w	$14(a0),d2
-		bpl.s	+
-		neg.w	d2
-+
-		lea	(SonAni_Roll2).l,a1
-		cmpi.w	#$600,d2
-		bhs.s	+
-		lea	(SonAni_Roll).l,a1
-+
-		neg.w	d2
-		addi.w	#$400,d2
-		bpl.s	+
-		moveq	#0,d2
-+
-		lsr.w	#8,d2
-		move.b	d2,$1E(a0)
-		move.b	$22(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,1(a0)
-		or.b	d1,1(a0)
-		bra.w	SAnim_Do2
-; ===========================================================================
-; loc_10C82:
-SAnim_Push:
-		move.w	$14(a0),d2
-		bmi.s	+
-		neg.w	d2
-+
-		addi.w	#$800,d2
-		bpl.s	+
-		moveq	#0,d2
-+
-		lsr.w	#6,d2
-		move.b	d2,$1E(a0)
-		lea	(SonAni_Push).l,a1
-		move.b	$22(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,1(a0)
-		or.b	d1,1(a0)
-		bra.w	SAnim_Do2
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Animation script - Sonic
-; ---------------------------------------------------------------------------
-; off_10CB4: Sonic_AnimateData:
-SonicAniData:	offsetTable
-		offsetTableEntry.w SonAni_Walk
-		offsetTableEntry.w SonAni_Run
-		offsetTableEntry.w SonAni_Roll
-		offsetTableEntry.w SonAni_Roll2
-		offsetTableEntry.w SonAni_Push
-		offsetTableEntry.w SonAni_Wait
-		offsetTableEntry.w SonAni_Balance
-		offsetTableEntry.w SonAni_LookUp
-		offsetTableEntry.w SonAni_Duck
-		offsetTableEntry.w SonAni_Spindash
-		offsetTableEntry.w SonAni_WallRecoil1
-		offsetTableEntry.w SonAni_WallRecoil2
-		offsetTableEntry.w SonAni_0x0C
-		offsetTableEntry.w SonAni_Stop
-		offsetTableEntry.w SonAni_Float1
-		offsetTableEntry.w SonAni_Float2
-		offsetTableEntry.w SonAni_0x10
-		offsetTableEntry.w SonAni_S1LzHang
-		offsetTableEntry.w SonAni_Unused_0x12
-		offsetTableEntry.w SonAni_Unused_0x13
-		offsetTableEntry.w SonAni_Unused_0x14
-		offsetTableEntry.w SonAni_Bubble
-		offsetTableEntry.w SonAni_Death1
-		offsetTableEntry.w SonAni_Drown
-		offsetTableEntry.w SonAni_Death2
-		offsetTableEntry.w SonAni_Unused_0x19
-		offsetTableEntry.w SonAni_Hurt
-		offsetTableEntry.w SonAni_S1LzSlide
-		offsetTableEntry.w SonAni_0x1C
-		offsetTableEntry.w SonAni_Float3
-		offsetTableEntry.w SonAni_0x1E
-SonAni_Walk:		dc.b $FF,$10,$11,$12,$13,$14,$15,$16,$17,$0C,$0D,$0E,$0F,$FF
-SonAni_Run:		dc.b $FF,$3C,$3D,$3E,$3F,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-SonAni_Roll:		dc.b $FE,$6C,$70,$6D,$70,$6E,$70,$6F,$70,$FF
-SonAni_Roll2:		dc.b $FE,$6C,$70,$6D,$70,$6E,$70,$6F,$70,$FF
-SonAni_Push:		dc.b $FD,$77,$78,$79,$7A,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-SonAni_Wait:		dc.b $07,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-			dc.b $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$02
-			dc.b $03,$03,$03,$04,$04,$05,$05,$FE,$04
-SonAni_Balance:		dc.b $07,$89,$8A,$FF
-SonAni_LookUp:		dc.b $05,$06,$07,$FE,$01
-SonAni_Duck:		dc.b $05,$7F,$80,$FE,$01
-SonAni_Spindash:	dc.b $00,$71,$72,$71,$73,$71,$74,$71,$75,$71,$76,$71,$FF
-SonAni_WallRecoil1:	dc.b $3F,$82,$FF
-SonAni_WallRecoil2:	dc.b $07,$08,$08,$09,$FD,$05
-SonAni_0x0C:		dc.b $07,$09,$FD,$05
-SonAni_Stop:		dc.b $03,$81,$82,$83,$84,$85,$86,$87,$88,$FE,$02
-SonAni_Float1:		dc.b $07,$94,$96,$FF
-SonAni_Float2:		dc.b $07,$91,$92,$93,$94,$95,$FF
-SonAni_0x10:		dc.b $2F,$7E,$FD,$00
-SonAni_S1LzHang:	dc.b $05,$8F,$90,$FF
-SonAni_Unused_0x12:	dc.b $0F,$43,$43,$43,$FE,$01
-SonAni_Unused_0x13:	dc.b $0F,$43,$44,$FE,$01
-SonAni_Unused_0x14:	dc.b $3F,$49,$FF
-SonAni_Bubble:		dc.b $0B,$97,$97,$12,$13,$FD,$00
-SonAni_Death1:		dc.b $20,$9A,$FF
-SonAni_Drown:		dc.b $20,$99,$FF
-SonAni_Death2:		dc.b $20,$98,$FF
-SonAni_Unused_0x19:	dc.b $03,$4E,$4F,$50,$51,$52,$00,$FE,$01
-SonAni_Hurt:		dc.b $40,$8D,$FF
-SonAni_S1LzSlide:	dc.b $09,$8D,$8E,$FF
-SonAni_0x1C:		dc.b $77,$00,$FD,$00
-SonAni_Float3:		dc.b $03,$91,$92,$93,$94,$95,$FF
-SonAni_0x1E:		dc.b $03,$3C,$FD,$00
-		even
-
-; ---------------------------------------------------------------------------
-; Sonic pattern loading subroutine
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10DDC: Load_Sonic_Dynamic_PLC:
-LoadSonicDynPLC:
-		moveq	#0,d0
-		move.b	$1A(a0),d0	; load frame number
-		cmp.b	(Sonic_LastLoadedDPLC).w,d0
-		beq.s	return_10E2E
-		move.b	d0,(Sonic_LastLoadedDPLC).w
-		lea	(MapRUnc_Sonic).l,a2
-		add.w	d0,d0
-		adda.w	(a2,d0.w),a2
-		move.w	(a2)+,d5
-		subq.w	#1,d5
-		bmi.s	return_10E2E
-		move.w	#$F000,d4
-; loc_10E02:
-SPLC_ReadEntry:
-		moveq	#0,d1
-		move.w	(a2)+,d1
-		move.w	d1,d3
-		lsr.w	#8,d3
-		andi.w	#$F0,d3
-		addi.w	#$10,d3
-		andi.w	#$FFF,d1
-		lsl.l	#5,d1
-		addi.l	#ArtUnc_Sonic,d1
-		move.w	d4,d2
-		add.w	d3,d4
-		add.w	d3,d4
-		jsr	(QueueDMATransfer).l
-		dbf	d5,SPLC_ReadEntry	; repeat for number of entries
-
-return_10E2E:
-		rts
-; End of function LoadSonicDynPLC
-
-; ===========================================================================
-; loc_10E30:
-JmpTo_KillSonic:	; JmpTo
-		jmp	(KillSonic).l
-
-		align 4
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Object 02 - Tails
-; ---------------------------------------------------------------------------
-; Sprite_10E38: Obj_0x02_Tails:
-Obj02:
-		moveq	#0,d0
-		move.b	routine(a0),d0
-		move.w	Obj02_Index(pc,d0.w),d1
-		jmp	Obj02_Index(pc,d1.w)
-; ===========================================================================
-; off_10E46: Tails_Index:
-Obj02_Index:	offsetTable
-		offsetTableEntry.w Obj02_Init
-		offsetTableEntry.w Obj02_Control
-		offsetTableEntry.w Tails_Hurt
-		offsetTableEntry.w Tails_Death
-		offsetTableEntry.w Tails_ResetLevel
-; ===========================================================================
-; loc_10E50: Tails_Main:
-Obj02_Init:
-		addq.b	#2,routine(a0)
-		move.b	#$F,$16(a0)
-		move.b	#9,$17(a0)
-		move.l	#Tails_Mappings,4(a0)
-		move.w	#$7A0,2(a0)
-		bsr.w	Adjust2PArtPointer
-		move.b	#2,$18(a0)
-		move.b	#$18,$19(a0)
-		move.b	#$84,1(a0)
-		move.w	#$600,(Sonic_top_speed).w
-		move.w	#$C,(Sonic_acceleration).w
-		move.w	#$80,(Sonic_deceleration).w
-		move.b	#$C,$3E(a0)
-		move.b	#$D,$3F(a0)
-		move.b	#0,$2C(a0)
-		move.b	#4,$2D(a0)
-		move.b	#5,(Tails_Tails).w
-; loc_10EB4: Tails_Control:
-Obj02_Control:
-		bsr.w	TailsCPU_Control
-		btst	#0,$2A(a0)
-		bne.s	Obj02_ControlsLock
-		moveq	#0,d0
-		move.b	$22(a0),d0
-		andi.w	#6,d0
-		move.w	Obj02_Modes(pc,d0.w),d1
-		jsr	Obj02_Modes(pc,d1.w)
-; loc_10Ed2: Tails_ControlsLock:
-Obj02_ControlsLock:
-		bsr.s	Tails_Display
-		bsr.w	Tails_RecordPos
-		move.b	(Primary_Angle).w,$36(a0)
-		move.b	(Secondary_Angle).w,$37(a0)
-		bsr.w	Tails_Animate
-		tst.b	$2A(a0)
-		bmi.s	loc_10EF4
-		jsr	(TouchResponse).l
-
-loc_10EF4:
-		bsr.w	LoadTailsDynPLC
-		rts
-; ===========================================================================
-; off_10EFA: Tails_Modes:
-Obj02_Modes:	offsetTable
-		offsetTableEntry.w Obj02_MdNormal	; 0 - not airborne or rolling
-		offsetTableEntry.w Obj02_MdAir		; 2 - airborne
-		offsetTableEntry.w Obj02_MdRoll		; 4 - rolling
-		offsetTableEntry.w Obj02_MdJump		; 6 - jumping
-; ===========================================================================
-; byte_10F02:
-Tails_MusicList:	zoneOrderedTable 1,1
-	zoneTableEntry.b	MusID_GHZ	; GHZ
-	zoneTableEntry.b	MusID_GHZ	; OWZ
-	zoneTableEntry.b	MusID_MTZ	; WZ
-	zoneTableEntry.b	MusID_SSZ	; SSZ
-	zoneTableEntry.b	MusID_MTZ	; MTZ
-	zoneTableEntry.b	MusID_MTZ	; MTZ2
-	zoneTableEntry.b	MusID_BOZ	; BLZ
-	zoneTableEntry.b	MusID_HTZ	; HTZ
-	zoneTableEntry.b	MusID_HPZ	; HPZ
-	zoneTableEntry.b	MusID_RWZ	; RWZ
-	zoneTableEntry.b	MusID_OOZ	; OOZ
-	zoneTableEntry.b	MusID_DHZ	; DHZ
-	zoneTableEntry.b	MusID_CNZ	; CNZ
-	zoneTableEntry.b	MusID_CPZ	; CPZ
-	zoneTableEntry.b	MusID_CPZ	; GCZ
-	zoneTableEntry.b	MusID_NGHZ	; NGHZ
-	if FixBugs
-	zoneTableEntry.b	MusID_DEZ	; DEZ
-	else
-	; no *proper* entry for DEZ,so it instead uses the alignment to play sound $08
-	endif
-	zoneTableEnd
-	even
-
-; ===========================================================================
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10F12:
-Tails_Display:
-		move.w	$30(a0),d0
-		beq.s	Obj02_Display
-		subq.w	#1,$30(a0)
-		lsr.w	#3,d0
-		bhs.s	Obj02_ChkInvin
-; loc_10F20:
-Obj02_Display:
-		jsr	(DisplaySprite).l
-; loc_10F26:
-Obj02_ChkInvin:	; Checks if Tails has run out of invincibility frames
-		tst.b	(Invincibility_flag).w
-		beq.s	Obj02_ChkShoes
-		tst.w	$32(a0)
-		beq.s	Obj02_ChkShoes
-		subq.w	#1,$32(a0)
-		bne.s	Obj02_ChkShoes
-		tst.b	(Current_Boss_ID).w
-		bne.s	Obj02_RmvInvin
-		cmpi.w	#$C,(Current_Air).w
-		blo.s	Obj02_RmvInvin
-		moveq	#0,d0
-		move.b	(Current_Zone).w,d0
-		lea	Tails_MusicList(pc),a1
-		move.b	(a1,d0.w),d0
-		jsr	(PlayMusic).l
-; loc_10F5A:
-Obj02_RmvInvin:
-		move.b	#0,(Invincibility_flag).w
-; loc_10F60:
-Obj02_ChkShoes:	; Checks if Tails should still have the speed shoes
-		tst.b	(Speed_shoes).w
-		beq.s	Obj02_ExitChk
-		tst.w	$34(a0)
-		beq.s	Obj02_ExitChk
-		subq.w	#1,$34(a0)
-		bne.s	Obj02_ExitChk
-		move.w	#$600,(Sonic_top_speed).w
-		move.w	#$C,(Sonic_acceleration).w
-		move.w	#$80,(Sonic_deceleration).w
-		move.b	#0,(Speed_shoes).w
-		move.w	#MusID_SlowDown,d0	; restore music tempo
-		jmp	(PlayMusic).l
-; return_10F94:
-Obj02_ExitChk:
-		rts
-; End of subroutine Tails_Display
-
-; ---------------------------------------------------------------------------
-; Tails' AI code; rather idiotic in this version,as it only really is
-; programmed to copy Sonic's inputs and make no effort to correct itself
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_10F96: Tails_Control2:
-TailsCPU_Control:
-		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#button_up_mask+button_down_mask+button_left_mask+button_right_mask+button_A_mask+button_B_mask+button_C_mask,d0	; did the real player 2 hit something?
-		beq.s	TailsCPU_Normal_HumanControl		; if not,branch
-		move.w	#0,(unk_F700).w				; clear this flag that is never set...
-		move.w	#60*5,(Tails_control_counter).w		; give player 2 control for 5 seconds
-		rts
-; ===========================================================================
-; loc_10FAE: Tails_ControlNoKeysPressed:
-TailsCPU_Normal_HumanControl:
-		tst.w	(Tails_control_counter).w
-		beq.s	+
-		subq.w	#1,(Tails_control_counter).w
-		rts
-+
-		move.w	(Tails_CPU_routine).w,d0
-		move.w	TailsCPU_States(pc,d0.w),d0
-		jmp	TailsCPU_States(pc,d0.w)
-; ===========================================================================
-; off_10FC6: Tails_ControlIndex:
-TailsCPU_States: offsetTable
-		offsetTableEntry.w TailsCPU_Init
-		offsetTableEntry.w Tails_Control_01
-		offsetTableEntry.w Tails_Control_02
-		offsetTableEntry.w TailsCPU_Normal
-
-; ===========================================================================
-; initial AI State
-; ---------------------------------------------------------------------------
-; loc_10FCE: Tails_Control_00
-TailsCPU_Init:
-		move.w	#6,(Tails_CPU_routine).w
-		rts
-; ===========================================================================
-; unused AI states,drops Tails out of the sky and... nothing else...
-; for some reason they REALLY didn't want players seeing this given
-; they both get stopped by branch to the used code and a return command...
-; ---------------------------------------------------------------------------
-; loc_10Fd6:
-Tails_Control_01:
-		move.w	#6,(Tails_CPU_routine).w
-		rts
-		move.w	#$40,(unk_F706).w
-		move.w	#4,(Tails_CPU_routine).w
-
-; loc_10FEA:
-Tails_Control_02:
-		move.w	#6,(Tails_CPU_routine).w
-		rts
-		move.w	(unk_F706).w,d1
-		subq.w	#1,d1
-		cmpi.w	#$10,d1
-		bne.s	loc_11004
-		move.w	#6,(Tails_CPU_routine).w
-
-loc_11004:
-		move.w	d1,(unk_F706).w
-		lea	(unk_E600).w,a1
-		lsl.b	#2,d1
-		addq.b	#4,d1
-		move.w	(unk_EEE0).w,d0
-		sub.b	d1,d0
-		move.w	(a1,d0.w),x_pos(a0)
-		move.w	2(a1,d0.w),y_pos(a0)
-		rts
-; ===========================================================================
-; AI State where Tails follows the player normally
-; ---------------------------------------------------------------------------
-; loc_11024: Tails_ControlCopySonicMoves:
-TailsCPU_Normal:
-		move.w	(MainCharacter+8).w,d0
-		sub.w	x_pos(a0),d0
-		bpl.s	+
-		neg.w	d0
-+
-		cmpi.w	#224-32,d0			; is Sonic 192 pixels away from Tails?
-		blo.s	TailsCPU_Normal_SonicOK		; if not,branch
-		nop					; ...and then do nothing and continue anyways...
-; loc_11038:
-TailsCPU_Normal_SonicOK:
-		; amazingly,this block of code is still in the final!
-		lea	(Sonic_Pos_Record_Buf).w,a1
-		move.w	#$10,d1
-		lsl.b	#2,d1
-		addq.b	#4,d1
-		move.w	(Sonic_Pos_Record_Index).w,d0
-		sub.b	d1,d0
-		lea	(Sonic_Stat_Record_Buf).w,a1
-		move.w	(a1,d0.w),(Ctrl_2).w
-		rts
-
-; ---------------------------------------------------------------------------
-; Subroutine to record Tails' previous positions for invincibility stars
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_11056: Tails_RecordMoves:
-Tails_RecordPos:
-		move.w	(Tails_Pos_Record_Index).w,d0
-		lea	(Tails_Pos_Record_Buf).w,a1
-		lea	(a1,d0),a1
-		move.w	x_pos(a0),(a1)+
-		move.w	y_pos(a0),(a1)+
-		addq.b	#4,(Tails_Pos_Record_Index+1).w
-		rts
-; End of subroutine Tails_RecordPos
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Start of subroutine Obj02_MdNormal
-; Called if Tails is neither airborne nor rolling this frame
-; ---------------------------------------------------------------------------
-; loc_11070: Tails_MdNormal:
-Obj02_MdNormal:
-		bsr.w	Tails_Spindash
-		bsr.w	Tails_Jump
-		bsr.w	Tails_SlopeResist
-		bsr.w	Tails_Move
-		bsr.w	Tails_Roll
-		bsr.w	Tails_LevelBoundaries
-		jsr	(ObjectMove).l
-		bsr.w	AnglePos
-		bsr.w	Tails_SlopeRepel
-		rts
-; End of subroutine Obj02_MdNormal
-
-; ===========================================================================
-; Start of subroutine Obj02_MdAir
-; Called if Tails is airborne,but not in a ball (thus,probably not jumping)
-; loc_11098: Tails_MdJump:
-Obj02_MdAir:
-		bsr.w	Tails_JumpHeight
-		bsr.w	Tails_ChgJumpDir
-		bsr.w	Tails_LevelBoundaries
-		jsr	(ObjectMoveAndFall).l
-		btst	#6,$22(a0)	; is Tails underwater?
-		beq.s	+		; if not,branch
-		subi.w	#$28,$12(a0)	; reduce gravity by $28 ($38-$28=$10)
-+
-		bsr.w	Tails_JumpAngle
-		bsr.w	Tails_Floor
-		rts
-; End of subroutine Obj02_MdAir
-
-; ===========================================================================
-; Start of subroutine Obj02_MdRoll
-; Called if Tails is in a ball,but not airborne (thus,probably rolling)
-; loc_110C2: Tails_MdRoll:
-Obj02_MdRoll:
-		bsr.w	Tails_Jump
-		bsr.w	Tails_RollRepel
-		bsr.w	Tails_RollSpeed
-		bsr.w	Tails_LevelBoundaries
-		jsr	(ObjectMove).l
-		bsr.w	AnglePos
-		bsr.w	Tails_SlopeRepel
-		rts
-; End of subroutine Obj02_MdAir
-
-; ===========================================================================
-; Start of subroutine Obj02_MdJump
-; Called if Tails is in a ball and airborne (he could be jumping but not necessarily)
-; Notes: This is identical to Obj02_MdAir,at least at this outer level.
-;		 Why they gave it a separate copy of the code,I don't know.
-; loc_110E2: Tails_MdJump2:
-Obj02_MdJump:
-		bsr.w	Tails_JumpHeight
-		bsr.w	Tails_ChgJumpDir
-		bsr.w	Tails_LevelBoundaries
-		jsr	(ObjectMoveAndFall).l
-		btst	#6,$22(a0)	; is Tails underwater?
-		beq.s	+		; if not,branch
-		subi.w	#$28,$12(a0)	; reduce gravity by $28 ($38-$28=$10)
-+
-		bsr.w	Tails_JumpAngle
-		bsr.w	Tails_Floor
-		rts
-; End of subroutine Obj02_MdJump
-
-; ---------------------------------------------------------------------------
-; Subroutine to make Tails walk/run
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1110C:
-Tails_Move:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		move.w	(Sonic_deceleration).w,d4
-		tst.b	(Sliding_flag).w
-		bne.w	Obj02_Traction
-		tst.w	$2E(a0)
-		bne.w	Obj02_UpdateSpeedOnGround
-		btst	#button_left,(Ctrl_2_Held).w	; is left being pressed?
-		beq.s	Obj02_NotLeft		; if not,branch
-		bsr.w	Tails_MoveLeft
-; loc_11134:
-Obj02_NotLeft:
-		btst	#button_right,(Ctrl_2_Held).w	; is right being pressed?
-		beq.s	Obj02_NotRight		; if not,branch
-		bsr.w	Tails_MoveRight
-; loc_11140:
-Obj02_NotRight:
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0				; is Tails on a slope?
-		bne.w	Obj02_UpdateSpeedOnGround	; if yes,branch
-		tst.w	$14(a0)				; is Tails moving?
-		bne.w	Obj02_UpdateSpeedOnGround	; if yes,branch
-		bclr	#5,$22(a0)
-		move.b	#5,$1C(a0)		; use "standing" animation
-		btst	#3,$22(a0)
-		beq.s	Tails_Balance
-		moveq	#0,d0
-		move.b	$3D(a0),d0
-		lsl.w	#6,d0
-		lea	(Object_RAM).w,a1	; a1=character
-		lea	(a1,d0.w),a1		; a1=object
-
-		tst.b	$22(a1)
-		bmi.s	Tails_LookUp
-		moveq	#0,d1
-		move.b	$19(a1),d1
-		move.w	d1,d2
-		add.w	d2,d2
-		subq.w	#4,d2
-		add.w	x_pos(a0),d1
-		sub.w	x_pos(a1),d1
-		cmpi.w	#4,d1
-		blt.s	Tails_BalanceOnObjLeft
-		cmp.w	d2,d1
-		bge.s	Tails_BalanceOnObjRight
-		bra.s	Tails_LookUp
-; ---------------------------------------------------------------------------
-; balancing checks for Tails
-; loc_111A2:
-Tails_Balance:
-		jsr	(ObjHitFloor).l
-		cmpi.w	#$C,d1
-		blt.s	Tails_LookUp
-		cmpi.b	#3,$36(a0)
-		bne.s	Tails_BalanceLeft
-; loc_111B6:
-Tails_BalanceOnObjRight:
-		bclr	#0,$22(a0)
-		bra.s	Tails_BalanceDone
-; ---------------------------------------------------------------------------
-; loc_111BE:
-Tails_BalanceLeft:
-		cmpi.b	#3,$37(a0)
-		bne.s	Tails_LookUp
-; loc_111C6:
-Tails_BalanceOnObjLeft:
-		bset	#0,$22(a0)
-; loc_111CC:
-Tails_BalanceDone:
-		move.b	#6,$1C(a0)
-		bra.s	Obj02_UpdateSpeedOnGround
-; ---------------------------------------------------------------------------
-; loc_111d4:
-Tails_LookUp:
-		btst	#button_up,(Ctrl_2_Held).w	; is up being pressed?
-		beq.s	Tails_Duck		; if not,branch
-		move.b	#7,$1C(a0)		; use "looking up" animation
-		bra.s	Obj02_UpdateSpeedOnGround
-; ---------------------------------------------------------------------------
-; loc_111E4:
-Tails_Duck:
-		btst	#button_down,(Ctrl_2_Held).w		; is down being pressed?
-		beq.s	Obj02_UpdateSpeedOnGround	; if not,branch
-		move.b	#8,$1C(a0)		; use "ducking" animation
-
-; ---------------------------------------------------------------------------
-; updates Tails' speed on the ground
-; ---------------------------------------------------------------------------
-; loc_111F2:
-Obj02_UpdateSpeedOnGround:
-		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#button_left_mask+button_right_mask,d0		; is left/right being pressed?
-		bne.s	Obj02_Traction	; if yes,branch
-		move.w	$14(a0),d0
-		beq.s	Obj02_Traction
-		bmi.s	Obj02_SettleLeft
-
-; slow down when facing right and not pressing a direction
-; Obj02_SettleRight:
-		sub.w	d5,d0
-		bhs.s	+
-		move.w	#0,d0
-+
-		move.w	d0,$14(a0)
-		bra.s	Obj02_Traction
-; ---------------------------------------------------------------------------
-; slow down when facing left and not pressing a direction
-; loc_11212:
-Obj02_SettleLeft:
-		add.w	d5,d0
-		bhs.s	+
-		move.w	#0,d0
-+
-		move.w	d0,$14(a0)
-
-; increase or decrease speed on the ground
-; loc_1121E:
-Obj02_Traction:
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	$14(a0),d1
-		asr.l	#8,d1
-		move.w	d1,$10(a0)
-		muls.w	$14(a0),d0
-		asr.l	#8,d0
-		move.w	d0,$12(a0)
-
-; stops Tails from running through walls that meet the ground
-; loc_1123C:
-Obj02_CheckWallsOnGround:
-		move.b	$26(a0),d0
-		addi.b	#$40,d0
-		bmi.s	return_112AC
-		move.b	#$40,d1
-		tst.w	$14(a0)
-		beq.s	return_112AC
-		bmi.s	+
-		neg.w	d1
-+
-		move.b	$26(a0),d0
-		add.b	d1,d0
-		move.w	d0,-(sp)
-		bsr.w	Sonic_WalkSpeed
-		move.w	(sp)+,d0
-		tst.w	d1
-		bpl.s	return_112AC
-		asl.w	#8,d1
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		beq.s	loc_112A8
-		cmpi.b	#$40,d0
-		beq.s	loc_11296
-		cmpi.b	#$80,d0
-		beq.s	loc_11290
-		add.w	d1,$10(a0)
-		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_11290:
-		sub.w	d1,$12(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_11296:
-		sub.w	d1,$10(a0)
-		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_112A8:
-		add.w	d1,$12(a0)
-
-return_112AC:
-		rts
-; End of subroutine Tails_Move
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_112AE:
-Tails_MoveLeft:
-		move.w	$14(a0),d0
-		beq.s	loc_112B6
-		bpl.s	Tails_TurnLeft	; if Tails is already moving to the right,branch
-
-loc_112B6:
-		bset	#0,$22(a0)
-		bne.s	loc_112CA
-		bclr	#5,$22(a0)
-		move.b	#1,$1D(a0)
-
-loc_112CA:
-		sub.w	d5,d0		; add acceleration to left
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0		; compare new speed with top speed
-		bgt.s	loc_112DC	; if new speed is less than the maximum,branch
-		add.w	d5,d0		; remove this frame's acceleration change
-		cmp.w	d1,d0		; compare speed with top speed
-		ble.s	loc_112DC	; if speed was already greater than the maximum,branc
-		move.w	d1,d0		; limit speed on ground going left
-
-loc_112DC:
-		move.w	d0,$14(a0)
-		move.b	#0,$1C(a0)	; use "walking" animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_112E8:
-Tails_TurnLeft:
-		sub.w	d4,d0
-		bhs.s	loc_112F0
-		move.w	#-$80,d0
-
-loc_112F0:
-		move.w	d0,$14(a0)
-	if FixBugs
-		move.b	$26(a0),d1
-		addi.b	#$20,d1
-		andi.b	#$C0,d1
-	else
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-	endif
-		bne.s	return_1131E
-		cmpi.w	#$400,d0
-		blt.s	return_1131E
-		move.b	#$D,$1C(a0)	; use "stopping" animation
-		bclr	#0,$22(a0)
-		move.w	#SndID_Skidding,d0		; use "stopping" sound
-		jsr	(PlaySound).l
-
-return_1131E:
-		rts
-; End of subroutine Tails_MoveLeft
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_11320:
-Tails_MoveRight:
-		move.w	$14(a0),d0
-		bmi.s	Tails_TurnRight
-		bclr	#0,$22(a0)
-		beq.s	loc_1133A
-		bclr	#5,$22(a0)
-		move.b	#1,$1D(a0)	; force walking animation to restart if it's already in-progress
-
-loc_1133A:
-		add.w	d5,d0		; add acceleration to the right
-		cmp.w	d6,d0		; compare new speed with top speed
-		blt.s	loc_11348	; if new speed is less than the maximum,branch
-		sub.w	d5,d0		; remove this frame's acceleration change
-		cmp.w	d6,d0		; compare speed with top speed
-		bge.s	loc_11348	; if speed was already greater than the maximum,branch
-		move.w	d6,d0		; limit speed on ground going right
-
-loc_11348:
-		move.w	d0,$14(a0)
-		move.b	#0,$1C(a0)	; use walking animation
-		rts
-; ---------------------------------------------------------------------------
-; loc_11354:
-Tails_TurnRight:
-		add.w	d4,d0
-		bhs.s	loc_1135C
-		move.w	#$80,d0
-
-loc_1135C:
-		move.w	d0,$14(a0)
-	if FixBugs
-		move.b	$26(a0),d1
-		addi.b	#$20,d1
-		andi.b	#$C0,d1
-	else
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-	endif
-		bne.s	return_1138A
-		cmpi.w	#-$400,d0
-		bgt.s	return_1138A
-		move.b	#$D,$1C(a0)	; use "stopping" animation
-		bset	#0,$22(a0)
-		move.w	#SndID_Skidding,d0		; use "stopping" sound
-		jsr	(PlaySound).l
-
-return_1138A:
-		rts
-; End of subroutine Tails_MoveRight
-
-; ---------------------------------------------------------------------------
-; Subroutine to change Tails' speed as he rolls
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1138C:
-Tails_RollSpeed:
-		move.w	(Sonic_top_speed).w,d6
-		asl.w	#1,d6
-		move.w	(Sonic_acceleration).w,d5
-		asr.w	#1,d5			; natural roll deceleration = 1/2 normal acceleration
-		; read Sonic's equivalent of the code for a hilarious screw-up
-		move.w	(Sonic_deceleration).w,d4
-		asr.w	#2,d4			; controlled roll deceleration
-		tst.b	(Sliding_flag).w
-		bne.w	Tails_SetRollSpeed
-		tst.w	$2E(a0)
-		bne.s	Tails_ApplyRollSpeed
-		btst	#button_left,(Ctrl_2_Held).w	; is left being pressed?
-		beq.s	loc_113B8		; if not,branch
-		bsr.w	Tails_RollLeft
-
-loc_113B8:
-		btst	#button_right,(Ctrl_2_Held).w	; is right being pressed?
-		beq.s	Tails_ApplyRollSpeed	; if not,branch
-		bsr.w	Tails_RollRight
-; loc_113C4:
-Tails_ApplyRollSpeed:
-		move.w	$14(a0),d0
-		beq.s	Tails_CheckRollStop
-		bmi.s	Tails_ApplyRollSpeedLeft
-
-; Tails_ApplyRollSpeedRight:
-		sub.w	d5,d0
-		bhs.s	loc_113d4
-		move.w	#0,d0
-
-loc_113d4:
-		move.w	d0,$14(a0)
-		bra.s	Tails_CheckRollStop
-; ---------------------------------------------------------------------------
-; loc_113DA:
-Tails_ApplyRollSpeedLeft:
-		add.w	d5,d0
-		bhs.s	loc_113E2
-		move.w	#0,d0
-
-loc_113E2:
-		move.w	d0,$14(a0)
-; loc_113E6:
-Tails_CheckRollStop:
-		tst.w	$14(a0)
-		bne.s	Tails_SetRollSpeed
-		bclr	#2,$22(a0)
-		move.b	#$F,$16(a0)	; sets standing height to only slightly higher than rolling height,unlike Sonic
-		move.b	#9,$17(a0)
-		move.b	#5,$1C(a0)
-		subq.w	#5,y_pos(a0)
-; loc_11408:
-Tails_SetRollSpeed:
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	$14(a0),d0
-		asr.l	#8,d0
-		move.w	d0,$12(a0)	; set y velocity based on $14 and angle
-		muls.w	$14(a0),d1
-		asr.l	#8,d1
-		cmpi.w	#$1000,d1
-		ble.s	loc_1142C
-		move.w	#$1000,d1	; limit Tails' speed rolling right
-
-loc_1142C:
-		cmpi.w	#-$1000,d1
-		bge.s	loc_11436
-		move.w	#-$1000,d1	; limit Tails' speed rolling left
-
-loc_11436:
-		move.w	d1,$10(a0)	; set x velocity based on $14 and angle
-		bra.w	Obj02_CheckWallsOnGround
-; End of function Tails_RollSpeed
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1143E:
-Tails_RollLeft:
-		move.w	$0014(a0),d0
-		beq.s	loc_11446
-		bpl.s	loc_11454
-loc_11446:
-		bset	#0,$0022(a0)
-		move.b	#2,$001C(a0)
-		rts
-loc_11454:
-		sub.w	d4,d0
-		bhs.s	loc_1145C
-		move.w	#-$80,d0
-loc_1145C:
-		move.w	d0,$0014(a0)
-		rts
-;===============================================================================
-; Sub Routine Tails_RollLeft
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_RollRight
-; [ Begin ]
-;===============================================================================
-Tails_RollRight: ; loc_11462:
-		move.w	$0014(a0),d0
-		bmi.s	loc_11476
-		bclr	#0,$0022(a0)
-		move.b	#2,$001C(a0)
-		rts
-loc_11476:
-		add.w	d4,d0
-		bhs.s	loc_1147E
-		move.w	#$0080,d0
-loc_1147E:
-		move.w	d0,$0014(a0)
-		rts
-;===============================================================================
-; Sub Routine Tails_RollRight
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_ChgJumpDir
-; [ Begin ]
-;===============================================================================
-Tails_ChgJumpDir: ; loc_11484:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		asl.w	#1,d5
-		btst	#$04,$0022(a0)
-		bne.s	loc_114CE
-		move.w	$0010(a0),d0
-		btst	#button_left,(Ctrl_2_Held).w
-		beq.s	loc_114B4
-		bset	#0,$0022(a0)
-		sub.w	d5,d0
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0
-		bgt.s	loc_114B4
-		move.w	d1,d0
-loc_114B4:
-		btst	#button_right,(Ctrl_2_Held).w
-		beq.s	loc_114CA
-		bclr	#0,$0022(a0)
-		add.w	d5,d0
-		cmp.w	d6,d0
-		blt.s	loc_114CA
-		move.w	d6,d0
-loc_114CA:
-		move.w	d0,$0010(a0)
-loc_114CE:
-		cmpi.w	#-$400,$0012(a0)
-		blo.s	loc_114FC
-		move.w	$0010(a0),d0
-		move.w	d0,d1
-		asr.w	#$05,d1
-		beq.s	loc_114FC
-		bmi.s	loc_114F0
-		sub.w	d1,d0
-		bhs.s	loc_114EA
-		move.w	#0,d0
-loc_114EA:
-		move.w	d0,$0010(a0)
-		rts
-loc_114F0:
-		sub.w	d1,d0
-		blo.s	loc_114F8
-		move.w	#0,d0
-loc_114F8:
-		move.w	d0,$0010(a0)
-loc_114FC:
-		rts
-;===============================================================================
-; Sub Routine Tails_ChgJumpDir
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_LevelBoundaries
-; [ Begin ]
-;===============================================================================
-Tails_LevelBoundaries: ; loc_114FE:
-		move.l	x_pos(a0),d1
-		move.w	$0010(a0),d0
-		ext.l	d0
-		asl.l	#$08,d0
-		add.l	d0,d1
-		swap	d1
-		move.w	(Camera_Min_X_pos).w,d0
-		addi.w	#$0010,d0
-		cmp.w	d1,d0
-		bhi.s	loc_1156A
-		move.w	(Camera_Max_X_pos).w,d0
-		addi.w	#$0128,d0
-		tst.b	(Current_Boss_ID).w
-		bne.s	loc_1152C
-		addi.w	#$0040,d0
-loc_1152C:
-		cmp.w	d1,d0
-		bls.s	loc_1156A
-loc_11530:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$00E0,d0
-		cmp.w	y_pos(a0),d0
-		blt.s	loc_11540
-		rts
-loc_11540:
-		bra.w	KillTails				; loc_12074
-		cmpi.w	#scrap_brain_zone_act_2,(Current_ZoneAndAct).w
-		bne.w	KillTails				 ; loc_12074
-		cmpi.w	#$2000,x_pos(a0)
-		blo.w	KillTails				 ; loc_12074
-		clr.b	(Last_star_pole_hit).w
-		move.w	#$0001,(Level_Inactive_flag).w
-		move.w	#labyrinth_zone_act_4,(Current_ZoneAndAct).w
-		rts
-loc_1156A:
-		move.w	d0,x_pos(a0)
-		move.w	#0,$000A(a0)
-		move.w	#0,$0010(a0)
-		move.w	#0,$0014(a0)
-		bra.s	loc_11530
-;===============================================================================
-; Sub Routine Tails_LevelBoundaries
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_Roll
-; [ Begin ]
-;===============================================================================
-Tails_Roll: ; loc_11582:
-		tst.b	(Sliding_flag).w
-		bne.s	loc_115A8
-		move.w	$0014(a0),d0
-		bpl.s	loc_11590
-		neg.w	d0
-loc_11590:
-		cmpi.w	#$0080,d0
-		blo.s	loc_115A8
-		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#button_left_mask+button_right_mask,d0
-		bne.s	loc_115A8
-		btst	#button_down,(Ctrl_2_Held).w
-		bne.s	loc_115AA
-loc_115A8:
-		rts
-loc_115AA:
-		btst	#2,$0022(a0)
-		beq.s	loc_115B4
-		rts
-loc_115B4:
-		bset	#2,$0022(a0)
-		move.b	#$0E,$0016(a0)
-		move.b	#$07,$0017(a0)
-		move.b	#2,$001C(a0)
-		addq.w	#$05,y_pos(a0)
-		move.w	#SndID_Roll,d0
-		jsr	(PlaySound).l			  ; loc_14C6
-		tst.w	$0014(a0)
-		bne.s	loc_115E6
-		move.w	#$0200,$0014(a0)
-loc_115E6:
-		rts
-;===============================================================================
-; Sub Routine Tails_Roll
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_Jump
-; [ Begin ]
-;===============================================================================
-Tails_Jump: ; loc_115E8:
-		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		beq.w	loc_1168C
-		moveq	#0,d0
-		move.b	$0026(a0),d0
-		addi.b	#$80,d0
-		bsr.w	loc_136F2
-		cmpi.w	#$0006,d1
-		blt.w	loc_1168C
-		move.w	#$0680,d2
-		btst	#$06,$0022(a0)
-		beq.s	loc_1161A
-		move.w	#$0380,d2
-loc_1161A:
-		moveq	#0,d0
-		move.b	$0026(a0),d0
-		subi.b	#$40,d0
-		jsr	(CalcSine).l		; loc_320A
-		muls.w	d2,d1
-		asr.l	#$08,d1
-		add.w	d1,$0010(a0)
-		muls.w	d2,d0
-		asr.l	#$08,d0
-		add.w	d0,$0012(a0)
-		bset	#1,$0022(a0)
-		bclr	#$05,$0022(a0)
-		addq.l	#$04,sp
-		move.b	#1,$003C(a0)
-		clr.b	$0038(a0)
-		move.w	#SndID_Jump,d0
-		jsr	(PlaySound).l			  ; loc_14C6
-		move.b	#$0F,$0016(a0)
-		move.b	#$09,$0017(a0)
-		btst	#2,$0022(a0)
-		bne.s	loc_1168E
-		move.b	#$0E,$0016(a0)
-		move.b	#$07,$0017(a0)
-		move.b	#2,$001C(a0)
-		bset	#2,$0022(a0)
-		addq.w	#$05,y_pos(a0)
-loc_1168C:
-		rts
-loc_1168E:
-		bset	#$04,$0022(a0)
-		rts
-;===============================================================================
-; Sub Routine Tails_Jump
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_JumpHeight
-; [ Begin ]
-;===============================================================================
-Tails_JumpHeight: ; loc_11696:
-		tst.b	$003C(a0)
-		beq.s	loc_116C2
-		move.w	#-$400,d1
-		btst	#$06,$0022(a0)
-		beq.s	loc_116AC
-		move.w	#-$200,d1
-loc_116AC:
-		cmp.w	$0012(a0),d1
-		ble.s	loc_116C0
-		move.b	(Ctrl_2_Held).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		bne.s	loc_116C0
-		move.w	d1,$0012(a0)
-loc_116C0:
-		rts
-loc_116C2:
-		cmpi.w	#$F040,$0012(a0)
-		bge.s	loc_116d0
-		move.w	#$F040,$0012(a0)
-loc_116d0:
-		rts
-;===============================================================================
-; Sub Routine Tails_JumpHeight
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_Spindash
-; [ Begin ]
-;===============================================================================
-Tails_Spindash: ; loc_116d2:
-		tst.b	$0039(a0)
-		bne.s	loc_11706
-		cmpi.b	#$08,$001C(a0)
-		bne.s	loc_11704
-		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		beq.w	loc_11704
-		move.b	#$09,$001C(a0)
-		move.w	#SndID_Roll,d0
-		jsr	(PlaySound).l			  ; loc_14C6
-		addq.l	#$04,sp
-		move.b	#1,$0039(a0)
-loc_11704:
-		rts
-loc_11706:
-		move.b	(Ctrl_2_Held).w,d0
-		btst	#button_down,d0
-		bne.s	loc_1174C
-		move.b	#$0E,$0016(a0)
-		move.b	#$07,$0017(a0)
-		move.b	#2,$001C(a0)
-		addq.w	#$05,y_pos(a0)
-		move.b	#0,$0039(a0)
-		move.w	#$2000,(Horiz_scroll_delay_val_P2).w
-		move.w	#$0800,$0014(a0)
-		btst	#0,$0022(a0)
-		beq.s	loc_11744
-		neg.w	$0014(a0)
-loc_11744:
-		bset	#2,$0022(a0)
-		rts
-loc_1174C:
-		move.b	(Ctrl_2_Press).w,d0
-		andi.b	#button_A_mask+button_B_mask+button_C_mask,d0
-		beq.w	loc_1175A
-		nop
-loc_1175A:
-		addq.l	#$04,sp
-		rts
-;===============================================================================
-; Sub Routine Tails_Spindash
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_SlopeResist
-; [ Begin ]
-;===============================================================================
-Tails_SlopeResist: ; loc_1175E:
-		move.b	$0026(a0),d0
-		addi.b	#$60,d0
-		cmpi.b	#$C0,d0
-		bhs.s	loc_11792
-		move.b	$0026(a0),d0
-		jsr	(CalcSine).l		; loc_320A
-		muls.w	#$0020,d0
-		asr.l	#$08,d0
-		tst.w	$0014(a0)
-		beq.s	loc_11792
-		bmi.s	loc_1178E
-		tst.w	d0
-		beq.s	loc_1178C
-		add.w	d0,$0014(a0)
-loc_1178C:
-		rts
-loc_1178E:
-		add.w	d0,$0014(a0)
-loc_11792:
-		rts
-;===============================================================================
-; Sub Routine Tails_SlopeResist
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_RollRepel
-; [ Begin ]
-;===============================================================================
-Tails_RollRepel: ; loc_11794:
-		move.b	$0026(a0),d0
-		addi.b	#$60,d0
-		cmpi.b	#$C0,d0
-		bhs.s	loc_117CE
-		move.b	$0026(a0),d0
-		jsr	(CalcSine).l		; loc_320A
-		muls.w	#$0050,d0
-		asr.l	#$08,d0
-		tst.w	$0014(a0)
-		bmi.s	loc_117C4
-		tst.w	d0
-		bpl.s	loc_117BE
-		asr.l	#2,d0
-loc_117BE:
-		add.w	d0,$0014(a0)
-		rts
-loc_117C4:
-		tst.w	d0
-		bmi.s	loc_117CA
-		asr.l	#2,d0
-loc_117CA:
-		add.w	d0,$0014(a0)
-loc_117CE:
-		rts
-;===============================================================================
-; Sub Routine Tails_RollRepel
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_SlopeRepel
-; [ Begin ]
-;===============================================================================
-Tails_SlopeRepel: ; loc_117d0:
-		nop
-		tst.b	$0038(a0)
-		bne.s	loc_1180A
-		tst.w	$002E(a0)
-		bne.s	loc_1180C
-		move.b	$0026(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		beq.s	loc_1180A
-		move.w	$0014(a0),d0
-		bpl.s	loc_117F4
-		neg.w	d0
-loc_117F4:
-		cmpi.w	#$0280,d0
-		bhs.s	loc_1180A
-		clr.w	$0014(a0)
-		bset	#1,$0022(a0)
-		move.w	#$001E,$002E(a0)
-loc_1180A:
-		rts
-loc_1180C:
-		subq.w	#1,$002E(a0)
-		rts
-;===============================================================================
-; Sub Routine Tails_SlopeRepel
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_JumpAngle
-; [ Begin ]
-;===============================================================================
-Tails_JumpAngle: ; loc_11812:
-		move.b	$0026(a0),d0
-		beq.s	loc_1182C
-		bpl.s	loc_11822
-		addq.b	#2,d0
-		bhs.s	loc_11820
-		moveq	#0,d0
-loc_11820:
-		bra.s	loc_11828
-loc_11822:
-		subq.b	#2,d0
-		bhs.s	loc_11828
-		moveq	#0,d0
-loc_11828:
-		move.b	d0,$0026(a0)
-loc_1182C:
-		move.b	$0027(a0),d0
-		beq.s	loc_11870
-		tst.w	$0014(a0)
-		bmi.s	loc_11850
-loc_11838:
-		move.b	$002D(a0),d1
-		add.b	d1,d0
-		bhs.s	loc_1184E
-		subq.b	#1,$002C(a0)
-		bhs.s	loc_1184E
-		move.b	#0,$002C(a0)
-		moveq	#0,d0
-loc_1184E:
-		bra.s	loc_1186C
-loc_11850:
-		tst.b	$0029(a0)
-		bne.s	loc_11838
-		move.b	$002D(a0),d1
-		sub.b	d1,d0
-		bhs.s	loc_1186C
-		subq.b	#1,$002C(a0)
-		bhs.s	loc_1186C
-		move.b	#0,$002C(a0)
-		moveq	#0,d0
-loc_1186C:
-		move.b	d0,$0027(a0)
-loc_11870:
-		rts
-;===============================================================================
-; Sub Routine Tails_JumpAngle
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_Floor
-; [ Begin ]
-;===============================================================================
-Tails_Floor: ; loc_11872:
-		move.b	$003F(a0),d5
-		move.w	$0010(a0),d1
-		move.w	$0012(a0),d2
-		jsr	(CalcAngle).l			   ; loc_34A2
-		move.b	d0,$002B(a0)
-		subi.b	#$20,d0
-		andi.b	#$C0,d0
-		cmpi.b	#$40,d0
-		beq.w	loc_11946
-		cmpi.b	#$80,d0
-		beq.w	loc_119A8
-		cmpi.b	#$C0,d0
-		beq.w	loc_11A04
-		bsr.w	Sonic_HitWall			; loc_13AFC
-		tst.w	d1
-		bpl.s	loc_118BA
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-loc_118BA:
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	loc_118CC
-		add.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-loc_118CC:
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	loc_11944
-		move.b	$0012(a0),d2
-		addq.b	#$08,d2
-		neg.b	d2
-		cmp.b	d2,d1
-		bge.s	loc_118E4
-		cmp.b	d2,d0
-		blt.s	loc_11944
-loc_118E4:
-		add.w	d1,y_pos(a0)
-		move.b	d3,$0026(a0)
-		bsr.w	Tails_ResetTailsOnFloor ; loc_11A66
-		move.b	#0,$001C(a0)
-		move.b	d3,d0
-		addi.b	#$20,d0
-		andi.b	#$40,d0
-		bne.s	loc_11922
-		move.b	d3,d0
-		addi.b	#$10,d0
-		andi.b	#$20,d0
-		beq.s	loc_11914
-		asr.w	$0012(a0)
-		bra.s	loc_11936
-loc_11914:
-		move.w	#0,$0012(a0)
-		move.w	$0010(a0),$0014(a0)
-		rts
-loc_11922:
-		move.w	#0,$0010(a0)
-		cmpi.w	#$0FC0,$0012(a0)
-		ble.s	loc_11936
-		move.w	#$0FC0,$0012(a0)
-loc_11936:
-		move.w	$0012(a0),$0014(a0)
-		tst.b	d3
-		bpl.s	loc_11944
-		neg.w	$0014(a0)
-loc_11944:
-		rts
-loc_11946:
-		bsr.w	Sonic_HitWall			; loc_13AFC
-		tst.w	d1
-		bpl.s	loc_11960
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-		move.w	$0012(a0),$0014(a0)
-		rts
-loc_11960:
-		bsr.w	Sonic_DontRunOnWalls	; loc_139CC
-		tst.w	d1
-		bpl.s	loc_1197A
-		sub.w	d1,y_pos(a0)
-		tst.w	$0012(a0)
-		bpl.s	loc_11978
-		move.w	#0,$0012(a0)
-loc_11978:
-		rts
-loc_1197A:
-		tst.w	$0012(a0)
-		bmi.s	loc_119A6
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	loc_119A6
-		add.w	d1,y_pos(a0)
-		move.b	d3,$0026(a0)
-		bsr.w	Tails_ResetTailsOnFloor ; loc_11A66
-		move.b	#0,$001C(a0)
-		move.w	#0,$0012(a0)
-		move.w	$0010(a0),$0014(a0)
-loc_119A6:
-		rts
-loc_119A8:
-		bsr.w	Sonic_HitWall			; loc_13AFC
-		tst.w	d1
-		bpl.s	loc_119BA
-		sub.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-loc_119BA:
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	loc_119CC
-		add.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-loc_119CC:
-		bsr.w	Sonic_DontRunOnWalls	; loc_139CC
-		tst.w	d1
-		bpl.s	loc_11A02
-		sub.w	d1,y_pos(a0)
-		move.b	d3,d0
-		addi.b	#$20,d0
-		andi.b	#$40,d0
-		bne.s	loc_119EC
-		move.w	#0,$0012(a0)
-		rts
-loc_119EC:
-		move.b	d3,$0026(a0)
-		bsr.w	Tails_ResetTailsOnFloor ; loc_11A66
-		move.w	$0012(a0),$0014(a0)
-		tst.b	d3
-		bpl.s	loc_11A02
-		neg.w	$0014(a0)
-loc_11A02:
-		rts
-loc_11A04:
-		bsr.w	loc_1397A
-		tst.w	d1
-		bpl.s	loc_11A1E
-		add.w	d1,x_pos(a0)
-		move.w	#0,$0010(a0)
-		move.w	$0012(a0),$0014(a0)
-		rts
-loc_11A1E:
-		bsr.w	Sonic_DontRunOnWalls	; loc_139CC
-		tst.w	d1
-		bpl.s	loc_11A38
-		sub.w	d1,y_pos(a0)
-		tst.w	$0012(a0)
-		bpl.s	loc_11A36
-		move.w	#0,$0012(a0)
-loc_11A36:
-		rts
-loc_11A38:
-		tst.w	$0012(a0)
-		bmi.s	loc_11A64
-		bsr.w	loc_13736
-		tst.w	d1
-		bpl.s	loc_11A64
-		add.w	d1,y_pos(a0)
-		move.b	d3,$0026(a0)
-		bsr.w	Tails_ResetTailsOnFloor ; loc_11A66
-		move.b	#0,$001C(a0)
-		move.w	#0,$0012(a0)
-		move.w	$0010(a0),$0014(a0)
-loc_11A64:
-		rts
-;===============================================================================
-; Sub Routine Tails_Floor
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Object 0x02 - Tails
-; [ End ]
-;===============================================================================
-
-;===============================================================================
-; Sub Routine Tails_ResetTailsOnFloor
-; [ Begin ]
-;===============================================================================
-Tails_ResetTailsOnFloor: ; loc_11A66:
-		btst	#$04,$0022(a0)
-		beq.s	loc_11A74
-		nop
-		nop
-		nop
-loc_11A74:
-		bclr	#$05,$0022(a0)
-		bclr	#1,$0022(a0)
-		bclr	#$04,$0022(a0)
-		btst	#2,$0022(a0)
-		beq.s	loc_11AAA
-		bclr	#2,$0022(a0)
-		move.b	#$0F,$0016(a0)
-		move.b	#$09,$0017(a0)
-		move.b	#0,$001C(a0)
-		subq.w	#1,y_pos(a0)
-loc_11AAA:
-		move.b	#0,$003C(a0)
-		move.w	#0,(Chain_Bonus_counter).w
-		move.b	#0,$0027(a0)
-		move.b	#0,$0029(a0)
-		rts
-;===============================================================================
-; Sub Routine Tails_ResetTailsOnFloor
-; [ End ]
-;===============================================================================
-
-Tails_Hurt: ; loc_11AC4:
-		jsr	(ObjectMove).l				 ; loc_d27A
-		addi.w	#$0030,$0012(a0)
-		btst	#$06,$0022(a0)
-		beq.s	loc_11ADE
-		subi.w	#$0020,$0012(a0)
-loc_11ADE:
-		bsr.w	Tails_HurtStop			; loc_11AF4
-		bsr.w	Tails_LevelBoundaries	; loc_114FE
-		bsr.w	Tails_Animate			; loc_11BA2
-		bsr.w	LoadTailsDynPLC	 ; loc_11F42
-		jmp	(DisplaySprite).l			; loc_d3C2
-
-;===============================================================================
-; Sub Routine Tails_HurtStop
-; [ Begin ]
-;===============================================================================
-Tails_HurtStop: ; loc_11AF4:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$00E0,d0
-		cmp.w	y_pos(a0),d0
-		blo.w	KillTails				 ; loc_12074
-		bsr.w	Tails_Floor				; loc_11872
-		btst	#1,$0022(a0)
-		bne.s	loc_11B30
-		moveq	#0,d0
-		move.w	d0,$0012(a0)
-		move.w	d0,$0010(a0)
-		move.w	d0,$0014(a0)
-		move.b	#0,$001C(a0)
-		move.b	#2,$0024(a0)
-		move.w	#$0078,$0030(a0)
-loc_11B30:
-		rts
-;===============================================================================
-; Sub Routine Tails_HurtStop
-; [ End ]
-;===============================================================================
-
-Tails_Death: ; loc_11B32:
-		bsr.w	Tails_GameOver			; loc_11B4A
-		jsr	(ObjectMoveAndFall).l				; loc_d24E
-		bsr.w	Tails_Animate			; loc_11BA2
-		bsr.w	LoadTailsDynPLC	 ; loc_11F42
-		jmp	(DisplaySprite).l			; loc_d3C2
-
-;===============================================================================
-; Sub Routine Tails_GameOver
-; [ Begin ]
-;===============================================================================
-Tails_GameOver: ; loc_11B4A:
-		move.w	(Camera_Max_Y_pos_now).w,d0
-		addi.w	#$0100,d0
-		cmp.w	y_pos(a0),d0
-		bhs.w	loc_11B8C
-		move.w	(MainCharacter+x_pos).w,d0
-		subi.w	#$0040,d0
-		move.w	d0,x_pos(a0)
-		move.w	(MainCharacter+$C).w,d0
-		subi.w	#$0080,d0
-		move.w	d0,y_pos(a0)
-		move.b	#2,$0024(a0)
-		andi.w	#$7FFF,art_tile(a0)
-		move.b	#$0C,$003E(a0)
-		move.b	#$0D,$003F(a0)
-		nop
-loc_11B8C:
-		rts
-;===============================================================================
-; Sub Routine Tails_GameOver
-; [ End ]
-;===============================================================================
-
-Tails_ResetLevel: ; loc_11B8E:
-		tst.w	$003A(a0)
-		beq.s	loc_11BA0
-		subq.w	#1,$003A(a0)
-		bne.s	loc_11BA0
-		move.w	#$0001,(Level_Inactive_flag).w
-loc_11BA0:
-		rts
-
-;===============================================================================
-; Sub Routine Tails_Animate
-; [ Begin ]
-;===============================================================================
-Tails_Animate: ; loc_11BA2: ; Tails Subroutine
-		lea	(Tails_AnimateData).l,A1 ; loc_11DF4
-Tails_Animate2: ; loc_11BA8:
-		moveq	#0,d0
-		move.b	$001C(a0),d0
-		cmp.b	$001D(a0),d0
-		beq.s	loc_11BCA
-		move.b	d0,$001D(a0)
-		move.b	#0,$001B(a0)
-		move.b	#0,$001E(a0)
-		bclr	#$05,$0022(a0)
-loc_11BCA:
-		add.w	d0,d0
-		adda.w	(A1,d0.w),A1
-		move.b	(a1),d0
-		bmi.s	loc_11C3A
-		move.b	$0022(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,$0001(a0)
-		or.b	d1,$0001(a0)
-		subq.b	#1,$001E(a0)
-		bpl.s	loc_11C08
-		move.b	d0,$001E(a0)
-loc_11BF0:
-		moveq	#0,d1
-		move.b	$001B(a0),d1
-		move.b	$01(A1,d1),d0
-		cmpi.b	#$F0,d0
-		bhs.s	loc_11C0A
-loc_11C00:
-		move.b	d0,$001A(a0)
-		addq.b	#1,$001B(a0)
-loc_11C08:
-		rts
-loc_11C0A:
-		addq.b	#1,d0
-		bne.s	loc_11C1A
-		move.b	#0,$001B(a0)
-		move.b	$0001(a1),d0
-		bra.s	loc_11C00
-loc_11C1A:
-		addq.b	#1,d0
-		bne.s	loc_11C2E
-		move.b	$02(A1,d1),d0
-		sub.b	d0,$001B(a0)
-		sub.b	d0,d1
-		move.b	$01(A1,d1),d0
-		bra.s	loc_11C00
-loc_11C2E:
-		addq.b	#1,d0
-		bne.s	loc_11C38
-		move.b	$02(A1,d1),$001C(a0)
-loc_11C38:
-		rts
-loc_11C3A:
-		subq.b	#1,$001E(a0)
-		bpl.s	loc_11C08
-		addq.b	#1,d0
-		bne.w	loc_11d26
-		moveq	#0,d0
-		move.b	$0027(a0),d0
-		bne.w	loc_11CC0
-		moveq	#0,d1
-		move.b	$0026(a0),d0
-		move.b	$0022(a0),d2
-		andi.b	#1,d2
-		bne.s	loc_11C62
-		not.b	d0
-loc_11C62:
-		addi.b	#$10,d0
-		bpl.s	loc_11C6A
-		moveq	#$03,d1
-loc_11C6A:
-		andi.b	#$FC,$0001(a0)
-		eor.b	d1,d2
-		or.b	d2,$0001(a0)
-		lsr.b	#$04,d0
-		andi.b	#$06,d0
-		move.w	$0014(a0),d2
-		bpl.s	loc_11C84
-		neg.w	d2
-loc_11C84:
-		move.b	d0,d3
-		add.b	d3,d3
-		add.b	d3,d3
-		lea	(Tails_Animate_Walk).l,A1 ; loc_11E32
-		cmpi.w	#$0600,d2
-		blo.s	loc_11CA6
-		lea	(Tails_Animate_Run).l,A1 ; loc_11E3C
-		move.b	d0,d1
-		lsr.b	#1,d1
-		add.b	d1,d0
-		add.b	d0,d0
-		move.b	d0,d3
-loc_11CA6:
-		neg.w	d2
-		addi.w	#$0800,d2
-		bpl.s	loc_11CB0
-		moveq	#0,d2
-loc_11CB0:
-		lsr.w	#$08,d2
-		move.b	d2,$001E(a0)
-		bsr.w	loc_11BF0
-		add.b	d3,$001A(a0)
-		rts
-loc_11CC0:
-		move.b	$0027(a0),d0
-		moveq	#0,d1
-		move.b	$0022(a0),d2
-		andi.b	#1,d2
-		bne.s	loc_11CEE
-		andi.b	#$FC,$0001(a0)
-		addi.b	#$0B,d0
-		divu.w	#$0016,d0
-		addi.b	#$75,d0
-		move.b	d0,$001A(a0)
-		move.b	#0,$001E(a0)
-		rts
-loc_11CEE:
-		andi.b	#$FC,$0001(a0)
-		tst.b	$0029(a0)
-		beq.s	loc_11d06
-		ori.b	#1,$0001(a0)
-		addi.b	#$0B,d0
-		bra.s	loc_11d12
-loc_11d06:
-		ori.b	#$03,$0001(a0)
-		neg.b	d0
-		addi.b	#$8F,d0
-loc_11d12:
-		divu.w	#$0016,d0
-		addi.b	#$75,d0
-		move.b	d0,$001A(a0)
-		move.b	#0,$001E(a0)
-		rts
-loc_11d26:
-		addq.b	#1,d0
-		bne.s	loc_11d6A
-		move.w	$0014(a0),d2
-		bpl.s	loc_11d32
-		neg.w	d2
-loc_11d32:
-		lea	(Tails_Animate_Roll2).l,A1 ; loc_11E4B
-		cmpi.w	#$0600,d2
-		bhs.s	loc_11d44
-		lea	(Tails_Animate_Roll).l,A1 ; loc_11E46
-loc_11d44:
-		neg.w	d2
-		addi.w	#$0400,d2
-		bpl.s	loc_11d4E
-		moveq	#0,d2
-loc_11d4E:
-		lsr.w	#$08,d2
-		move.b	d2,$001E(a0)
-		move.b	$0022(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,$0001(a0)
-		or.b	d1,$0001(a0)
-		bra.w	loc_11BF0
-loc_11d6A:
-		addq.b	#1,d0
-		bne.s	loc_11DA0
-		move.w	$0014(a0),d2
-		bmi.s	loc_11d76
-		neg.w	d2
-loc_11d76:
-		addi.w	#$0800,d2
-		bpl.s	loc_11d7E
-		moveq	#0,d2
-loc_11d7E:
-		lsr.w	#$06,d2
-		move.b	d2,$001E(a0)
-		lea	(Tails_Animate_Push_NoArt).l,A1 ; loc_11E50
-		move.b	$0022(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,$0001(a0)
-		or.b	d1,$0001(a0)
-		bra.w	loc_11BF0
-loc_11DA0:
-		move.w	(Sidekick+$10).w,d1
-		move.w	(Sidekick+$12).w,d2
-		jsr	(CalcAngle).l			   ; loc_34A2
-		moveq	#0,d1
-		move.b	$0022(a0),d2
-		andi.b	#1,d2
-		bne.s	loc_11DBE
-		not.b  d0
-		bra.s	loc_11DC2
-loc_11DBE:
-		addi.b	#$80,d0
-loc_11DC2:
-		addi.b	#$10,d0
-		bpl.s	loc_11DCA
-		moveq	#$03,d1
-loc_11DCA:
-		andi.b	#$FC,$0001(a0)
-		eor.b	d1,d2
-		or.b	d2,$0001(a0)
-		lsr.b	#$03,d0
-		andi.b	#$0C,d0
-		move.b	d0,d3
-		lea	(loc_12054).l,A1
-		move.b	#$03,$001E(a0)
-		bsr.w	loc_11BF0
-		add.b	d3,$001A(a0)
-		rts
-Tails_AnimateData: ; loc_11DF4: ; Tails Data
-		dc.w	Tails_Animate_Walk-Tails_AnimateData		   ; loc_11E32
-		dc.w	Tails_Animate_Run-Tails_AnimateData			   ; loc_11E3C
-		dc.w	Tails_Animate_Roll-Tails_AnimateData		   ; loc_11E46
-		dc.w	Tails_Animate_Roll2-Tails_AnimateData		   ; loc_11E4B
-		dc.w	Tails_Animate_Push_NoArt-Tails_AnimateData	   ; loc_11E50
-		dc.w	Tails_Animate_Wait-Tails_AnimateData		   ; loc_11E58
-		dc.w	Tails_Animate_Balance_NoArt-Tails_AnimateData  ; loc_11E96
-		dc.w	Tails_Animate_LookUp-Tails_AnimateData		   ; loc_11EA0
-		dc.w	Tails_Animate_Duck-Tails_AnimateData		   ; loc_11EA3
-		dc.w	Tails_Animate_Spindash-Tails_AnimateData	   ; loc_11EA6
-		dc.w	Tails_Animate_0x0A-Tails_AnimateData		   ; loc_11EAB
-		dc.w	Tails_Animate_0x0B-Tails_AnimateData		   ; loc_11EAE
-		dc.w	Tails_Animate_0x0C-Tails_AnimateData		   ; loc_11EB4
-		dc.w	Tails_Animate_Stop-Tails_AnimateData		   ; loc_11EB8
-		dc.w	Tails_Animate_Fly-Tails_AnimateData			   ; loc_11EBC
-		dc.w	Tails_Animate_0x0F-Tails_AnimateData		   ; loc_11EC0
-		dc.w	Tails_Animate_Jump-Tails_AnimateData		   ; loc_11EC7
-		dc.w	Tails_Animate_0x11-Tails_AnimateData		   ; loc_11Ed6
-		dc.w	Tails_Animate_0x12-Tails_AnimateData		   ; loc_11EDA
-		dc.w	Tails_Animate_0x13-Tails_AnimateData		   ; loc_11EE0
-		dc.w	Tails_Animate_0x14-Tails_AnimateData		   ; loc_11EE5
-		dc.w	Tails_Animate_0x15-Tails_AnimateData		   ; loc_11EE8
-		dc.w	Tails_Animate_Death1-Tails_AnimateData		   ; loc_11EEF
-		dc.w	Tails_Animate_Unused_Drown-Tails_AnimateData   ; loc_11EF2
-		dc.w	Tails_Animate_Death2-Tails_AnimateData		   ; loc_11EF5
-		dc.w	Tails_Animate_0x19-Tails_AnimateData		   ; loc_11EF8
-		dc.w	Tails_Animate_0x1A-Tails_AnimateData		   ; loc_11EFB
-		dc.w	Tails_Animate_0x1B-Tails_AnimateData		   ; loc_11EFE
-		dc.w	Tails_Animate_0x1C-Tails_AnimateData		   ; loc_11F02
-		dc.w	Tails_Animate_0x1D-Tails_AnimateData		   ; loc_11F06
-		dc.w	Tails_Animate_0x1E-Tails_AnimateData		   ; loc_11F10
-Tails_Animate_Walk: ; loc_11E32:
-		dc.b	$FF,$10,$11,$12,$13,$14,$15,$0E,$0F,$FF
-Tails_Animate_Run: ; loc_11E3C:
-		dc.b	$FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF
-Tails_Animate_Roll: ; loc_11E46:
-		dc.b	$01,$48,$47,$46,$FF
-Tails_Animate_Roll2: ; loc_11E4B:
-		dc.b	$01,$48,$47,$46,$FF
-Tails_Animate_Push_NoArt: ; loc_11E50:
-		dc.b	$FD,$09,$0A,$0B,$0C,$0D,$0E,$FF
-Tails_Animate_Wait: ; loc_11E58:
-		dc.b	$07,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$03,$02,$01,$01,$01
-		dc.b	$01,$01,$01,$01,$01,$03,$02,$01,$01,$01,$01,$01,$01,$01,$01,$01
-		dc.b	$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05
-		dc.b	$06,$07,$08,$07,$08,$07,$08,$07,$08,$07,$08,$06,$FE,$1C
-Tails_Animate_Balance_NoArt: ; loc_11E96:
-		dc.b	$1F,$01,$02,$03,$04,$05,$06,$07,$08,$FF
-Tails_Animate_LookUp: ; loc_11EA0:
-		dc.b	$3F,$04,$FF
-Tails_Animate_Duck: ; loc_11EA3:
-		dc.b	$3F,$5B,$FF
-Tails_Animate_Spindash: ; loc_11EA6:
-		dc.b	$00,$60,$61,$62,$FF
-Tails_Animate_0x0A: ; loc_11EAB:
-		dc.b	$3F,$82,$FF
-Tails_Animate_0x0B: ; loc_11EAE:
-		dc.b	$07,$08,$08,$09,$FD,$05
-Tails_Animate_0x0C: ; loc_11EB4:
-		dc.b	$07,$09,$FD,$05
-Tails_Animate_Stop: ; loc_11EB8:
-		dc.b	$07,$01,$02,$FF
-Tails_Animate_Fly: ; loc_11EBC:
-		dc.b	$07,$5E,$5F,$FF
-Tails_Animate_0x0F: ; loc_11EC0:
-		dc.b	$07,$01,$02,$03,$04,$05,$FF
-Tails_Animate_Jump: ; loc_11EC7:
-		dc.b	$03,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,$00
-Tails_Animate_0x11: ; loc_11Ed6:
-		dc.b	$04,$01,$02,$FF
-Tails_Animate_0x12: ; loc_11EDA:
-		dc.b	$0F,$01,$02,$03,$FE,$01
-Tails_Animate_0x13: ; loc_11EE0:
-		dc.b	$0F,$01,$02,$FE,$01
-Tails_Animate_0x14: ; loc_11EE5:
-		dc.b	$3F,$01,$FF
-Tails_Animate_0x15: ; loc_11EE8:
-		dc.b	$0B,$01,$02,$03,$04,$FD,$00
-Tails_Animate_Death1: ; loc_11EEF:
-		dc.b	$20,$5D,$FF
-Tails_Animate_Unused_Drown: ; loc_11EF2:
-		dc.b	$2F,$5D,$FF
-Tails_Animate_Death2: ; loc_11EF5:
-		dc.b	$03,$5D,$FF
-Tails_Animate_0x19: ; loc_11EF8:
-		dc.b	$03,$5D,$FF
-Tails_Animate_0x1A: ; loc_11EFB:
-		dc.b	$03,$5C,$FF
-Tails_Animate_0x1B: ; loc_11EFE:
-		dc.b	$07,$01,$01,$FF
-Tails_Animate_0x1C: ; loc_11F02:
-		dc.b	$77,$00,$FD,$00
-Tails_Animate_0x1D: ; loc_11F06:
-		dc.b	$03,$01,$02,$03,$04,$05,$06,$07,$08,$FF
-Tails_Animate_0x1E: ; loc_11F10:
-		dc.b	$03,$01,$02,$03,$04,$05,$06,$07,$08,$FF
-		even
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Tails' Tails pattern loading subroutine
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-
-; loc_11F1A: Load_Tails_Tail_Dynamic_PLC:
-LoadTailsTailsDynPLC:
-		moveq	#0,d0
-		move.b	$1A(a0),d0
-		cmp.b	(TailsTails_LastLoadedDPLC).w,d0
-		beq.s	return_11F94
-		move.b	d0,(TailsTails_LastLoadedDPLC).w
-		lea	(Tails_Dyn_Script).l,a2
-		add.w	d0,d0
-		adda.w	(a2,d0.w),a2
-		move.w	(a2)+,d5
-		subq.w	#1,d5
-		bmi.s	return_11F94
-		move.w	#$F600,d4
-		bra.s	TPLC_ReadEntry
-
-; ---------------------------------------------------------------------------
-; Tails pattern loading subroutine
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_11F42: Load_Tails_Dynamic_PLC:
-LoadTailsDynPLC:
-		moveq	#0,d0
-		move.b	$1A(a0),d0
-		cmp.b	(Tails_LastLoadedDPLC).w,d0
-		beq.s	return_11F94
-		move.b	d0,(Tails_LastLoadedDPLC).w
-		lea	(Tails_Dyn_Script).l,a2
-		add.w	d0,d0
-		adda.w	(a2,d0.w),a2
-		move.w	(a2)+,d5
-		subq.w	#1,d5
-		bmi.s	return_11F94
-		move.w	#$F400,d4
-; loc_11F68:
-TPLC_ReadEntry:
-		moveq	#0,d1
-		move.w	(a2)+,d1
-		move.w	d1,d3
-		lsr.w	#8,d3
-		andi.w	#$F0,d3
-		addi.w	#$10,d3
-		andi.w	#$FFF,d1
-		lsl.l	#5,d1
-		addi.l	#Tails_Sprites,d1
-		move.w	d4,d2
-		add.w	d3,d4
-		add.w	d3,d4
-		jsr	(QueueDMATransfer).l
-		dbf	d5,TPLC_ReadEntry
-
-return_11F94:
-		rts
-; End of function LoadTailsDynPLC
+		include	"obj/02 Tails.asm"
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -22277,281 +18404,11 @@ loc_1206C:	dc.b	  2,$81,$82,$83,$84,$FF
 ; Object 0x05 - Tails "Tail"
 ; [ End ]
 ;===============================================================================
-		nop
-KillTails: ; loc_12074:
-		jmp	(KillSonic).l				; loc_21422
-		align 4
-;===============================================================================
-; Object 0x0A -
-; [ Begin ]
-;===============================================================================
-Obj_0x0A_Bubbles_And_Numbers: ; loc_1207C:
-		moveq	#0,d0
-		move.b	routine(a0),d0
-		move.w	loc_1208A(pc,d0),d1
-		jmp	loc_1208A(pc,d1)
-loc_1208A:
-		dc.w	loc_1209C-loc_1208A
-		dc.w	loc_120F8-loc_1208A
-		dc.w	loc_12104-loc_1208A
-		dc.w	loc_1216E-loc_1208A
-		dc.w	JmpTo2_DeleteObject-loc_1208A ; loc_12182-...
-		dc.w	loc_1230C-loc_1208A
-		dc.w	loc_12188-loc_1208A
-		dc.w	loc_1216E-loc_1208A
-		dc.w	JmpTo2_DeleteObject-loc_1208A ; loc_12182-...
-loc_1209C:
-		addq.b	#2,$24(a0)
-		move.l	#Obj_0x0A_Bubbles_Mappings,4(a0) ; loc_14374
-		move.w	#$8500,2(a0)
-		move.b	#$84,1(a0)
-		move.b	#$10,$19(a0)
-		move.b	#1,$18(a0)
-		move.b	$28(a0),d0
-		bpl.s	loc_120E4
-		addq.b	#8,$24(a0)
-		move.l	#Obj_0x0A_Numbers_Mappings,4(a0) ; loc_125C2
-		move.w	#$440,2(a0)
-		andi.w	#$7F,d0
-		move.b	d0,$33(a0)
-		bra.w	loc_1230C
-loc_120E4:
-		move.b	d0,$1C(a0)
-		bsr.w	Adjust2PArtPointer	   ; loc_DC30
-		move.w	x_pos(a0),$30(a0)
-		move.w	#$FF78,$12(a0)
-loc_120F8:
-		lea	(loc_12530).l,A1
-		jsr	(AnimateSprite).l			; (loc_d412)
-loc_12104:
-		move.w	(Water_Level_1).w,d0
-		cmp.w	y_pos(a0),d0
-		blo.s	loc_1212A
-		move.b	#6,$24(a0)
-		addq.b	#7,$1C(a0)
-		cmpi.b	#$D,$1C(a0)
-		beq.s	loc_1216E
-		blo.s	loc_1216E
-		move.b	#$D,$1C(a0)
-		bra.s	loc_1216E
-loc_1212A:
-		tst.b	(WindTunnel_flag).w
-		beq.s	loc_12134
-		addq.w	#4,$30(a0)
-loc_12134:
-		move.b	$26(a0),d0
-		addq.b	#1,$26(a0)
-		andi.w	#$7F,d0
-		lea	(loc_1220C).l,A1
-		move.b	(A1,d0),d0
-		ext.w	d0
-		add.w	$30(a0),d0
-		move.w	d0,x_pos(a0)
-		bsr.s	loc_121C0
-		jsr	(ObjectMove).l				; (loc_d27A)
-		tst.b	1(a0)
-		bpl.s	JmpTo_DeleteObject
-		jmp	(DisplaySprite).l			; (loc_d3C2)
-; loc_12168:
-JmpTo_DeleteObject:
-		jmp	(DeleteObject).l
 
-loc_1216E:
-		bsr.s	loc_121C0
-		lea	(loc_12530).l,A1
-		jsr	(AnimateSprite).l			; (loc_d412)
-		jmp	(DisplaySprite).l			; (loc_d3C2)
-; loc_12182:
-JmpTo2_DeleteObject:
-		jmp	(DeleteObject).l
-loc_12188:
-		cmpi.w	#$C,(Current_Air).w
-		bhi.s	JmpTo3_DeleteObject
-		subq.w	#1,$38(a0)
-		bne.s	loc_121A2
-		move.b	#$E,$24(a0)
-		addq.b	#7,$1C(a0)
-		bra.s	loc_1216E
-loc_121A2:
-		lea	(loc_12530).l,A1
-		jsr	(AnimateSprite).l			; (loc_d412)
-		tst.b	1(a0)
-		bpl.s	JmpTo3_DeleteObject
-		jmp	(DisplaySprite).l			; (loc_d3C2)
-; loc_121BA:
-JmpTo3_DeleteObject:
-		jmp	(DeleteObject).l
-loc_121C0:
-		tst.w	$38(a0)
-		beq.s	loc_1220A
-		subq.w	#1,$38(a0)
-		bne.s	loc_1220A
-		cmpi.b	#7,$1C(a0)
-		bhs.s	loc_1220A
-		move.w	#$F,$38(a0)
-		clr.w	$12(a0)
-		move.b	#$80,1(a0)
-		move.w	x_pos(a0),d0
-		sub.w	(Camera_X_pos).w,d0
-		addi.w	#$80,d0
-		move.w	d0,x_pos(a0)
-		move.w	y_pos(a0),d0
-		sub.w	(Camera_Y_pos).w,d0
-		addi.w	#$80,d0
-		move.w	d0,$A(a0)
-		move.b	#$C,$24(a0)
-loc_1220A:
-		rts
+		jmpTos	JmpTo2_KillCharacter
 
-loc_1220C:
-		dc.b	$00,$00,$00,$00,$00,$00,$01,$01,$01,$01,$01,$02,$02,$02,$02,$02
-		dc.b	$02,$02,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-		dc.b	$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$02
-		dc.b	$02,$02,$02,$02,$02,$02,$01,$01,$01,$01,$01,$00,$00,$00,$00,$00
-		dc.b	$00,$FF,$FF,$FF,$FF,$FF,$FE,$FE,$FE,$FE,$FE,$FD,$FD,$FD,$FD,$FD
-		dc.b	$FD,$FD,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC
-		dc.b	$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FD
-		dc.b	$FD,$FD,$FD,$FD,$FD,$FD,$FE,$FE,$FE,$FE,$FE,$FF,$FF,$FF,$FF,$FF
-		dc.b	$00,$00,$00,$00,$00,$00,$01,$01,$01,$01,$01,$02,$02,$02,$02,$02
-		dc.b	$02,$02,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-		dc.b	$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$02
-		dc.b	$02,$02,$02,$02,$02,$02,$01,$01,$01,$01,$01,$00,$00,$00,$00,$00
-		dc.b	$00,$FF,$FF,$FF,$FF,$FF,$FE,$FE,$FE,$FE,$FE,$FD,$FD,$FD,$FD,$FD
-		dc.b	$FD,$FD,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC
-		dc.b	$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FC,$FD
-		dc.b	$FD,$FD,$FD,$FD,$FD,$FD,$FE,$FE,$FE,$FE,$FE,$FF,$FF,$FF,$FF,$FF
-loc_1230C:
-		tst.w	$2C(a0)
-		bne.w	loc_123F6
-		cmpi.b	#6,(MainCharacter+routine).w
-		bhs.w	loc_124FC
-		btst	#6,(MainCharacter+$22).w
-		beq.w	loc_124FC
-		subq.w	#1,$38(a0)
-		bpl.w	loc_1241C
-		move.w	#59,$38(a0)
-		move.w	#1,$36(a0)
-		jsr	(PseudoRandomNumber).l		; loc_31E4
-		andi.w	#1,d0
-		move.b	d0,$34(a0)
-		move.w	(Current_Air).w,d0
-		cmpi.w	#$19,d0
-		beq.s	loc_12386
-		cmpi.w	#$14,d0
-		beq.s	loc_12386
-		cmpi.w	#$F,d0
-		beq.s	loc_12386
-		cmpi.w	#$C,d0
-		bhi.s	loc_12390
-		bne.s	loc_12372
-		move.w	#MusID_LevelSel,d0
-		jsr	(PlayMusic).l			 ; loc_14C0
-loc_12372:
-		subq.b	#1,$32(a0)
-		bpl.s	loc_12390
-		move.b	$33(a0),$32(a0)
-		bset	#7,$36(a0)
-		bra.s	loc_12390
-loc_12386:
-		move.w	#SndID_WaterWarning,d0
-		jsr	(PlaySound).l			  ; loc_14C6
-loc_12390:
-		subq.w	#1,(Current_Air).w
-		bhs.w	loc_1241A
-		bsr.w	ResumeMusic				; loc_124FE
-		move.b	#$81,(MainCharacter+$2A).w
-		move.w	#SndID_Drown,d0
-		jsr	(PlaySound).l			  ; loc_14C6
-		move.b	#$A,$34(a0)
-		move.w	#1,$36(a0)
-		move.w	#$78,$2C(a0)
-		move.l	a0,-(sp)
-		lea	(MainCharacter).w,a0
-		bsr.w	Sonic_ResetOnFloor		; loc_1090C
-		move.b	#$17,$1C(a0)
-		bset	#1,$22(a0)
-		bset	#7,2(a0)
-		move.w	#0,$12(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$14(a0)
-		move.b	#1,(Deform_lock).w
-		movea.l	(sp)+,a0
-		rts
-loc_123F6:
-		subq.w	#1,$2C(a0)
-		bne.s	loc_12404
-		move.b	#6,(MainCharacter+routine).w
-		rts
-loc_12404:
-		move.l	A0,-(sp)
-		lea	(MainCharacter).w,A0
-		jsr	ObjectMove				; (loc_d27A)
-		addi.w	#$10,$12(a0)
-		move.l	(sp)+,A0
-		bra.s	loc_1241C
-loc_1241A:
-		bra.s	loc_1242C
-loc_1241C:
-		tst.w	$36(a0)
-		beq.w	loc_124FC
-		subq.w	#1,$3A(a0)
-		bpl.w	loc_124FC
-loc_1242C:
-		jsr	(PseudoRandomNumber).l		; loc_31E4
-		andi.w	#$F,d0
-		move.w	d0,$3A(a0)
-		jsr	(SingleObjLoad).l		 ; (loc_E772)
-		bne.w	loc_124FC
-		_move.b	#$A,id(a1)
-		move.w	(MainCharacter+x_pos).w,x_pos(a1)
-		moveq	#6,d0
-		btst	#0,(MainCharacter+$22).w
-		beq.s	loc_12462
-		neg.w	d0
-		move.b	#$40,$26(a1)
-loc_12462:
-		add.w	d0,x_pos(a1)
-		move.w	(MainCharacter+$C).w,y_pos(a1)
-		move.b	#6,$28(a1)
-		tst.w	$2C(a0)
-		beq.w	loc_124AE
-		andi.w	#7,$3A(a0)
-		addi.w	#0,$3A(a0)
-		move.w	(MainCharacter+$C).w,d0
-		subi.w	#$C,d0
-		move.w	d0,y_pos(a1)
-		jsr	(PseudoRandomNumber).l		; loc_31E4
-		move.b	d0,$26(a1)
-		move.w	(Timer_frames).w,d0
-		andi.b	#3,d0
-		bne.s	loc_124F2
-		move.b	#$E,$28(a1)
-		bra.s	loc_124F2
-loc_124AE:
-		btst	#$07,$0036(a0)
-		beq.s	loc_124F2
-		move.w	(Current_Air).w,d2
-		lsr.w	#1,d2
-		jsr	(PseudoRandomNumber).l		; loc_31E4
-		andi.w	#3,d0
-		bne.s	loc_124DA
-		bset	#6,$36(a0)
-		bne.s	loc_124F2
-		move.b	d2,$28(a1)
-		move.w	#$1C,$38(a1)
-loc_124DA:
-		tst.b	$34(a0)
-		bne.s	loc_124F2
-		bset	#6,$36(a0)
-		bne.s	loc_124F2
-		move.b	d2,$28(a1)
-		move.w	#$1C,$38(a1)
-loc_124F2:
-		subq.b	#1,$34(a0)
-		bpl.s	loc_124FC
-		clr.w	$36(a0)
-loc_124FC:
-		rts
+		include	"obj/0A Drowning Countdown.asm"
+
 ResumeMusic: ; loc_124FE:
 		cmpi.w	#$C,(Current_Air).w
 		bhi.s	loc_12524
@@ -24275,7 +20132,9 @@ ObjHitWallLeft: ; loc_13B24:
 		move.b	#$40,d3
 loc_13B50:
 		rts
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object 0x79 - Lamp Post
 ; [ Begin ]
@@ -24285,7 +20144,7 @@ Obj_0x79_Lamp_Post: ; loc_13B54:
 		move.b	routine(a0),d0
 		move.w	loc_13B68(pc,d0),d1
 		jsr	loc_13B68(pc,d1)
-		jmp	MarkObjGone				; (loc_d2A0)
+		jmp	(MarkObjGone).l				; (loc_d2A0)
 loc_13B68:
 		dc.w	loc_13B6E-loc_13B68
 		dc.w	loc_13Bd0-loc_13B68
@@ -24424,7 +20283,8 @@ loc_13D8C:
 Obj79_MapUnc_13D8E:	binclude	"mappings/sprite/obj79.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -24537,7 +20397,9 @@ loc_13EF4:
 ; Object 0x7D - Hidden Bonus at end of levels - Sonic 1 Leftover
 ; [ End ]
 ;===============================================================================
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object ??? - Unknow Object 0x013F00
 ; [ Begin ]
@@ -24640,7 +20502,9 @@ loc_14048:
 ; Object ??? - Unknow Object 0x013F00
 ; [ Begin ]
 ;===============================================================================
-		nop					 ; Filler
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object ??? - Unknow Object 0x01405C
 ; [ Begin ]
@@ -25363,7 +21227,8 @@ byte_1498E:	dc.b	7, 4, 3, 2, 1, 0, $FE, 1
 Obj0B_MapUnc_14996:	binclude	"mappings/sprite/obj0B.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -25423,7 +21288,7 @@ Obj0C_Main:
 loc_14A8E:
 		addq.b	#1,$3D(a0)
 		move.b	d1,d0
-		bsr.w	JmpTo_CalcSine
+		jsrto	JmpTo_CalcSine
 		addi.w	#8,d0
 		asr.w	#6,d0
 		subi.w	#$10,d0
@@ -25441,9 +21306,8 @@ loc_14AAC:
 loc_14ABC:
 		addq.b	#1,$3C(a0)
 
-
 loc_14AC0:
-		bsr.w	JmpTo_CalcSine
+		jsrto	JmpTo_CalcSine
 		addi.w	#8,d1
 		asr.w	#4,d1
 		add.w	$3A(a0),d1
@@ -25463,13 +21327,7 @@ loc_14Ad2:
 Obj0C_MapUnc_14AE6:	binclude	"mappings/sprite/obj0C.bin"
 		even
 
-; ===========================================================================
-		nop
-; loc_14AF4:
-JmpTo_CalcSine:
-		jmp	(CalcSine).l
-
-		align 4
+		jmpTos	JmpTo_CalcSine
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -25516,7 +21374,8 @@ Obj12_Main:
 Obj12_MapUnc_14B62:	binclude	"mappings/sprite/obj12.bin"
 		even
 ; ===========================================================================
-		nop
+
+		jmpTos	; Empty
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -25708,7 +21567,7 @@ Obj04_Display:
 		move.b	(a1,d1.w),$1A(a0)
 		addq.b	#1,$1B(a0)
 		andi.b	#$3F,$1B(a0)
-		bra.w	JmpTo_DisplaySprite
+		jmpto	JmpTo_DisplaySprite
 ; ===========================================================================
 ; water sprite animation 'script' (custom format for this object)
 ; byte_15136:
@@ -25745,7 +21604,7 @@ loc_151A8:
 		andi.b	#1,$1A(a0)
 
 loc_151BE:
-		bra.w	JmpTo_DisplaySprite
+		jmpto	JmpTo_DisplaySprite
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
@@ -25804,7 +21663,7 @@ loc_153B8:
 		bhs.s	loc_153EA
 		move.b	#1,$001A(a0)
 		add.b	d3,$001A(a0)
-		bra.w	JmpTo_DisplaySprite
+		jmpto	JmpTo_DisplaySprite
 loc_153EA:
 		move.w	(Sidekick+8).w,d0
 		cmp.w	d1,d0
@@ -25814,7 +21673,7 @@ loc_153EA:
 		move.b	#1,$001A(a0)
 loc_153FC:
 		add.b	d3,$001A(a0)
-		bra.w	JmpTo_DisplaySprite
+		jmpto	JmpTo_DisplaySprite
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
@@ -25863,7 +21722,7 @@ loc_155EC:
 loc_15606:
 		tst.w	(Debug_placement_mode).w
 		beq.s	loc_15610
-		bsr.w	JmpTo_DisplaySprite
+		jsrto	JmpTo_DisplaySprite
 loc_15610:
 		rts
 ; Lava_Attributes_Mappings:		loc_15612:
@@ -25937,13 +21796,8 @@ loc_156B0:
 Obj74_MapUnc_156B2:	binclude	"mappings/sprite/obj74.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_15720:
-JmpTo_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_15726:
-JmpTo10_DeleteObject:
-		jmp	(DeleteObject).l
+
+		jmpTos	JmpTo_DisplaySprite,JmpTo10_DeleteObject
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -26266,7 +22120,7 @@ loc_15B42:
 		btst	#3,$22(a1)
 		beq.s	return_15AEC
 		move.b	(a2),d0
-		bsr.w	JmpTo2_CalcSine
+		jsrto	JmpTo2_CalcSine
 		muls.w	#$2800,d1
 		swap	d1
 		move.w	y_pos(a0),d2
@@ -26286,12 +22140,8 @@ loc_15B42:
 return_15B80:
 		rts
 ; ===========================================================================
-		nop
-; loc_15B84:
-JmpTo2_CalcSine:
-		jmp	(CalcSine).l
 
-		align 4
+		jmpTos	JmpTo2_CalcSine
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -26304,7 +22154,7 @@ Obj14:
 		move.w	Obj14_Index(pc,d0.w),d1
 		jsr	Obj14_Index(pc,d1.w)
 		move.w	$30(a0),d0
-		bra.w	JmpTo_MarkObjGone2
+		jmpto	JmpTo_MarkObjGone2
 ; ===========================================================================
 ; off_15BA2:
 Obj14_Index:	offsetTable
@@ -26320,7 +22170,7 @@ Obj14_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj14_MapUnc_15F54,4(a0)
 		move.w	#$3C6,2(a0)
-		bsr.w	JmpTo_Adjust2PArtPointer
+		jsrto	JmpTo_Adjust2PArtPointer
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
 		move.b	#$30,$19(a0)
@@ -26459,7 +22309,7 @@ Obj14_Ball_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj14_MapUnc_15FE0,4(a0)
 		move.w	#$3DE,2(a0)
-		bsr.w	JmpTo_Adjust2PArtPointer
+		jsrto	JmpTo_Adjust2PArtPointer
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
 		move.b	#$8B,$20(a0)
@@ -26535,19 +22385,19 @@ Obj14_Ball_Fly:
 		bsr.w	Obj14_Animate
 		tst.w	$12(a0)
 		bpl.s	loc_15E1A
-		bsr.w	JmpTo_ObjectMoveAndFall
+		jsrto	JmpTo_ObjectMoveAndFall
 		move.w	$34(a0),d0		; d0 = bottom of seesaw y position
 		subi.w	#$2F,d0
 		cmp.w	y_pos(a0),d0
 		bgt.s	return_15E18
-		bsr.w	JmpTo_ObjectMoveAndFall
+		jsrto	JmpTo_ObjectMoveAndFall
 
 return_15E18:
 		rts
 ; ===========================================================================
 
 loc_15E1A:
-		bsr.w	JmpTo_ObjectMoveAndFall
+		jsrto	JmpTo_ObjectMoveAndFall
 		move.l	$3C(a0),a1		; a1=parent object (seesaw)
 		lea	(Obj14_YOffsets).l,a2
 		moveq	#0,d0
@@ -26652,18 +22502,7 @@ Obj14_MapUnc_15F54:	binclude	"mappings/sprite/obj14_a.bin"
 Obj14_MapUnc_15FE0:	binclude	"mappings/sprite/obj14_b.bin"
 		even
 
-; ===========================================================================
-; loc_15FF8:
-JmpTo_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_15FFE:
-JmpTo_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
-; loc_16004:
-JmpTo_MarkObjGone2:
-		jmp	(MarkObjGone2).l
-
-		align 4
+		jmpTos0	JmpTo_Adjust2PArtPointer,JmpTo_ObjectMoveAndFall,JmpTo_MarkObjGone2
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -26686,7 +22525,7 @@ Obj16_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj16_MapUnc_1611E,4(a0)
 		move.w	#$43E6,2(a0)
-		bsr.w	JmpTo2_Adjust2PArtPointer
+		jsrto	JmpTo2_Adjust2PArtPointer
 		ori.b	#4,1(a0)
 		move.b	#$20,$19(a0)
 		move.b	#0,$1A(a0)
@@ -26706,7 +22545,7 @@ Obj16_Main:
 		move.w	#-$28,d3
 		move.w	(sp)+,d4
 		bsr.w	PlatformObject
-		bra.w	JmpTo_MarkObjGone
+		jmpto	JmpTo_MarkObjGone
 ; ===========================================================================
 ; loc_16080:
 Obj16_RunSecondaryRoutine:
@@ -26740,7 +22579,7 @@ return_160BA:
 ; ===========================================================================
 ; loc_160BC:
 Obj16_Slide:
-		bsr.w	JmpTo_ObjectMove
+		jsrto	JmpTo_ObjectMove
 		subq.w	#1,$34(a0)
 		bne.s	return_16100
 		addq.b	#2,$25(a0)
@@ -26760,7 +22599,7 @@ return_16100:
 ; ===========================================================================
 ; loc_16102:
 Obj16_Fall:
-		bsr.w	JmpTo_ObjectMove
+		jsrto	JmpTo_ObjectMove
 		addi.w	#$38,$12(a0)
 		move.w	(Camera_Max_Y_pos_now).w,d0
 		addi.w	#$E0,d0
@@ -26773,19 +22612,8 @@ Obj16_Fall:
 Obj16_MapUnc_1611E:	binclude	"mappings/sprite/obj16.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_16204:
-JmpTo12_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1620A:
-JmpTo_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_16210:
-JmpTo2_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_16216:
-JmpTo_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo12_DeleteObject,JmpTo_MarkObjGone,JmpTo2_Adjust2PArtPointer,JmpTo_ObjectMove
 
 ;===============================================================================
 ; Object 0x19 - Oil Ocean - Elevators
@@ -26809,7 +22637,7 @@ loc_16238:
 		bne.s	loc_16258
 		move.w	#$6300,art_tile(a0)
 loc_16258:
-		bsr.w	JmpTo3_Adjust2PArtPointer
+		jsrto	JmpTo3_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		moveq	#0,d0
 		move.b	$0028(a0),d0
@@ -26838,7 +22666,7 @@ loc_162A0:
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$0280,d0
 		bhi.w	JmpTo13_DeleteObject
-		bra.w	JmpTo2_DisplaySprite
+		jmpto	JmpTo2_DisplaySprite
 loc_162d0:
 		moveq	#0,d0
 		move.b	$0028(a0),d0
@@ -26900,7 +22728,7 @@ loc_1634E:
 loc_1635C:
 		rts
 loc_1635E:
-		bsr.w	JmpTo2_ObjectMove
+		jsrto	JmpTo2_ObjectMove
 		moveq	#$08,d1
 		move.w	$0032(a0),d0
 		subi.w	#$0060,d0
@@ -26914,7 +22742,7 @@ loc_16374:
 loc_1637E:
 		rts
 loc_16380:
-		bsr.w	JmpTo2_ObjectMove
+		jsrto	JmpTo2_ObjectMove
 		moveq	#$08,d1
 		move.w	$0032(a0),d0
 		subi.w	#$0060,d0
@@ -26975,19 +22803,8 @@ loc_163FE:
 Obj19_MapUnc_16412:	binclude	"mappings/sprite/obj19.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_16450:
-JmpTo2_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_16456:
-JmpTo13_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1645C:
-JmpTo3_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_16462:
-JmpTo2_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo2_DisplaySprite,JmpTo13_DeleteObject,JmpTo3_Adjust2PArtPointer,JmpTo2_ObjectMove
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -27015,7 +22832,7 @@ Obj1B_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj1B_MapUnc_1658A,4(a0)
 		move.w	#$E39C,2(a0)
-		bsr.w	JmpTo4_Adjust2PArtPointer
+		jsrto	JmpTo4_Adjust2PArtPointer
 		ori.b	#4,1(a0)
 		move.b	#$20,$19(a0)
 		move.b	#1,$18(a0)
@@ -27070,7 +22887,7 @@ loc_16510:
 		bsr.w	Obj1B_GiveBoost
 
 loc_16540:
-		bra.w	JmpTo2_MarkObjGone
+		jmpto	JmpTo2_MarkObjGone
 ; ===========================================================================
 ; sub_16544:
 Obj1B_GiveBoost:
@@ -27095,12 +22912,8 @@ loc_16562:
 Obj1B_MapUnc_1658A:	binclude	"mappings/sprite/obj1B.bin"
 		even
 ; ===========================================================================
-; loc_165A4:
-JmpTo2_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_165AA:
-JmpTo4_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+
+		jmpTos0	JmpTo2_MarkObjGone,JmpTo4_Adjust2PArtPointer
 
 ;===============================================================================
 ; Object 0x1D - Chemical Plant - Worms
@@ -27145,7 +22958,7 @@ loc_16600:
 		move.w	y_pos(a0),y_pos(a1)
 		move.l	#Obj1D_MapUnc_16702,mappings(a1) ; loc_16702
 		move.w	#$643C,art_tile(a1)
-		bsr.w	JmpTo_Adjust2PArtPointer2
+		jsrto	JmpTo_Adjust2PArtPointer2
 		move.b	#$04,$0001(a1)
 		move.b	#$03,$0018(a1)
 		move.b	#$8B,$0020(a1)
@@ -27174,9 +22987,9 @@ loc_1667E:
 		move.w	#SndID_ArrowFiring,d0
 		jsr	(PlaySound).l			  ; loc_14C6
 loc_16698:
-		bra.w	JmpTo3_MarkObjGone
+		jmpto	JmpTo3_MarkObjGone
 loc_1669C:
-		bsr.w	JmpTo3_ObjectMove
+		jsrto	JmpTo3_ObjectMove
 		move.w	$0036(a0),d0
 		add.w	d0,$0010(a0)
 		addi.w	#$0018,$0012(a0)
@@ -27190,9 +23003,9 @@ loc_166B4:
 		clr.w	$0010(a0)
 		subq.b	#2,$0024(a0)
 loc_166CC:
-		bra.w	JmpTo3_MarkObjGone
+		jmpto	JmpTo3_MarkObjGone
 loc_166d0:
-		bsr.w	JmpTo3_ObjectMove
+		jsrto	JmpTo3_ObjectMove
 		addi.w	#$0018,$0012(a0)
 		bne.s	loc_166E8
 		move.w	$003A(a0),d0
@@ -27205,25 +23018,15 @@ loc_166E8:
 		move.w	$0034(a0),$0012(a0)
 		move.w	$0038(a0),x_pos(a0)
 loc_166FE:
-		bra.w	JmpTo3_MarkObjGone
+		jmpto	JmpTo3_MarkObjGone
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj1D_MapUnc_16702:	binclude	"mappings/sprite/obj1D.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_16710:
-JmpTo3_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_16716:
-JmpTo_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_1671C:
-JmpTo3_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos	JmpTo3_MarkObjGone,JmpTo_Adjust2PArtPointer2,JmpTo3_ObjectMove
 
 ;===============================================================================
 ; Object 0x1E - Chemical Plant - Tube Attributes
@@ -27743,11 +23546,9 @@ loc_1714E:
 ; Object 0x1E - Chemical Plant - Tube Attributes
 ; [ End ]
 ;===============================================================================
-; loc_1716C:
-JmpTo_MarkObjGone3:
-		jmp	(MarkObjGone3).l
 
-		align 4
+		jmpTos0	JmpTo_MarkObjGone3
+
 ;===============================================================================
 ; Object 0x20 - Fireball - Hill Top
 ; [ Begin ]
@@ -27771,7 +23572,7 @@ loc_17190:
 		move.b	#$08,$0017(a0)
 		move.l	#Fireball_Mappings,mappings(a0) ; loc_173d0
 		move.w	#$8416,art_tile(a0)
-		bsr.w	JmpTo5_Adjust2PArtPointer
+		jsrto	JmpTo5_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$03,$0018(a0)
 		move.b	#$08,$0019(a0)
@@ -27790,15 +23591,15 @@ loc_17190:
 		move.w	d0,$0034(a0)
 loc_171F2:
 		lea	(loc_173B2).l,A1
-		bsr.w	JmpTo_AnimateSprite
-		bra.w	JmpTo4_MarkObjGone
+		jsrto	JmpTo_AnimateSprite
+		jmpto	JmpTo4_MarkObjGone
 loc_17200:
 		cmpi.b	#$05,$001E(a0)
 		bne.s	loc_17230
-		bsr.w	JmpTo_SingleObjLoad2
+		jsrto	JmpTo_SingleObjLoad2
 		bne.s	loc_17222
 		bsr.s	loc_1723E
-		bsr.w	JmpTo_SingleObjLoad2
+		jsrto	JmpTo_SingleObjLoad2
 		bne.s	loc_17222
 		bsr.s	loc_1723E
 		neg.w	$0010(a1)
@@ -27809,8 +23610,8 @@ loc_17222:
 		addq.b	#2,routine(a0)
 loc_17230:
 		lea	(loc_173B2).l,A1
-		bsr.w	JmpTo_AnimateSprite
-		bra.w	JmpTo4_MarkObjGone
+		jsrto	JmpTo_AnimateSprite
+		jmpto	JmpTo4_MarkObjGone
 loc_1723E:
 		_move.b	#$20,0(a1)
 		move.b	#$08,$0024(a1)
@@ -27836,8 +23637,8 @@ loc_1729A:
 		move.w	#$0001,$001C(a0)
 loc_172B2:
 		lea	(loc_173B2).l,A1
-		bsr.w	JmpTo_AnimateSprite
-		bra.w	JmpTo4_MarkObjGone
+		jsrto	JmpTo_AnimateSprite
+		jmpto	JmpTo4_MarkObjGone
 loc_172C0:
 		subq.b	#1,$001E(a0)
 		bpl.s	loc_172d6
@@ -27845,13 +23646,13 @@ loc_172C0:
 		addq.b	#1,$001A(a0)
 		andi.b	#1,$001A(a0)
 loc_172d6:
-		bsr.w	JmpTo4_ObjectMove
+		jsrto	JmpTo4_ObjectMove
 		addi.w	#$0018,$0012(a0)
 		move.w	(Camera_Max_Y_pos_now).w,d0
 		addi.w	#$00E0,d0
 		cmp.w	y_pos(a0),d0
 		bhs.s	loc_172F2
-		bra.w	JmpTo14_DeleteObject
+		jmpto	JmpTo14_DeleteObject
 loc_172F2:
 		bclr	#1,$0001(a0)
 		tst.w	$0012(a0)
@@ -27867,19 +23668,19 @@ loc_172F2:
 		move.w	#0,$0012(a0)
 		move.l	#$00017410,mappings(a0)
 		move.w	#$839E,art_tile(a0)
-		bsr.w	JmpTo5_Adjust2PArtPointer
+		jsrto	JmpTo5_Adjust2PArtPointer
 		move.b	#0,$001A(a0)
 		move.w	#$0009,$0032(a0)
 		move.b	#$03,$0036(a0)
 loc_1734A:
-		bra.w	JmpTo4_MarkObjGone
+		jmpto	JmpTo4_MarkObjGone
 loc_1734E:
 		subq.w	#1,$0032(a0)
 		bpl.s	loc_173A0
 		move.w	#$007F,$0032(a0)
 		subq.b	#1,$0036(a0)
 		bmi.s	loc_173A0
-		bsr.w	JmpTo_SingleObjLoad2
+		jsrto	JmpTo_SingleObjLoad2
 		bne.s	loc_173A0
 		moveq	#0,d0
 		move.w	#$000F,d1
@@ -27901,10 +23702,10 @@ loc_17390:
 		add.w	d1,y_pos(a1)
 loc_173A0:
 		lea	(loc_173B2).l,A1
-		bsr.w	JmpTo_AnimateSprite
-		bra.w	JmpTo4_MarkObjGone
+		jsrto	JmpTo_AnimateSprite
+		jmpto	JmpTo4_MarkObjGone
 loc_173AE:
-		bra.w	JmpTo14_DeleteObject
+		jmpto	JmpTo14_DeleteObject
 loc_173B2:
 		dc.w	loc_173B8-loc_173B2
 		dc.w	loc_173BF-loc_173B2
@@ -27965,24 +23766,9 @@ loc_17444:
 loc_1744E:
 		dc.w	$0001
 		dc.l	$00050810,$0808FFF8
-; loc_17458:
-JmpTo14_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1745E:
-JmpTo4_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_17464:
-JmpTo_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1746A:
-JmpTo_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_17470:
-JmpTo5_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_17476:
-JmpTo4_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos0	JmpTo14_DeleteObject,JmpTo4_MarkObjGone,JmpTo_SingleObjLoad2,JmpTo_AnimateSprite,JmpTo5_Adjust2PArtPointer,JmpTo4_ObjectMove
+
 ;===============================================================================
 ; Object 0x20 - Fireball - Hill Top
 ; [ End ]
@@ -28006,7 +23792,7 @@ loc_1749A:
 		addq.b	#2,routine(a0)
 		move.l	#Obj2F_MapUnc_1786A,mappings(a0) ; loc_1786A
 		move.w	#$C000,art_tile(a0)
-		bsr.w	JmpTo6_Adjust2PArtPointer
+		jsrto	JmpTo6_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$04,$0018(a0)
@@ -28028,12 +23814,12 @@ loc_174D8:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject
+		jsrto	JmpTo_SolidObject
 		move.b	$0022(a0),d0
 		andi.b	#$18,d0
 		bne.s	loc_17514
 loc_17510:
-		bra.w	JmpTo5_MarkObjGone
+		jmpto	JmpTo5_MarkObjGone
 loc_17514:
 		cmpi.b	#$18,d0
 		bne.s	loc_17578
@@ -28125,14 +23911,14 @@ loc_17614:
 		neg.w	d1
 		addi.w	#$0009,d1
 		move.w	#$0018,d2
-		bsr.w	JmpTo_BreakObjectToPieces
+		jsrto	JmpTo_BreakObjectToPieces
 		bsr.w	loc_17818
 loc_1764C:
-		bsr.w	JmpTo5_ObjectMove
+		jsrto	JmpTo5_ObjectMove
 		addi.w	#$0018,$0012(a0)
 		tst.b	$0001(a0)
 		bpl.w	JmpTo15_DeleteObject
-		bra.w	JmpTo3_DisplaySprite
+		jmpto	JmpTo3_DisplaySprite
 loc_17662:
 		dc.w	$FF00,$F800,$0100,$F800,$FF20,$F900,$00E0,$F900
 		dc.w	$FF40,$FA00,$00C0,$FA00,$FF60,$FB00,$00A0,$FB00
@@ -28167,7 +23953,7 @@ loc_1769E:
 		move.b	#$10,$0019(a0)
 		move.l	#loc_17808,$003C(a0)
 loc_176E2:
-		bsr.w	JmpTo6_Adjust2PArtPointer
+		jsrto	JmpTo6_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$04,$0018(a0)
 loc_176F2:
@@ -28180,12 +23966,12 @@ loc_176F2:
 		move.w	#$0010,d2
 		move.w	#$0011,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject
+		jsrto	JmpTo_SolidObject
 		move.b	$0022(a0),d0
 		andi.b	#$18,d0
 		bne.s	loc_1772C
 loc_17728:
-		bra.w	JmpTo5_MarkObjGone
+		jmpto	JmpTo5_MarkObjGone
 loc_1772C:
 		cmpi.b	#$18,d0
 		bne.s	loc_1775A
@@ -28235,14 +24021,14 @@ loc_177C2:
 		move.w	$0038(a0),(Chain_Bonus_counter).w
 		andi.b	#$E7,$0022(a0)
 		move.l	$003C(a0),A4
-		bsr.w	JmpTo_BreakObjectToPieces
+		jsrto	JmpTo_BreakObjectToPieces
 		bsr.w	loc_17818
 loc_177DA:
-		bsr.w	JmpTo5_ObjectMove
+		jsrto	JmpTo5_ObjectMove
 		addi.w	#$0018,$0012(a0)
 		tst.b	$0001(a0)
 		bpl.w	JmpTo15_DeleteObject
-		bra.w	JmpTo3_DisplaySprite
+		jmpto	JmpTo3_DisplaySprite
 loc_177F0:
 		dc.w	$FE00,$FE00,$0000,$FD80,$0200,$FE00,$FE40,$FE40
 		dc.w	$0000,$FE00,$01C0,$FE40
@@ -28253,7 +24039,7 @@ loc_17808:
 ; [ End ]
 ;===============================================================================
 loc_17818:
-		bsr.w	JmpTo_SingleObjLoad
+		jsrto	JmpTo_SingleObjLoad
 		bne.s	loc_17860
 		_move.b	#$29,0(a1)
 		move.w	x_pos(a0),x_pos(a1)
@@ -28291,31 +24077,8 @@ Obj32_MapUnc_179C2:	binclude	"mappings/sprite/obj32_HTZ.bin"	; HTZ rock
 Obj32_MapUnc_179F6:	binclude	"mappings/sprite/obj32_CPZ.bin" ; CPZ tube cover
 		even
 ; ===========================================================================
-		nop
-; loc_17A1C:
-JmpTo3_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_17A22:
-JmpTo15_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_17A28:
-JmpTo_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_17A2E:
-JmpTo5_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_17A34:
-JmpTo6_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_17A3A:
-JmpTo_BreakObjectToPieces:
-		jmp	(BreakObjectToPieces).l
-; loc_17A40:
-JmpTo_SolidObject:
-		jmp	(SolidObject).l
-; loc_17A46:
-JmpTo5_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo3_DisplaySprite,JmpTo15_DeleteObject,JmpTo_SingleObjLoad,JmpTo5_MarkObjGone,JmpTo6_Adjust2PArtPointer,JmpTo_BreakObjectToPieces,JmpTo_SolidObject,JmpTo5_ObjectMove
 
 ;===============================================================================
 ; Object 0x30 -
@@ -28354,7 +24117,7 @@ loc_17A9E:
 		beq.s	loc_17AB0
 		bclr	#$07,$02(A2,d0)
 loc_17AB0:
-		bra.w	JmpTo16_DeleteObject
+		jmpto	JmpTo16_DeleteObject
 loc_17AB4:
 		move.w	$0032(a0),d0
 		add.w	(Camera_BG_Y_offset).w,d0
@@ -28377,31 +24140,31 @@ loc_17AE2:
 		move.w	#$0080,d2
 		move.w	#$0081,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_Always
+		jsrto	JmpTo_SolidObject_Always
 		bra.w	loc_FBF4
 loc_17AFA:
 		move.w	#$00CB,d1
 		move.w	#$0078,d2
 		move.w	#$0079,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_Always
+		jsrto	JmpTo_SolidObject_Always
 		bsr.w	loc_FBF4
 loc_17B12:
 		btst	#$03,$0022(a0)
 		beq.s	loc_17B28
 		move.l	A0,-(sp)
-		move.l	A0,A1
+		movea.l	A0,A1
 		lea	(MainCharacter).w,A0
-		bsr.w	JmpTo_Touch_ChkHurt
-		move.l	(sp)+,A0
+		jsrto	JmpTo_Touch_ChkHurt
+		movea.l	(sp)+,A0
 loc_17B28:
 		btst	#$04,$0022(a0)
 		beq.s	loc_17B3E
 		move.l	A0,-(sp)
-		move.l	A0,A1
+		movea.l	A0,A1
 		lea	(Sidekick).w,A0
-		bsr.w	JmpTo_Touch_ChkHurt
-		move.l	(sp)+,A0
+		jsrto	JmpTo_Touch_ChkHurt
+		movea.l	(sp)+,A0
 loc_17B3E:
 		rts
 loc_17B40:
@@ -28409,7 +24172,7 @@ loc_17B40:
 		move.w	#$0078,d2
 		move.w	#$0079,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_Always
+		jsrto	JmpTo_SolidObject_Always
 		bsr.w	loc_FBF4
 		bra.s	loc_17B12
 loc_17B5A:
@@ -28417,7 +24180,7 @@ loc_17B5A:
 		move.w	#$003E,d2
 		move.w	x_pos(a0),d4
 		lea	(loc_17B74).l,A2
-		bsr.w	JmpTo_SlopedSolid
+		jsrto	JmpTo_SlopedSolid
 		bra.w	loc_FBF4
 loc_17B74:
 		dc.b	$40,$40,$40,$40,$40,$40,$40,$40,$3F,$3F,$3E,$3E,$3D,$3D,$3C,$3C
@@ -28441,23 +24204,8 @@ loc_17B74:
 ; Object 0x30 -
 ; [ End ]
 ;===============================================================================
-; loc_17C80:
-JmpTo16_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_17C86:
-JmpTo_Touch_ChkHurt:
-		jmp	(Touch_ChkHurt).l
-; loc_17C8C:
-JmpTo2_MarkObjGone3:
-		jmp	(MarkObjGone3)
-; loc_17C92:
-JmpTo_SolidObject_Always:
-		jmp	(SolidObject_Always).l
-; loc_17C98:
-JmpTo_SlopedSolid:
-		jmp	(SlopedSolid).l
 
-		align 4
+		jmpTos0	JmpTo16_DeleteObject,JmpTo_Touch_ChkHurt,JmpTo2_MarkObjGone3,JmpTo_SolidObject_Always,JmpTo_SlopedSolid
 
 ;===============================================================================
 ; Object 0x33 - Oil Ocean - Touch to Boost Up
@@ -28475,7 +24223,7 @@ loc_17CB2:
 		addq.b	#2,routine(a0)
 		move.l	#Obj33_MapUnc_17EE2,mappings(a0) ; loc_17EE2
 		move.w	#$632C,art_tile(a0)
-		bsr.w	JmpTo7_Adjust2PArtPointer
+		jsrto	JmpTo7_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$03,$0018(a0)
 		move.b	#$18,$0019(a0)
@@ -28498,8 +24246,8 @@ loc_17CF6:
 		moveq	#$08,d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo2_SolidObject
-		bra.w	JmpTo6_MarkObjGone
+		jsrto	JmpTo2_SolidObject
+		jmpto	JmpTo6_MarkObjGone
 loc_17d22:
 		dc.w	loc_17d2C-loc_17d22
 		dc.w	loc_17d46-loc_17d22
@@ -28635,18 +24383,8 @@ loc_17EE0:
 Obj33_MapUnc_17EE2:	binclude	"mappings/sprite/obj33.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_17EF8:
-JmpTo6_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_17EFE:
-JmpTo7_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_17F04:
-JmpTo2_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos	JmpTo6_MarkObjGone,JmpTo7_Adjust2PArtPointer,JmpTo2_SolidObject
 
 ;===============================================================================
 ; Object 0x43 - Oil Ocean - Giant Spikeball
@@ -28667,7 +24405,7 @@ loc_17F20:
 loc_17F32:
 		addq.b	#2,routine(a0)
 		move.w	#$C30C,art_tile(a0)
-		bsr.w	JmpTo8_Adjust2PArtPointer
+		jsrto	JmpTo8_Adjust2PArtPointer
 		moveq	#0,d1
 		move.b	$0028(a0),d1
 		lea	loc_17F20(pc,d1),A2
@@ -28675,7 +24413,7 @@ loc_17F32:
 		move.l	A0,A1
 		bra.s	loc_17F74
 loc_17F50:
-		bsr.w	JmpTo2_SingleObjLoad2
+		jsrto	JmpTo2_SingleObjLoad2
 		bne.s	loc_17FA0
 		_move.b	0(a0),0(a1)
 		move.b	#$04,$0024(a1)
@@ -28778,13 +24516,8 @@ loc_1808C:
 Obj43_MapUnc_1808E:	binclude	"mappings/sprite/obj43.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_180C4:
-JmpTo2_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_180CA:
-JmpTo8_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+
+		jmpTos	JmpTo2_SingleObjLoad2,JmpTo8_Adjust2PArtPointer
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -28836,7 +24569,7 @@ Obj07_CheckSupportChar1:
 		moveq	#3,d6
 		move.w	x_pos(a1),d4
 		move.w	d4,x_pos(a0)
-		bsr.w	JmpTo_PlatformObject_SingleCharacter	; stop the character from falling past the oil
+		jsrto	JmpTo_PlatformObject_SingleCharacter	; stop the character from falling past the oil
 
 		; check 2
 		lea	(Sidekick).w,a1
@@ -28862,7 +24595,7 @@ Obj07_CheckSupportChar2:
 		moveq	#4,d6
 		move.w	x_pos(a1),d4
 		move.w	d4,x_pos(a0)
-		bsr.w	JmpTo_PlatformObject_SingleCharacter	; stop the character from falling past the oil
+		jsrto	JmpTo_PlatformObject_SingleCharacter	; stop the character from falling past the oil
 		rts
 ; ---------------------------------------------------------------------------
 ; loc_1817E:
@@ -28872,17 +24605,12 @@ Obj07_SuffocateCharacter:
 		move.l	a0,-(sp)
 		movea.l	a0,a2
 		movea.l	a1,a0
-		bsr.w	JmpTo3_KillCharacter
+		jsrto	JmpTo3_KillCharacter
 		movea.l	(sp)+,a0
 		rts
 ; ===========================================================================
-		nop
-; loc_18194:
-JmpTo3_KillCharacter:
-		jmp	(KillSonic).l
-; loc_1819A:
-JmpTo_PlatformObject_SingleCharacter:
-		jmp	(PlatformObject_SingleCharacter).l
+
+		jmpTos	JmpTo3_KillCharacter,JmpTo_PlatformObject_SingleCharacter
 
 ;===============================================================================
 ; Object 0x45 - Oil Ocean - Spring Push to Boost
@@ -28893,7 +24621,7 @@ Obj_0x45_Spring_Push_Boost: ; loc_181A0:
 		move.b	routine(a0),d0
 		move.w	loc_181B2(pc,d0),d1
 		jsr	loc_181B2(pc,d1)
-		bra.w	JmpTo7_MarkObjGone
+		jmpto	JmpTo7_MarkObjGone
 loc_181B2:
 		dc.w	loc_181B8-loc_181B2
 		dc.w	loc_1822E-loc_181B2
@@ -28924,7 +24652,7 @@ loc_18216:
 		move.b	$0028(a0),d0
 		andi.w	#$0002,d0
 		move.w	loc_1822A(pc,d0),$0030(a0)
-		bsr.w	JmpTo9_Adjust2PArtPointer
+		jsrto	JmpTo9_Adjust2PArtPointer
 		rts
 loc_1822A:
 		dc.w	$F000,$F600
@@ -28948,7 +24676,7 @@ loc_18250:
 		move.w	#$001B,d1
 		move.w	#$0014,d2
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject45
+		jsrto	JmpTo_SolidObject45
 		rts
 loc_1826E:
 		lea	(MainCharacter).w,A1
@@ -29008,7 +24736,7 @@ loc_18322:
 		lea	(MainCharacter).w,A1
 		moveq	#$03,d6
 		movem.l d1-d4,-(sp)
-		bsr.w	JmpTo_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo_SolidObject_Always_SingleCharacter
 		cmpi.w	#$0001,d4
 		bne.s	loc_18368
 		move.b	$0022(a0),d1
@@ -29024,7 +24752,7 @@ loc_18368:
 		movem.l (sp)+,d1-d4
 		lea	(Sidekick).w,A1
 		moveq	#$04,d6
-		bsr.w	JmpTo_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo_SolidObject_Always_SingleCharacter
 		cmpi.w	#$0001,d4
 		bne.s	loc_18396
 		move.b	$0022(a0),d1
@@ -29230,7 +24958,7 @@ loc_18AF0:
 		move.b	#$0F,$0017(a0)
 		move.l	#Obj46_MapUnc_18CFA,mappings(a0) ; loc_18CFA
 		move.w	#$6354,art_tile(a0)
-		bsr.w	JmpTo9_Adjust2PArtPointer
+		jsrto	JmpTo9_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$03,$0018(a0)
 		move.w	x_pos(a0),$0034(a0)
@@ -29239,7 +24967,7 @@ loc_18AF0:
 		move.b	#0,$001A(a0)
 		move.w	#0,$0014(a0)
 		move.b	#1,$001F(a0)
-		bsr.w	JmpTo2_SingleObjLoad
+		jsrto	JmpTo2_SingleObjLoad
 		bne.s	loc_18B8E
 		_move.b	#$46,0(a1)
 		addq.b	#$06,$0024(a1)
@@ -29276,10 +25004,10 @@ loc_18BAC:
 		neg.w	$0014(a0)
 loc_18BD8:
 		bsr.w	loc_18C98
-		bra.w	JmpTo7_MarkObjGone
+		jmpto	JmpTo7_MarkObjGone
 loc_18BE0:
 		move.w	x_pos(a0),-(sp)
-		bsr.w	JmpTo6_ObjectMove
+		jsrto	JmpTo6_ObjectMove
 		btst	#1,$0022(a0)
 		beq.s	loc_18C34
 		addi.w	#$0018,$0012(a0)
@@ -29315,9 +25043,9 @@ loc_18C4C:
 		move.w	#$0010,d2
 		move.w	#$0011,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo3_SolidObject
+		jsrto	JmpTo3_SolidObject
 		bsr.w	loc_18C98
-		bra.w	JmpTo7_MarkObjGone
+		jmpto	JmpTo7_MarkObjGone
 loc_18C6C:
 		move.w	(sp)+,d4
 		lea	(Object_Respawn_Table).w,A2
@@ -29326,7 +25054,7 @@ loc_18C6C:
 		beq.s	loc_18C80
 		bclr	#$07,$02(A2,d0)
 loc_18C80:
-		bra.w	JmpTo18_DeleteObject
+		jmpto	JmpTo18_DeleteObject
 loc_18C84:
 		tst.b	$0030(a0)
 		beq.s	loc_18C94
@@ -29334,7 +25062,7 @@ loc_18C84:
 		bne.s	loc_18C94
 		clr.b	$0030(a0)
 loc_18C94:
-		bra.w	JmpTo7_MarkObjGone
+		jmpto	JmpTo7_MarkObjGone
 loc_18C98:
 		tst.b	$001A(a0)
 		beq.s	loc_18CA6
@@ -29383,31 +25111,8 @@ loc_18CF4:
 Obj46_MapUnc_18CFA:	binclude	"mappings/sprite/obj46.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_18d6C:
-JmpTo18_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_18d72:
-JmpTo2_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_18d78:
-JmpTo7_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_18d7E:
-JmpTo9_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_18D84:
-JmpTo3_SolidObject:
-		jmp	(SolidObject).l
-; loc_18D8A:
-JmpTo_SolidObject_Always_SingleCharacter:
-		jmp	(SolidObject_Always_SingleCharacter).l
-; loc_18D90:
-JmpTo_SolidObject45:
-		jmp	(SolidObject45).l
-; loc_18D96:
-JmpTo6_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo18_DeleteObject,JmpTo2_SingleObjLoad,JmpTo7_MarkObjGone,JmpTo9_Adjust2PArtPointer,JmpTo3_SolidObject,JmpTo_SolidObject_Always_SingleCharacter,JmpTo_SolidObject45,JmpTo6_ObjectMove
 
 ;===============================================================================
 ; Object 0x47 - Switch - Oil Ocean / Dust Hill
@@ -29425,7 +25130,7 @@ loc_18DAE:
 		addq.b	#2,routine(a0)
 		move.l	#Obj47_MapUnc_18E3E,mappings(a0) ; loc_18E3E
 		move.w	#$0424,art_tile(a0)
-		bsr.w	JmpTo10_Adjust2PArtPointer
+		jsrto	JmpTo10_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$04,$0018(a0)
@@ -29437,7 +25142,7 @@ loc_18DDA:
 		move.w	#$0004,d2
 		move.w	#$0005,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo4_SolidObject
+		jsrto	JmpTo4_SolidObject
 		move.b	#0,$001A(a0)
 		move.b	$0028(a0),d0
 		andi.w	#$000F,d0
@@ -29462,25 +25167,15 @@ loc_18E32:
 		bset	d3,(a3)
 		move.b	#1,$001A(a0)
 loc_18E3A:
-		bra.w	JmpTo8_MarkObjGone
+		jmpto	JmpTo8_MarkObjGone
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj47_MapUnc_18E3E:	binclude	"mappings/sprite/obj47.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_18E64:
-JmpTo8_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_18E6A:
-JmpTo10_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_18E70:
-JmpTo4_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos	JmpTo8_MarkObjGone,JmpTo10_Adjust2PArtPointer,JmpTo4_SolidObject
 
 ;===============================================================================
 ; Object 0x3D - Break to Boost - Oil Ocean
@@ -29500,7 +25195,7 @@ loc_18E8E:
 		addq.b	#2,routine(a0)
 		move.l	#Obj3D_MapUnc_1916E,mappings(a0) ; loc_1916E
 		move.w	#$6332,art_tile(a0)
-		bsr.w	JmpTo11_Adjust2PArtPointer
+		jsrto	JmpTo11_Adjust2PArtPointer
 		move.b	#$04,$0001(a0)
 		move.b	#$18,$0019(a0)
 		move.b	#$04,$0018(a0)
@@ -29513,12 +25208,12 @@ loc_18EB6:
 		move.w	#$0010,d2
 		move.w	#$0011,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo5_SolidObject
+		jsrto	JmpTo5_SolidObject
 		move.b	$0022(a0),d0
 		andi.b	#$18,d0
 		bne.s	loc_18EF0
 loc_18EEC:
-		bra.w	JmpTo9_MarkObjGone
+		jmpto	JmpTo9_MarkObjGone
 loc_18EF0:
 		cmpi.b	#$18,d0
 		bne.s	loc_18F26
@@ -29570,7 +25265,7 @@ loc_18F78:
 		bsr.s	loc_18F48
 loc_18F94:
 		andi.b	#$E7,$0022(a0)
-		bsr.w	JmpTo3_SingleObjLoad2
+		jsrto	JmpTo3_SingleObjLoad2
 		bne.s	loc_18FB8
 		moveq	#0,d0
 		move.w	#$0009,d1
@@ -29584,13 +25279,13 @@ loc_18FB8:
 		addq.b	#1,$001A(a0)
 		moveq	#$0F,d1
 		move.w	#$0018,d2
-		bsr.w	JmpTo2_BreakObjectToPieces
+		jsrto	JmpTo2_BreakObjectToPieces
 loc_18FCC:
-		bsr.w	JmpTo7_ObjectMove
+		jsrto	JmpTo7_ObjectMove
 		addi.w	#$0018,$0012(a0)
 		tst.b	$0001(a0)
 		bpl.w	JmpTo19_DeleteObject
-		bra.w	JmpTo4_DisplaySprite
+		jmpto	JmpTo4_DisplaySprite
 loc_18FE2:
 		lea	(MainCharacter).w,A1
 		lea	$002C(a0),A4
@@ -29702,36 +25397,8 @@ loc_1912E:
 Obj3D_MapUnc_1916E:	binclude	"mappings/sprite/obj3D.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_19218:
-JmpTo4_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1921E
-JmpTo19_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_19224:
-JmpTo9_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1922A:
-JmpTo3_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_19230:
-JmpTo3_MarkObjGone3:
-		jmp	(MarkObjGone3).l
-; loc_19236:
-JmpTo11_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1923C:
-JmpTo2_BreakObjectToPieces:
-		jmp	(BreakObjectToPieces).l
-; loc_19242:
-JmpTo5_SolidObject:
-		jmp	(SolidObject).l
-; loc_19248:
-JmpTo7_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos	JmpTo4_DisplaySprite,JmpTo19_DeleteObject,JmpTo9_MarkObjGone,JmpTo3_SingleObjLoad2,JmpTo3_MarkObjGone3,JmpTo11_Adjust2PArtPointer,JmpTo2_BreakObjectToPieces,JmpTo5_SolidObject,JmpTo7_ObjectMove
 
 ;===============================================================================
 ; Object 0x48 - Cannon - Oil Ocean
@@ -29745,7 +25412,7 @@ Obj_0x48_Cannon: ; loc_19250:
 		move.b	$002C(a0),d0
 		add.b	$0036(a0),d0
 		beq.w	JmpTo10_MarkObjGone
-		bra.w	JmpTo5_DisplaySprite
+		jmpto	JmpTo5_DisplaySprite
 loc_1926E:
 		dc.w	loc_19282-loc_1926E
 		dc.w	loc_192d2-loc_1926E
@@ -29757,7 +25424,7 @@ loc_19282:
 		addq.b	#2,routine(a0)
 		move.l	#Obj48_MapUnc_194CA,mappings(a0) ; loc_194CA
 		move.w	#$6368,art_tile(a0)
-		bsr.w	JmpTo12_Adjust2PArtPointer
+		jsrto	JmpTo12_Adjust2PArtPointer
 		move.b	$0028(a0),d0
 		andi.w	#$000F,d0
 		btst	#0,$0022(a0)
@@ -29930,18 +25597,9 @@ loc_194C8:
 Obj48_MapUnc_194CA:	binclude	"mappings/sprite/obj48.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1964C:
-JmpTo5_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_19652:
-JmpTo10_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_19658:
-JmpTo12_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
 
-		align 4
+		jmpTos	JmpTo5_DisplaySprite,JmpTo10_MarkObjGone,JmpTo12_Adjust2PArtPointer
+
 ;===============================================================================
 ; Object 0x22 - Arrow Shooter - Neo Green Hill
 ; [ Begin ]
@@ -29961,7 +25619,7 @@ loc_19678:
 		addq.b	#2,routine(a0)
 		move.l	#Obj22_MapUnc_197C6,mappings(a0) ; loc_197C6
 		move.w	#$0417,art_tile(a0)
-		bsr.w	JmpTo13_Adjust2PArtPointer
+		jsrto	JmpTo13_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$03,$0018(a0)
 		move.b	#$10,$0019(a0)
@@ -29984,8 +25642,8 @@ loc_196CE:
 		move.b	d2,$001C(a0)
 loc_196d2:
 		lea	(loc_197B0).l,A1
-		bsr.w	JmpTo2_AnimateSprite
-		bra.w	JmpTo11_MarkObjGone
+		jsrto	JmpTo2_AnimateSprite
+		jmpto	JmpTo11_MarkObjGone
 loc_196E0:
 		move.w	x_pos(a0),d0
 		sub.w	x_pos(a1),d0
@@ -29998,7 +25656,7 @@ loc_196EC:
 loc_196F4:
 		rts
 loc_196F6:
-		bsr.w	JmpTo3_SingleObjLoad
+		jsrto	JmpTo3_SingleObjLoad
 		bne.s	loc_1972A
 		_move.b	0(a0),0(a1)
 		addq.b	#$06,$0024(a1)
@@ -30011,8 +25669,8 @@ loc_196F6:
 loc_1972A:
 		subq.b	#2,$0024(a0)
 		lea	(loc_197B0).l,A1
-		bsr.w	JmpTo2_AnimateSprite
-		bra.w	JmpTo11_MarkObjGone
+		jsrto	JmpTo2_AnimateSprite
+		jmpto	JmpTo11_MarkObjGone
 loc_1973C:
 		addq.b	#2,routine(a0)
 		move.b	#$08,$0016(a0)
@@ -30029,22 +25687,22 @@ loc_19776:
 		move.w	#SndID_ArrowFiring,d0
 		jsr	(PlaySound).l			  ; loc_14C6
 loc_19780:
-		bsr.w	JmpTo8_ObjectMove
+		jsrto	JmpTo8_ObjectMove
 		btst	#0,$0022(a0)
 		bne.s	loc_197A0
 		moveq	#-8,d3
 		bsr.w	ObjHitWallLeft			; loc_13B24
 		tst.w	d1
 		bmi.w	loc_1979C
-		bra.w	JmpTo11_MarkObjGone
+		jmpto	JmpTo11_MarkObjGone
 loc_1979C:
-		bra.w	JmpTo20_DeleteObject
+		jmpto	JmpTo20_DeleteObject
 loc_197A0:
 		moveq	#$08,d3
 		bsr.w	ObjHitWallRight			; loc_1399E
 		tst.w	d1
 		bmi.w	loc_1979C
-		bra.w	JmpTo11_MarkObjGone
+		jmpto	JmpTo11_MarkObjGone
 loc_197B0:
 		dc.w	loc_197B6-loc_197B0
 		dc.w	loc_197B9-loc_197B0
@@ -30061,25 +25719,8 @@ loc_197BD:
 Obj22_MapUnc_197C6:	binclude	"mappings/sprite/obj22.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1982C:
-JmpTo20_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_19832:
-JmpTo3_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_19838:
-JmpTo11_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1983E:
-JmpTo2_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_19844:
-JmpTo13_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1984A:
-JmpTo8_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo20_DeleteObject,JmpTo3_SingleObjLoad,JmpTo11_MarkObjGone,JmpTo2_AnimateSprite,JmpTo13_Adjust2PArtPointer,JmpTo8_ObjectMove
 
 ;===============================================================================
 ; Object 0x23 - Neo Green Hill - Pillar That Drops Lower Half
@@ -30097,12 +25738,12 @@ loc_19862:
 		addq.b	#2,routine(a0)
 		move.l	#Pillar_Mappings,mappings(a0) ; loc_199AA
 		move.w	#$2000,art_tile(a0)
-		bsr.w	JmpTo14_Adjust2PArtPointer
+		jsrto	JmpTo14_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$20,$0016(a0)
 		move.b	#$04,$0018(a0)
-		bsr.w	JmpTo4_SingleObjLoad2
+		jsrto	JmpTo4_SingleObjLoad2
 		bne.s	loc_198E6
 		_move.b	0(a0),0(a1)
 		addq.b	#2,routine(a1)
@@ -30129,8 +25770,8 @@ loc_198E6:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo6_SolidObject
-		bra.w	JmpTo12_MarkObjGone
+		jsrto	JmpTo6_SolidObject
+		jmpto	JmpTo12_MarkObjGone
 loc_1990C:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
@@ -30175,7 +25816,7 @@ loc_19960:
 loc_19974:
 		dc.b	$00,$01,$FF,$01,$00,$FF,$00,$01
 loc_1997C:
-		bsr.w	JmpTo9_ObjectMove		  ; loc_1A0BC
+		jsrto	JmpTo9_ObjectMove		  ; loc_1A0BC
 		addi.w	#$0038,$0012(a0)
 		bsr.w	ObjHitFloor				; loc_13898
 		tst.w	d1
@@ -30226,7 +25867,7 @@ loc_19A32:
 		addq.b	#2,routine(a0)
 		move.l	#Breakable_Pillar_Mappings,mappings(a0) ; loc_19C30
 		move.w	#$2000,art_tile(a0)
-		bsr.w	JmpTo14_Adjust2PArtPointer
+		jsrto	JmpTo14_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$18,$0016(a0)
@@ -30242,11 +25883,11 @@ loc_19A60:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo6_SolidObject
+		jsrto	JmpTo6_SolidObject
 		move.b	$0022(a0),d0
 		andi.b	#$18,d0
 		bne.w	loc_19A92
-		bra.w	JmpTo12_MarkObjGone
+		jmpto	JmpTo12_MarkObjGone
 loc_19A92:
 		lea	(loc_19B80).l,A4
 		lea	(loc_19B72).l,A2
@@ -30314,12 +25955,12 @@ loc_19B50:
 		subq.b	#1,$003F(a0)
 		bra.s	loc_19B66
 loc_19B5C:
-		bsr.w	JmpTo9_ObjectMove		  ; loc_1A0BC
+		jsrto	JmpTo9_ObjectMove		  ; loc_1A0BC
 		addi.w	#$0018,$0012(a0)
 loc_19B66:
 		tst.b	$0001(a0)
 		bpl.w	JmpTo21_DeleteObject
-		bra.w	JmpTo6_DisplaySprite
+		jmpto	JmpTo6_DisplaySprite
 loc_19B72:
 		dc.b	$00,$00,$00,$00,$04,$04,$08,$08,$0C,$0C,$10,$10,$14,$14
 loc_19B80:
@@ -30341,7 +25982,7 @@ loc_19BB8:
 		movea.l	a0,a1
 		bra.s	loc_19BE6
 loc_19BDE:
-		bsr.w	JmpTo4_SingleObjLoad2
+		jsrto	JmpTo4_SingleObjLoad2
 		bne.s	loc_19C26
 		addq.w	#$08,A3
 loc_19BE6:
@@ -30478,29 +26119,8 @@ loc_1A026:
 ; Object 0x2B - Neo Green Hill - Breakable Pillar
 ; [ End ]
 ;===============================================================================
-; loc_1A098:
-JmpTo6_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1A09E:
-JmpTo21_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1A0A4:
-JmpTo12_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1A0AA:
-JmpTo4_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1A0B0:
-JmpTo14_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1A0B6:
-JmpTo6_SolidObject:
-		jmp	(SolidObject).l
-; loc_1A0BC:
-JmpTo9_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo6_DisplaySprite,JmpTo21_DeleteObject,JmpTo12_MarkObjGone,JmpTo4_SingleObjLoad2,JmpTo14_Adjust2PArtPointer,JmpTo6_SolidObject,JmpTo9_ObjectMove
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -30549,7 +26169,7 @@ Obj2C_Main:
 		; entering edit mode will no longer display its collision box
 		tst.w	(Debug_placement_mode).w
 		beq.s	loc_1A130
-		bsr.w	JmpTo7_DisplaySprite
+		jsrto	JmpTo7_DisplaySprite
 
 loc_1A130:
 		move.b	$21(a0),d0
@@ -30601,13 +26221,13 @@ loc_1A18A:
 		moveq	#4-1,d6
 
 loc_1A192:
-		bsr.w	JmpTo4_SingleObjLoad
+		jsrto	JmpTo4_SingleObjLoad
 		bne.w	loc_1A21E
 		_move.b	#$2C,0(a1)		; load obj2C (leaves generator)
 		move.b	#4,routine(a1)
 		move.w	x_pos(a2),x_pos(a1)
 		move.w	y_pos(a2),y_pos(a1)
-		bsr.w	JmpTo_PseudoRandomNumber
+		jsrto	JmpTo_PseudoRandomNumber
 		andi.w	#$F,d0
 		subq.w	#8,d0
 		add.w	d0,x_pos(a1)
@@ -30676,7 +26296,7 @@ loc_1A252:
 		addq.w	#4,d3
 		add.w	d3,$12(a0)
 		move.b	$26(a0),d0
-		bsr.w	JmpTo3_CalcSine
+		jsrto	JmpTo3_CalcSine
 		asr.w	#6,d0
 		add.w	$30(a0),d0
 		move.w	d0,x_pos(a0)
@@ -30691,7 +26311,7 @@ loc_1A252:
 loc_1A2B0:
 		tst.b	1(a0)
 		bpl.w	JmpTo22_DeleteObject
-		bra.w	JmpTo7_DisplaySprite
+		jmpto	JmpTo7_DisplaySprite
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
@@ -30700,23 +26320,8 @@ Obj2C_MapUnc_1A2BC:	binclude	"mappings/sprite/obj2C.bin"
 		even
 
 ; ===========================================================================
-; loc_1A2EC:
-JmpTo7_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1A2F2:
-JmpTo22_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1A2F8:
-JmpTo4_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_1A2FE:
-JmpTo_PseudoRandomNumber:
-		jmp	(PseudoRandomNumber).l
-; loc_1A304:
-JmpTo3_CalcSine:
-		jmp	(CalcSine).l
 
-		align 4
+		jmpTos0	JmpTo7_DisplaySprite,JmpTo22_DeleteObject,JmpTo4_SingleObjLoad,JmpTo_PseudoRandomNumber,JmpTo3_CalcSine
 
 ;===============================================================================
 ; Object 0x40 - Chemical Plant / Neo Green Hill - Springs
@@ -30727,7 +26332,7 @@ Obj_0x40_Diagonal_Springs: ; loc_1A30C:
 		move.b	routine(a0),d0
 		move.w	loc_1A31E(pc,d0),d1
 		jsr	loc_1A31E(pc,d1.w)
-		bra.w	JmpTo13_MarkObjGone
+		jmpto	JmpTo13_MarkObjGone
 loc_1A31E:
 		dc.w	loc_1A328-loc_1A31E
 		dc.w	loc_1A364-loc_1A31E
@@ -30737,7 +26342,7 @@ loc_1A328:
 		addq.b	#2,routine(a0)
 		move.l	#Obj40_MapUnc_1A58A,mappings(a0) ; loc_1A58A
 		move.w	#$0440,art_tile(a0)
-		bsr.w	JmpTo15_Adjust2PArtPointer ; loc_1A5C0
+		jsrto	JmpTo15_Adjust2PArtPointer ; loc_1A5C0
 		ori.b	#$04,$0001(a0)
 		move.b	#$1C,$0019(a0)
 		move.b	#$04,$0018(a0)
@@ -30747,7 +26352,7 @@ loc_1A328:
 		move.w	loc_1A322(pc,d0),$0030(a0)
 loc_1A364:
 		lea	(loc_1A57E).l,A1
-		bsr.w	JmpTo3_AnimateSprite	  ; loc_1A5BA
+		jsrto	JmpTo3_AnimateSprite	  ; loc_1A5BA
 		move.w	#$0027,d1
 		move.w	#8,d2
 		move.w	x_pos(a0),d4
@@ -30759,7 +26364,7 @@ loc_1A388:
 		lea	(MainCharacter).w,A1
 		moveq	#$03,d6
 		movem.l d1-d4,-(sp)
-		bsr.w	JmpTo_SlopedSolid_SingleCharacter
+		jsrto	JmpTo_SlopedSolid_SingleCharacter
 		btst	#$03,$0022(a0)
 		beq.s	loc_1A3A0
 		bsr.s	loc_1A3BA
@@ -30767,7 +26372,7 @@ loc_1A3A0:
 		movem.l (sp)+,d1-d4
 		lea	(Sidekick).w,A1
 		moveq	#$04,d6
-		bsr.w	JmpTo_SlopedSolid_SingleCharacter
+		jsrto	JmpTo_SlopedSolid_SingleCharacter
 		btst	#$04,$0022(a0)
 		beq.s	loc_1A3B8
 		bsr.s	loc_1A3BA
@@ -30889,19 +26494,8 @@ loc_1A585:
 Obj40_MapUnc_1A58A:	binclude	"mappings/sprite/obj40.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1A5B4:
-JmpTo13_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1A5BA:
-JmpTo3_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1A5C0;
-JmpTo15_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1A5C6:
-JmpTo_SlopedSolid_SingleCharacter:
-		jmp	(SlopedSolid_SingleCharacter).l
+
+		jmpTos	JmpTo13_MarkObjGone,JmpTo3_AnimateSprite,JmpTo15_Adjust2PArtPointer,JmpTo_SlopedSolid_SingleCharacter
 
 ;===============================================================================
 ; Object 0x42 - Metropolis - Steam Vent
@@ -30923,7 +26517,7 @@ loc_1A5E0:
 		ori.b	#$04,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$04,$0018(a0)
-		bsr.w	JmpTo16_Adjust2PArtPointer
+		jsrto	JmpTo16_Adjust2PArtPointer
 		move.b	#$07,$001A(a0)
 		move.w	y_pos(a0),$0034(a0)
 		move.w	#$0010,$0036(a0)
@@ -30936,7 +26530,7 @@ loc_1A620:
 		lea	(MainCharacter).w,a1
 		moveq	#$03,d6
 		movem.l d1-d4,-(sp)
-		bsr.w	JmpTo2_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo2_SolidObject_Always_SingleCharacter
 		btst	#$03,$0022(a0)
 		beq.s	loc_1A64A
 		bsr.w	loc_1A726
@@ -30944,7 +26538,7 @@ loc_1A64A:
 		movem.l (sp)+,d1-d4
 		lea	(Sidekick).w,a1
 		moveq	#$04,d6
-		bsr.w	JmpTo2_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo2_SolidObject_Always_SingleCharacter
 		btst	#$04,$0022(a0)
 		beq.s	loc_1A664
 		bsr.w	loc_1A726
@@ -30990,9 +26584,9 @@ loc_1A6d4:
 		add.w	$0034(a0),d0
 		move.w	d0,y_pos(a0)
 loc_1A6E0:
-		bra.w	JmpTo14_MarkObjGone
+		jmpto	JmpTo14_MarkObjGone
 loc_1A6E4:
-		bsr.w	JmpTo5_SingleObjLoad
+		jsrto	JmpTo5_SingleObjLoad
 		bne.s	loc_1A724
 		_move.b	0(a0),0(a1)
 		addq.b	#$04,$0024(a1)
@@ -31062,32 +26656,15 @@ loc_1A7F0:
 		cmpi.b	#$07,$001A(a0)
 		beq.w	JmpTo23_DeleteObject
 loc_1A7FA:
-		bra.w	JmpTo8_DisplaySprite
+		jmpto	JmpTo8_DisplaySprite
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj42_MapUnc_1A7FE:	binclude	"mappings/sprite/obj42.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1A890:
-JmpTo8_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1A896:
-JmpTo23_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1A89C:
-JmpTo5_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_1A8A2:
-JmpTo14_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1A8A8:
-JmpTo16_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1A8AE:
-JmpTo2_SolidObject_Always_SingleCharacter:
-		jmp	(SolidObject_Always_SingleCharacter).l
+
+		jmpTos	JmpTo8_DisplaySprite,JmpTo23_DeleteObject,JmpTo5_SingleObjLoad,JmpTo14_MarkObjGone,JmpTo16_Adjust2PArtPointer,JmpTo2_SolidObject_Always_SingleCharacter
 
 ;===============================================================================
 ; Object 0x64 - Metropolis - Pistons
@@ -31120,7 +26697,7 @@ loc_1A8CE:
 loc_1A8FE:
 		move.l	#Obj64_MapUnc_1A9F0,mappings(a0) ; loc_1A9F0
 		move.w	#$2000,art_tile(a0)
-		bsr.w	JmpTo17_Adjust2PArtPointer
+		jsrto	JmpTo17_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$04,$0018(a0)
 		move.w	x_pos(a0),$0034(a0)
@@ -31146,7 +26723,7 @@ loc_1A936:
 		move.b	$002E(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo7_SolidObject
+		jsrto	JmpTo7_SolidObject
 loc_1A96A:
 		move.w	$0034(a0),d0
 		andi.w	#$FF80,d0
@@ -31205,12 +26782,8 @@ Obj64_MapUnc_1A9F0:	binclude	"mappings/sprite/obj64.bin"
 ; Object 0x64 - Metropolis - Pistons
 ; [ End ]
 ;===============================================================================
-; loc_1AA68:
-JmpTo17_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1AA6E:
-JmpTo7_SolidObject:
-		jmp	(SolidObject).l
+
+		jmpTos0	JmpTo17_Adjust2PArtPointer,JmpTo7_SolidObject
 
 ;===============================================================================
 ; Object 0x65 - Metropolis - Platform / Platform Over Gears
@@ -31232,7 +26805,7 @@ loc_1AA9A:
 		addq.b	#2,routine(a0)
 		move.l	#Obj65_MapUnc_1AE2C,mappings(a0) ; loc_1AE2C
 		move.w	#$6000,art_tile(a0)
-		bsr.w	JmpTo18_Adjust2PArtPointer
+		jsrto	JmpTo18_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$04,$0018(a0)
 		moveq	#0,d0
@@ -31270,7 +26843,7 @@ loc_1AB02:
 		bne.s	loc_1AB38
 		move.w	$003C(a0),$003A(a0)
 loc_1AB38:
-		bsr.w	JmpTo5_SingleObjLoad2
+		jsrto	JmpTo5_SingleObjLoad2
 		bne.s	loc_1AB98
 		_move.b	0(a0),0(a1)
 		addq.b	#$04,$0024(a1)
@@ -31312,7 +26885,7 @@ loc_1ABB0:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo8_SolidObject
+		jsrto	JmpTo8_SolidObject
 		move.w	$0034(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
@@ -31517,7 +27090,7 @@ loc_1AE08:
 loc_1AE10:
 		andi.w	#$0007,d0
 		move.b	loc_1AE1E(pc,d0),$001A(a0)
-		bra.w	JmpTo15_MarkObjGone
+		jmpto	JmpTo15_MarkObjGone
 loc_1AE1E:
 		dc.b	$00,$00,$02,$02,$02,$01,$01,$01
 loc_1AE26:
@@ -31535,18 +27108,8 @@ Obj65_MapUnc_1AE68:	binclude	"mappings/sprite/obj65_b.bin"
 ; Object 0x65 - Metropolis - Platform Over Gears
 ; [ End ]
 ;===============================================================================
-; loc_1AEA4:
-JmpTo15_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1AEAA:
-JmpTo5_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1AEB0:
-JmpTo18_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1AEB6:
-JmpTo8_SolidObject:
-		jmp	(SolidObject).l
+
+		jmpTos0	JmpTo15_MarkObjGone,JmpTo5_SingleObjLoad2,JmpTo18_Adjust2PArtPointer,JmpTo8_SolidObject
 
 ;===============================================================================
 ; Object 0x66 - Metropolis - Springs on Walls
@@ -31564,7 +27127,7 @@ loc_1AECE:
 		addq.b	#2,routine(a0)
 		move.l	#Obj66_MapUnc_1B084,mappings(a0) ; loc_1B084
 		move.w	#$8680,art_tile(a0)
-		bsr.w	JmpTo19_Adjust2PArtPointer
+		jsrto	JmpTo19_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$08,$0019(a0)
 		move.b	#$04,$0018(a0)
@@ -31585,7 +27148,7 @@ loc_1AF12:
 		lea	(MainCharacter).w,a1
 		moveq	#$03,d6
 		movem.l d1-d4,-(sp)
-		bsr.w	JmpTo3_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo3_SolidObject_Always_SingleCharacter
 		cmpi.b	#1,d4
 		bne.s	loc_1AF5A
 		btst	#1,$0022(a1)
@@ -31603,7 +27166,7 @@ loc_1AF5A:
 		movem.l (sp)+,d1-d4
 		lea	(Sidekick).w,a1
 		moveq	#$04,d6
-		bsr.w	JmpTo3_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo3_SolidObject_Always_SingleCharacter
 		cmpi.b	#1,d4
 		bne.s	loc_1AF90
 		btst	#1,$0022(a1)
@@ -31625,7 +27188,7 @@ loc_1AF90:
 		bhi.w	JmpTo26_DeleteObject
 		tst.w	(Debug_placement_mode).w
 		beq.s	loc_1AFAE
-		bsr.w	JmpTo9_DisplaySprite
+		jsrto	JmpTo9_DisplaySprite
 loc_1AFAE:
 		rts
 loc_1AFB0:
@@ -31690,18 +27253,8 @@ Obj66_MapUnc_1B084:	binclude	"mappings/sprite/obj66.bin"
 ; Object 0x66 - Metropolis - Springs on Walls
 ; [ End ]
 ;===============================================================================
-; loc_1B0AC:
-JmpTo9_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1B0B2:
-JmpTo26_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1B0B8:
-JmpTo19_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1B0BE:
-JmpTo3_SolidObject_Always_SingleCharacter:
-		jmp	(SolidObject_Always_SingleCharacter).l
+
+		jmpTos0	JmpTo9_DisplaySprite,JmpTo26_DeleteObject,JmpTo19_Adjust2PArtPointer,JmpTo3_SolidObject_Always_SingleCharacter
 
 ;===============================================================================
 ; Object 0x67 - Metropolis - Teleport Attributes
@@ -31716,8 +27269,8 @@ Obj_0x67_Teleport_Attributes: ; loc_1B0C4:
 		add.b	$0036(a0),d0
 		beq.w	JmpTo4_MarkObjGone3
 		lea	(loc_1B4BA).l,a1
-		bsr.w	JmpTo4_AnimateSprite
-		bra.w	JmpTo10_DisplaySprite
+		jsrto	JmpTo4_AnimateSprite
+		jmpto	JmpTo10_DisplaySprite
 loc_1B0EC:
 		dc.w	loc_1B0F0-loc_1B0EC
 		dc.w	loc_1B114-loc_1B0EC
@@ -32029,17 +27582,9 @@ loc_1B4DA:
 ; Object 0x67 - Metropolis - Teleport Attributes
 ; [ End ]
 ;===============================================================================
-; loc_1B50C:
-JmpTo10_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1B512:
-JmpTo4_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1B518:
-JmpTo4_MarkObjGone3:
-		jmp	(MarkObjGone3).l
 
-		align 4
+		jmpTos0	JmpTo10_DisplaySprite,JmpTo4_AnimateSprite,JmpTo4_MarkObjGone3
+
 ;===============================================================================
 ; Object 0x68 - Metropolis - Block with Arrow
 ; [ Begin ]
@@ -32057,11 +27602,11 @@ loc_1B534:
 		addq.b	#2,$0024(a0)
 		move.l	#Obj68_MapUnc_1B6DC,mappings(a0) ; loc_1B6DC
 		move.w	#$6414,art_tile(a0)
-		bsr.w	JmpTo20_Adjust2PArtPointer
+		jsrto	JmpTo20_Adjust2PArtPointer
 		move.b	#4,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#4,$0018(a0)
-		bsr.w	JmpTo6_SingleObjLoad2
+		jsrto	JmpTo6_SingleObjLoad2
 		bne.s	loc_1B5d0
 		_move.b	id(a0),id(a1)
 		addq.b	#4,$0024(a1)
@@ -32093,8 +27638,8 @@ loc_1B5d6:
 		move.w	#$0010,d2
 		move.w	#$0011,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo9_SolidObject
-		bra.w	JmpTo16_MarkObjGone
+		jsrto	JmpTo9_SolidObject
+		jmpto	JmpTo16_MarkObjGone
 loc_1B5EE:
 		bsr.w	loc_1B656
 		moveq	#0,d0
@@ -32103,7 +27648,7 @@ loc_1B5EE:
 		move.w	loc_1B60A(pc,d0.w),d1
 		jsr	loc_1B60A(pc,d1.w)
 		move.w	$0030(a0),d0
-		bra.w	JmpTo2_MarkObjGone2
+		jmpto	JmpTo2_MarkObjGone2
 loc_1B60A:
 		dc.w	loc_1B612-loc_1B60A
 		dc.w	loc_1B624-loc_1B60A
@@ -32198,7 +27743,7 @@ loc_1B732:
 		addq.b	#2,$0024(a0)
 		move.l	#Obj68_MapUnc_1B6DC,mappings(a0) ; loc_1B6DC
 		move.w	#$241C,art_tile(a0)
-		bsr.w	JmpTo20_Adjust2PArtPointer
+		jsrto	JmpTo20_Adjust2PArtPointer
 		ori.b	#4,$0001(a0)
 		move.b	#4,$0019(a0)
 		move.b	#4,$0018(a0)
@@ -32213,7 +27758,7 @@ loc_1B76C:
 		add.w	$0032(a0),d0
 		move.w	d0,y_pos(a0)
 		move.w	$0030(a0),d0
-		bra.w	JmpTo2_MarkObjGone2
+		jmpto	JmpTo2_MarkObjGone2
 loc_1B788:
 		tst.w	$003A(a0)
 		beq.s	loc_1B794
@@ -32249,22 +27794,8 @@ loc_1B7EE:
 ; Object 0x6D - Metropolis - Floor Harpoon
 ; [ End ]
 ;===============================================================================
-JmpTo16_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1B7F6:
-JmpTo6_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1B7FC:
-JmpTo20_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1B802:
-JmpTo9_SolidObject:
-		jmp	(SolidObject).l
-; loc_1B808:
-JmpTo2_MarkObjGone2:
-		jmp	(MarkObjGone2).l
 
-		align 4
+		jmpTos0	JmpTo16_MarkObjGone,JmpTo6_SingleObjLoad2,JmpTo20_Adjust2PArtPointer,JmpTo9_SolidObject,JmpTo2_MarkObjGone2
 
 ;===============================================================================
 ; Object 0x69 - Metropolis - Screew Nut
@@ -32284,7 +27815,7 @@ loc_1B826:
 		addq.b	#2,$0024(a0)
 		move.l	#Obj69_MapUnc_1B9A6,mappings(a0) ; loc_1B9A6
 		move.w	#$2500,art_tile(a0)
-		bsr.w	JmpTo21_Adjust2PArtPointer
+		jsrto	JmpTo21_Adjust2PArtPointer
 		move.b	#4,$0001(a0)
 		move.b	#$20,$0019(a0)
 		move.b	#$B,$0016(a0)
@@ -32308,8 +27839,8 @@ loc_1B880:
 		move.w	#$000C,d2
 		move.w	#$000D,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo10_SolidObject
-		bra.w	JmpTo17_MarkObjGone
+		jsrto	JmpTo10_SolidObject
+		jmpto	JmpTo17_MarkObjGone
 loc_1B898:
 		btst	d6,$0022(a0)
 		bne.s	loc_1B8A0
@@ -32395,9 +27926,9 @@ loc_1B95A:
 		move.w	d1,y_pos(a0)
 		rts
 loc_1B982:
-		bsr.w	JmpTo10_ObjectMove
+		jsrto	JmpTo10_ObjectMove
 		addi.w	#$38,$0012(a0)
-		bsr.w	JmpTo_ObjHitFloor
+		jsrto	JmpTo_ObjHitFloor
 		tst.w	d1
 		bpl.w	loc_1B9A2
 		add.w	d1,y_pos(a0)
@@ -32411,24 +27942,8 @@ loc_1B9A2:
 Obj69_MapUnc_1B9A6:	binclude	"mappings/sprite/obj69.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1BA10:
-JmpTo17_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1BA16:
-JmpTo21_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1BA1C:
-JmpTo10_SolidObject:
-		jmp	(SolidObject).l
-; loc_1BA2:
-JmpTo10_ObjectMove:
-		jmp	(ObjectMove).l
-; loc_1BA28:
-JmpTo_ObjHitFloor:
-		jmp	(ObjHitFloor).l
 
-		align 4
+		jmpTos	JmpTo17_MarkObjGone,JmpTo21_Adjust2PArtPointer,JmpTo10_SolidObject,JmpTo10_ObjectMove,JmpTo_ObjHitFloor
 
 ;===============================================================================
 ; Object 0x6A - Dust Hill - Three Rotating Boxes
@@ -32468,7 +27983,7 @@ loc_1BABC:
 		move.b	#0,$001A(a0)
 		cmpi.b	#$18,$0028(a0)
 		bne.w	loc_1BB50
-		bsr.w	JmpTo7_SingleObjLoad2
+		jsrto	JmpTo7_SingleObjLoad2
 		bne.s	loc_1BB1C
 		bsr.s	loc_1BB1E
 		addi.w	#$40,x_pos(a1)
@@ -32478,7 +27993,7 @@ loc_1BABC:
 		beq.s	loc_1BAF4
 		move.b	#$C,$0028(a1)
 loc_1BAF4:
-		bsr.w	JmpTo7_SingleObjLoad2
+		jsrto	JmpTo7_SingleObjLoad2
 		bne.s	loc_1BB1C
 		bsr.s	loc_1BB1E
 		subi.w	#$40,x_pos(a1)
@@ -32501,7 +28016,7 @@ loc_1BB44:
 		move.w	x_pos(a0),$0032(a0)
 		move.w	y_pos(a0),$0030(a0)
 loc_1BB50:
-		bsr.w	JmpTo22_Adjust2PArtPointer
+		jsrto	JmpTo22_Adjust2PArtPointer
 		move.b	$0028(a0),$0038(a0)
 		bra.w	loc_1BC22
 loc_1BB5E:
@@ -32546,10 +28061,10 @@ loc_1BBBE:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo11_SolidObject
+		jsrto	JmpTo11_SolidObject
 loc_1BBDE:
 		move.w	$0032(a0),d0
-		bra.w	JmpTo3_MarkObjGone2
+		jmpto	JmpTo3_MarkObjGone2
 loc_1BBE6:
 		move.w	x_pos(a0),-(sp)
 		jsr	(ObjectMove).l				 ; (loc_d27A)
@@ -32567,10 +28082,10 @@ loc_1BBFA:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo11_SolidObject
+		jsrto	JmpTo11_SolidObject
 loc_1BC1A:
 		move.w	$0032(a0),d0
-		bra.w	JmpTo3_MarkObjGone2
+		jmpto	JmpTo3_MarkObjGone2
 loc_1BC22:
 		moveq	#0,d0
 		move.b	$0038(a0),d0
@@ -32602,18 +28117,8 @@ loc_1BC92:
 Obj6A_MapUnc_1BCB0:	binclude	"mappings/sprite/obj6A.bin"
 		even
 ; ===========================================================================
-; loc_1BCd4:
-JmpTo7_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1BCDA:
-JmpTo22_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1BCE0:
-JmpTo11_SolidObject:
-		jmp	(SolidObject).l
-; loc_1BCE6:
-JmpTo3_MarkObjGone2:
-		jmp	(MarkObjGone2).l
+
+		jmpTos0	JmpTo7_SingleObjLoad2,JmpTo22_Adjust2PArtPointer,JmpTo11_SolidObject,JmpTo3_MarkObjGone2
 
 ;===============================================================================
 ; Object 0x6B - Metropolis Platforms / Chemical Plant - Block
@@ -32638,7 +28143,7 @@ loc_1Bd06:
 		move.l	#Obj6B_MapUnc_1BF4A,mappings(a0)		; loc_1BF4A
 		move.w	#$6418,art_tile(a0)
 loc_1Bd2E:
-		bsr.w	JmpTo23_Adjust2PArtPointer
+		jsrto	JmpTo23_Adjust2PArtPointer
 		move.b	#4,$0001(a0)
 		move.b	#3,$0018(a0)
 		moveq	#0,d0
@@ -32680,10 +28185,10 @@ loc_1BD88:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo12_SolidObject
+		jsrto	JmpTo12_SolidObject
 loc_1BDC0:
 		move.w	$0034(a0),d0
-		bra.w	JmpTo4_MarkObjGone2
+		jmpto	JmpTo4_MarkObjGone2
 loc_1BDC8:
 		dc.w	loc_1BDE0-loc_1BDC8
 		dc.w	loc_1BDE2-loc_1BDC8
@@ -32841,18 +28346,9 @@ loc_1BF34:
 Obj6B_MapUnc_1BF4A:	binclude	"mappings/sprite/obj6B.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1BF58:
-JmpTo23_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1BF5E:
-JmpTo12_SolidObject:
-		jmp	(SolidObject).l
-; loc_1BF64:
-JmpTo4_MarkObjGone2:
-		jmp	(MarkObjGone2).l
 
-		align 4
+		jmpTos	JmpTo23_Adjust2PArtPointer,JmpTo12_SolidObject,JmpTo4_MarkObjGone2
+
 ;===============================================================================
 ; Object 0x6C - Moving platforms - clockwise
 ; [ Begin ]
@@ -32867,9 +28363,9 @@ Obj_0x6C_Mz_Moving_Platforms: ; loc_1BF6C:
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.s	loc_1BF90
-		bra.w	JmpTo11_DisplaySprite
+		jmpto	JmpTo11_DisplaySprite
 loc_1BF90:
-		bra.w	JmpTo27_DeleteObject
+		jmpto	JmpTo27_DeleteObject
 loc_1BF94:
 		dc.w	loc_1BF98-loc_1BF94
 		dc.w	loc_1C0A0-loc_1BF94
@@ -32882,7 +28378,7 @@ loc_1BF98:
 		ori.b	#4,$0001(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#4,$0018(a0)
-		bsr.w	JmpTo24_Adjust2PArtPointer
+		jsrto	JmpTo24_Adjust2PArtPointer
 		move.b	#0,$001A(a0)
 		moveq	#0,d0
 		move.b	$0028(a0),d0
@@ -32933,7 +28429,7 @@ loc_1C04A:
 		move.w	y_pos(a0),d3
 		bra.s	loc_1C06E
 loc_1C068:
-		bsr.w	JmpTo6_SingleObjLoad
+		jsrto	JmpTo6_SingleObjLoad
 		bne.s	loc_1C098
 loc_1C06E:
 		_move.b	#$6C,id(a1)
@@ -32959,7 +28455,7 @@ loc_1C0A0:
 		move.b	$0019(a0),d1
 		moveq	#8,d3
 		move.w	(sp)+,d4
-		bra.w	JmpTo_PlatformObject
+		jmpto	JmpTo_PlatformObject
 loc_1C0B6:
 		move.w	x_pos(a0),d0
 		cmp.w	$0034(a0),d0
@@ -32989,7 +28485,7 @@ loc_1C0E8:
 		move.w	d0,$0036(a0)
 		bsr.w	loc_1C112
 loc_1C10C:
-		bsr.w	JmpTo11_ObjectMove
+		jsrto	JmpTo11_ObjectMove
 		rts
 loc_1C112:
 		moveq	#0,d0
@@ -33083,25 +28579,8 @@ loc_1C278:
 Obj6C_MapUnc_1C2AA:	binclude	"mappings/sprite/obj6C.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1C2C0:
-JmpTo11_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1C2C6:
-JmpTo27_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1C2CC:
-JmpTo6_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_1C2d2:
-JmpTo24_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1C2D8:
-JmpTo_PlatformObject:
-		jmp	(PlatformObject).l
-; loc_1C2DE:
-JmpTo11_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos	JmpTo11_DisplaySprite,JmpTo27_DeleteObject,JmpTo6_SingleObjLoad,JmpTo24_Adjust2PArtPointer,JmpTo_PlatformObject,JmpTo11_ObjectMove
 
 ;===============================================================================
 ; Object 0x6E - Metropolis - Machine
@@ -33122,7 +28601,7 @@ loc_1C300:
 		addq.b	#2,routine(a0)
 		move.l	#Obj6E_MapUnc_1C464,mappings(a0) ; loc_1C464
 		move.w	#$6000,art_tile(a0)
-		bsr.w	JmpTo25_Adjust2PArtPointer
+		jsrto	JmpTo25_Adjust2PArtPointer
 loc_1C316:
 		ori.b	#4,$0001(a0)
 		move.b	#4,$0018(a0)
@@ -33141,7 +28620,7 @@ loc_1C316:
 		bne.s	loc_1C36A
 		addq.b	#2,routine(a0)
 		move.w	#$63F0,art_tile(a0)
-		bsr.w	JmpTo25_Adjust2PArtPointer
+		jsrto	JmpTo25_Adjust2PArtPointer
 		move.b	#5,$0018(a0)
 		bra.w	loc_1C3F4
 loc_1C36A:
@@ -33174,7 +28653,7 @@ loc_1C39A:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo13_SolidObject
+		jsrto	JmpTo13_SolidObject
 		move.w	$0034(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
@@ -33237,12 +28716,8 @@ Obj6E_MapUnc_1C464:	binclude	"mappings/sprite/obj6E.bin"
 ; Object 0x6E - Metropolis - Machine
 ; [ End ]
 ;===============================================================================
-; loc_1C4EC:
-JmpTo25_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1C4F2:
-JmpTo13_SolidObject:
-		jmp	(SolidObject).l
+
+		jmpTos0	JmpTo25_Adjust2PArtPointer,JmpTo13_SolidObject
 
 ;===============================================================================
 ; Object 0x6F - Metropolis - Parallelogram Elevators
@@ -33260,7 +28735,7 @@ loc_1C50A:
 		addq.b	#2,routine(a0)
 		move.l	#Obj6F_MapUnc_1C7BE,mappings(a0) ; loc_1C7BE
 		move.w	#$653F,art_tile(a0)
-		bsr.w	JmpTo26_Adjust2PArtPointer
+		jsrto	JmpTo26_Adjust2PArtPointer
 		ori.b	#4,$0001(a0)
 		move.b	#4,$0018(a0)
 		move.b	#$80,$0019(a0)
@@ -33288,7 +28763,7 @@ loc_1C570:
 		moveq	#0,d1
 		move.b	$0019(a0),d1
 		lea	(loc_1C6BE).l,a2
-		bsr.w	JmpTo_DoubleSlopedSolid
+		jsrto	JmpTo_DoubleSlopedSolid
 		move.w	x_pos(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
@@ -33394,13 +28869,8 @@ loc_1C6BE:
 Obj6F_MapUnc_1C7BE:	binclude	"mappings/sprite/obj6F.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1C844:
-JmpTo26_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1C84A:
-JmpTo_DoubleSlopedSolid:
-		jmp	(DoubleSlopedSolid).l
+
+		jmpTos	JmpTo26_Adjust2PArtPointer,JmpTo_DoubleSlopedSolid
 
 ;===============================================================================
 ; Object 0x70 - Metropolis - Rotating Gears
@@ -33424,14 +28894,14 @@ loc_1C862:
 		bset	#7,$0022(a0)
 		bra.s	loc_1C884
 loc_1C87E:
-		bsr.w	JmpTo8_SingleObjLoad2
+		jsrto	JmpTo8_SingleObjLoad2
 		bne.s	loc_1C8DE
 loc_1C884:
 		_move.b	id(a0),id(a1)
 		addq.b	#2,routine(a1)
 		move.l	#Obj70_MapUnc_1CA16,mappings(a1) ; loc_1CA16
 		move.w	#$6378,art_tile(a1)
-		bsr.w	JmpTo2_Adjust2PArtPointer2
+		jsrto	JmpTo2_Adjust2PArtPointer2
 		move.b	#4,$0001(a1)
 		move.b	#4,$0018(a1)
 		move.b	#$10,$0019(a1)
@@ -33499,7 +28969,7 @@ loc_1C95A:
 		move.b	loc_1C997(pc,d0.w),d2
 		move.w	d2,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo14_SolidObject
+		jsrto	JmpTo14_SolidObject
 		move.w	$0032(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
@@ -33528,18 +28998,8 @@ loc_1C9B6:
 Obj70_MapUnc_1CA16:	binclude	"mappings/sprite/obj70.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1CBB8:
-JmpTo8_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1CBBE:
-JmpTo2_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_1CBC4:
-JmpTo14_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos	JmpTo8_SingleObjLoad2,JmpTo2_Adjust2PArtPointer2,JmpTo14_SolidObject
 
 ;===============================================================================
 ; Object 0x72 - Metropolis - Conveyor Belt Attributes
@@ -33567,7 +29027,7 @@ loc_1CBFE:
 		bsr.s	loc_1CC0E
 		lea	(Sidekick).w,a1
 		bsr.s	loc_1CC0E
-		bra.w	JmpTo5_MarkObjGone3
+		jmpto	JmpTo5_MarkObjGone3
 loc_1CC0E:
 		moveq	#0,d2
 		move.b	$0038(a0),d2
@@ -33594,12 +29054,9 @@ loc_1CC48:
 ; Object 0x72 - Metropolis - Conveyor Belt Attributes
 ; [ End ]
 ;===============================================================================
-		nop
-; loc_1CC4C:
-JmpTo5_MarkObjGone3:
-		jmp	(MarkObjGone3).l
 
-		align 4
+		jmpTos	JmpTo5_MarkObjGone3
+
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Solid rotating ring platform in DHZ
@@ -33623,7 +29080,7 @@ Obj73_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj73_MapUnc_1CE1C,4(a0)
 		move.w	#$26BC,2(a0)
-		bsr.w	JmpTo27_Adjust2PArtPointer
+		jsrto	JmpTo27_Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.b	#4,$18(a0)
 		move.b	#8,$19(a0)
@@ -33655,7 +29112,7 @@ Obj73_Init:
 		blo.s	Obj73_LoadSubObject_End
 ; loc_1CCEE:
 Obj73_LoadSubObject:
-		bsr.w	JmpTo7_SingleObjLoad
+		jsrto	JmpTo7_SingleObjLoad
 		bne.s	Obj73_LoadSubObject_End
 		addq.b	#1,$29(a0)
 		move.w	a1,d5
@@ -33691,7 +29148,7 @@ Obj73_Main:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo15_SolidObject
+		jsrto	JmpTo15_SolidObject
 		bra.w	Obj73_Display
 ; ===========================================================================
 ; loc_1Cd74:
@@ -33732,7 +29189,7 @@ Obj73_Display:
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	+
-		bra.w	JmpTo12_DisplaySprite
+		jmpto	JmpTo12_DisplaySprite
 ; ===========================================================================
 +
 		moveq	#0,d2
@@ -33744,7 +29201,7 @@ Obj73_Display:
 		lsl.w	#6,d0
 		addi.l	#Object_RAM,d0
 		move.l	d0,a1
-		bsr.w	JmpTo_DeleteObject2
+		jsrto	JmpTo_DeleteObject2
 		dbf	d2,-
 		rts
 ; ===========================================================================
@@ -33755,9 +29212,9 @@ Obj73_SubObject:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	$36(a0),d4
-		bsr.w	JmpTo15_SolidObject
+		jsrto	JmpTo15_SolidObject
 		move.w	x_pos(a0),$36(a0)
-		bra.w	JmpTo12_DisplaySprite
+		jmpto	JmpTo12_DisplaySprite
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
@@ -33765,23 +29222,8 @@ Obj73_SubObject:
 Obj73_MapUnc_1CE1C:	binclude	"mappings/sprite/obj73.bin"
 		even
 ; ===========================================================================
-; loc_1CE28:
-JmpTo12_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1CE3E:
-JmpTo7_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_1CE34:
-JmpTo_DeleteObject2:
-		jmp	(DeleteObject2).l
-; loc_1CE3A:
-JmpTo27_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1CE40:
-JmpTo15_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos0	JmpTo12_DisplaySprite,JmpTo7_SingleObjLoad,JmpTo_DeleteObject2,JmpTo27_Adjust2PArtPointer,JmpTo15_SolidObject
 
 ;===============================================================================
 ; Object 0x75 - Dust Hill - Spikeball with chain
@@ -33796,7 +29238,7 @@ Obj_0x75_Spikeball_Chain: ; loc_1CE48:
 		jmp	loc_1CE68(pc,d1.w)
 loc_1CE60:
 		move.w	#$280,d0
-		bra.w	JmpTo_DisplaySprite3
+		jmpto	JmpTo_DisplaySprite3
 loc_1CE68:
 		dc.w	loc_1CE6E-loc_1CE68
 		dc.w	loc_1CF4A-loc_1CE68
@@ -33805,7 +29247,7 @@ loc_1CE6E:
 		addq.b	#2,routine(a0)
 		move.l	#Obj75_MapUnc_1d00A,mappings(a0) ; loc_1d00A
 		move.w	#$2000,art_tile(a0)
-		bsr.w	JmpTo28_Adjust2PArtPointer
+		jsrto	JmpTo28_Adjust2PArtPointer
 		move.b	#4,$0001(a0)
 		move.b	#5,$0018(a0)
 		move.b	#$10,$0019(a0)
@@ -33830,7 +29272,7 @@ loc_1CE6E:
 		rts
 loc_1CEDE:
 		move.b	#$9A,$0020(a0)
-		bsr.w	JmpTo9_SingleObjLoad2
+		jsrto	JmpTo9_SingleObjLoad2
 		bne.s	loc_1CF4A
 		_move.b	id(a0),id(a1)
 		move.l	mappings(a0),mappings(a1)
@@ -33858,7 +29300,7 @@ loc_1CF4A:
 		move.w	$0034(a0),d0
 		add.w	d0,$0026(a0)
 		move.b	$0026(a0),d0
-		bsr.w	JmpTo4_CalcSine
+		jsrto	JmpTo4_CalcSine
 		move.w	$0032(a0),d2
 		move.w	$0030(a0),d3
 		moveq	#0,d6
@@ -33899,18 +29341,18 @@ loc_1CF84:
 loc_1CFBE:
 		tst.w	(Two_player_mode).w
 		beq.s	loc_1CFC8
-		bra.w	JmpTo13_DisplaySprite
+		jmpto	JmpTo13_DisplaySprite
 loc_1CFC8:
 		move.w	$0030(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	loc_1CFE0
-		bra.w	JmpTo13_DisplaySprite
+		jmpto	JmpTo13_DisplaySprite
 loc_1CFE0:
 		movea.l	$003C(a0),a1
-		bsr.w	JmpTo2_DeleteObject2
-		bra.w	JmpTo32_DeleteObject
+		jsrto	JmpTo2_DeleteObject2
+		jmpto	JmpTo32_DeleteObject
 loc_1CFEC:
 		moveq	#0,d1
 		move.b	$0019(a0),d1
@@ -33918,44 +29360,16 @@ loc_1CFEC:
 		move.w	#$10,d2
 		move.w	#$11,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo16_SolidObject
-		bra.w	JmpTo18_MarkObjGone
+		jsrto	JmpTo16_SolidObject
+		jmpto	JmpTo18_MarkObjGone
 ; ---------------------------------------------------------------------------
 ; Sprite mappings
 ; ---------------------------------------------------------------------------
 Obj75_MapUnc_1d00A:	binclude	"mappings/sprite/obj75.bin"
 		even
 ; ============================================================================
-		nop
-; loc_1d040:
-JmpTo_DisplaySprite3:
-		jmp	(DisplaySprite3).l
-; loc_1d046:
-JmpTo13_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1d04C:
-JmpTo32_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1d052:
-JmpTo18_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1d058:
-JmpTo2_DeleteObject2:
-		jmp	(DeleteObject2).l
-; loc_1d05E:
-JmpTo9_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1d064:
-JmpTo28_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1d06A:
-JmpTo4_CalcSine:
-		jmp	(CalcSine).l
-; loc_1d070:
-JmpTo16_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos	JmpTo_DisplaySprite3,JmpTo13_DisplaySprite,JmpTo32_DeleteObject,JmpTo18_MarkObjGone,JmpTo2_DeleteObject2,JmpTo9_SingleObjLoad2,JmpTo28_Adjust2PArtPointer,JmpTo4_CalcSine,JmpTo16_SolidObject
 
 ;===============================================================================
 ; Object 0x76 - Dust Hill - Platform with spikes on sides
@@ -33975,7 +29389,7 @@ loc_1d08E:
 		addq.b	#2,routine(a0)
 		move.l	#Obj76_MapUnc_1d1BA,mappings(a0) ; loc_1d1BA
 		move.w	#0,art_tile(a0)
-		bsr.w	JmpTo29_Adjust2PArtPointer
+		jsrto	JmpTo29_Adjust2PArtPointer
 		ori.b	#4,$0001(a0)
 		move.b	#4,$0018(a0)
 		moveq	#0,d0
@@ -34005,7 +29419,7 @@ loc_1d0DE:
 		move.b	$0016(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
-		bsr.w	JmpTo17_SolidObject
+		jsrto	JmpTo17_SolidObject
 		swap	d6
 		andi.w	#3,d6
 		beq.s	loc_1d142
@@ -34013,17 +29427,17 @@ loc_1d0DE:
 		andi.b	#1,d0
 		beq.s	loc_1d12E
 		lea	(MainCharacter).w,a1
-		bsr.w	JmpTo_Touch_ChkHurt2
+		jsrto	JmpTo_Touch_ChkHurt2
 		bclr	#5,$0022(a0)
 loc_1d12E:
 		andi.b	#2,d6
 		beq.s	loc_1d142
 		lea	(Sidekick).w,A1
-		bsr.w	JmpTo_Touch_ChkHurt2
+		jsrto	JmpTo_Touch_ChkHurt2
 		bclr	#6,$0022(a0)
 loc_1d142:
 		move.w	$0034(a0),d0
-		bra.w	JmpTo5_MarkObjGone2
+		jmpto	JmpTo5_MarkObjGone2
 loc_1d14A:
 		dc.w	loc_1d14E-loc_1d14A
 		dc.w	loc_1d19E-loc_1d14A
@@ -34071,19 +29485,8 @@ loc_1d1B8:
 Obj76_MapUnc_1d1BA:	binclude	"mappings/sprite/obj76.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1d1F0:
-JmpTo_Touch_ChkHurt2:
-		jmp	(Touch_ChkHurt2).l
-; loc_1d1F6:
-JmpTo29_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1d1FC:
-JmpTo17_SolidObject:
-		jmp	(SolidObject).l
-; loc_1d202:
-JmpTo5_MarkObjGone2:
-		jmp	(MarkObjGone2).l
+
+		jmpTos	JmpTo_Touch_ChkHurt2,JmpTo29_Adjust2PArtPointer,JmpTo17_SolidObject,JmpTo5_MarkObjGone2
 
 ;===============================================================================
 ; Object 0x77 - Dust Hill - Bridge
@@ -34101,7 +29504,7 @@ loc_1d21A:
 		addq.b	#2,routine(a0)
 		move.l	#Obj77_MapUnc_1d2E0,mappings(a0) ; loc_1d2E0
 		move.w	#$643C,art_tile(a0)
-		bsr.w	JmpTo30_Adjust2PArtPointer
+		jsrto	JmpTo30_Adjust2PArtPointer
 		ori.b	#4,$0001(a0)
 		move.b	#$80,$0019(a0)
 loc_1d23C:
@@ -34128,8 +29531,8 @@ loc_1d270:
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo18_SolidObject
-		bra.w	JmpTo19_MarkObjGone
+		jsrto	JmpTo18_SolidObject
+		jmpto	JmpTo19_MarkObjGone
 loc_1d29A:
 		move.b	$0022(a0),d0
 		andi.b	#$18,d0
@@ -34147,7 +29550,7 @@ loc_1d2B6:
 loc_1d2C6:
 		andi.b	#$E7,$0022(a0)
 loc_1d2CC:
-		bra.w	JmpTo19_MarkObjGone
+		jmpto	JmpTo19_MarkObjGone
 
 loc_1d2d0:
 		dc.w	loc_1d2d4-loc_1d2d0
@@ -34162,17 +29565,8 @@ loc_1d2DA:
 Obj77_MapUnc_1d2E0:	binclude	"mappings/sprite/obj77.bin"
 		even
 ; ===========================================================================
-; loc_1d3AC:
-JmpTo19_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1d3B2:
-JmpTo30_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1d3B8:
-JmpTo18_SolidObject:
-		jmp	(SolidObject).l
 
-		align 4
+		jmpTos0	JmpTo19_MarkObjGone,JmpTo30_Adjust2PArtPointer,JmpTo18_SolidObject
 
 ;===============================================================================
 ; Object 0x78 - Chemical Plant - Rotanting Platforms / Down when Touch Platform
@@ -34203,14 +29597,14 @@ loc_1d3F0:
 		moveq	#3,d1
 		bra.s	loc_1d408
 loc_1d3FA:
-		bsr.w	JmpTo10_SingleObjLoad2
+		jsrto	JmpTo10_SingleObjLoad2
 		bne.w	loc_1d460
 		move.b	#4,routine(a1)
 loc_1d408:
 		_move.b	id(a0),id(a1)
 		move.l	#Obj6B_MapUnc_1BF4A,mappings(a1) ; loc_1BF4A
 		move.w	#$6418,art_tile(a1)
-		bsr.w	JmpTo3_Adjust2PArtPointer2
+		jsrto	JmpTo3_Adjust2PArtPointer2
 		move.b	#4,$0001(a1)
 		move.b	#3,$0018(a1)
 		move.b	#$10,$0019(a1)
@@ -34244,7 +29638,7 @@ loc_1d474:
 		move.w	#$10,d2
 		move.w	#$11,d3
 		move.w	x_pos(a0),d4
-		bsr.w	JmpTo19_SolidObject
+		jsrto	JmpTo19_SolidObject
 		swap	d6
 		or.b	d6,$002E(a2)
 		rts
@@ -34344,18 +29738,8 @@ loc_1d57A:
 ; Object 0x78 - Chemical Plant - Rotanting Platforms / Down when Touch Platform
 ; [ End ]
 ;===============================================================================
-; loc_1d57C:
-JmpTo10_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1d582:
-JmpTo3_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_1d588:
-JmpTo19_SolidObject:
-		jmp	(SolidObject).l
-; loc_1d58E:
-JmpTo6_MarkObjGone2:
-		jmp	(MarkObjGone2).l
+
+		jmpTos0	JmpTo10_SingleObjLoad2,JmpTo3_Adjust2PArtPointer2,JmpTo19_SolidObject,JmpTo6_MarkObjGone2
 
 ;===============================================================================
 ; Object 0x7A - Chemical Plant - Platforms - Move horizontally
@@ -34376,7 +29760,7 @@ loc_1d5A8:
 loc_1d5BA:
 		addq.b	#2,routine(a0)
 		move.w	#$E418,art_tile(a0)
-		bsr.w	JmpTo31_Adjust2PArtPointer
+		jsrto	JmpTo31_Adjust2PArtPointer
 		moveq	#0,d1
 		move.b	$0028(a0),d1
 		lea	loc_1d5A8(pc,d1.w),a2
@@ -34384,7 +29768,7 @@ loc_1d5BA:
 		movea.l	a0,a1
 		bra.s	loc_1d5F6
 loc_1d5D8:
-		bsr.w	JmpTo11_SingleObjLoad2
+		jsrto	JmpTo11_SingleObjLoad2
 		bne.s	loc_1d61C
 		_move.b	id(a0),id(a1)
 		move.b	#4,routine(a1)
@@ -34475,7 +29859,7 @@ loc_1d6F4:
 		move.b	$0019(a0),d1
 		move.w	#8,d3
 		move.w	(sp)+,d4
-		bsr.w	JmpTo2_PlatformObject
+		jsrto	JmpTo2_PlatformObject
 		rts
 loc_1d706:
 		movea.l	$003C(a0),a1
@@ -34495,17 +29879,8 @@ loc_1d72A:
 Obj7A_MapUnc_1d72C:	binclude	"mappings/sprite/obj7A.bin"
 		even
 ; ===========================================================================
-; loc_1d738:
-JmpTo11_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1d73E:
-JmpTo31_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1d744:
-JmpTo2_PlatformObject:
-		jmp	(PlatformObject).l
 
-		align 4
+		jmpTos0	JmpTo11_SingleObjLoad2,JmpTo31_Adjust2PArtPointer,JmpTo2_PlatformObject
 
 ;===============================================================================
 ; Object 0x7B - Chemical Plant - Spring Over Tubes
@@ -34518,14 +29893,14 @@ Obj_0x7B_Spring_Tubes: ; loc_1d74C:
 		jsr	loc_1d77C(pc,d1.w)
 		tst.w	(Two_player_mode).w
 		beq.s	loc_1d764
-		bra.w	JmpTo14_DisplaySprite
+		jmpto	JmpTo14_DisplaySprite
 loc_1d764:
 		move.w	x_pos(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	JmpTo34_DeleteObject
-		bra.w	JmpTo14_DisplaySprite
+		jmpto	JmpTo14_DisplaySprite
 loc_1d77C:
 		dc.w	loc_1d784-loc_1d77C
 		dc.w	loc_1d7BA-loc_1d77C
@@ -34541,7 +29916,7 @@ loc_1d784:
 		move.b	$28(a0),d0
 		andi.w	#2,d0
 		move.w	loc_1d780(pc,d0.w),$30(a0)
-		bsr.w	JmpTo32_Adjust2PArtPointer
+		jsrto	JmpTo32_Adjust2PArtPointer
 loc_1d7BA:
 		cmpi.b	#1,$1A(a0)
 		beq.s	loc_1D802
@@ -34552,7 +29927,7 @@ loc_1d7BA:
 		lea	(MainCharacter).w,A1
 		moveq	#3,d6
 		movem.l d1-d4,-(sp)
-		bsr.w	JmpTo4_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo4_SolidObject_Always_SingleCharacter
 		btst	#3,$22(a0)
 		beq.s	loc_1d7EA
 		bsr.s	loc_1D862
@@ -34560,7 +29935,7 @@ loc_1d7EA:
 		movem.l (sp)+,d1-d4
 		lea	(Sidekick).w,A1
 		moveq	#4,d6
-		bsr.w	JmpTo4_SolidObject_Always_SingleCharacter
+		jsrto	JmpTo4_SolidObject_Always_SingleCharacter
 		btst	#4,$22(a0)
 		beq.s	loc_1D802
 		bsr.s	loc_1D862
@@ -34597,7 +29972,7 @@ loc_1D838:
 		move.b	#3,$1C(a0)
 loc_1D856:
 		lea	(loc_1D908).l,A1
-		bra.w	JmpTo5_AnimateSprite
+		jmpto	JmpTo5_AnimateSprite
 		rts
 loc_1D862:
 		move.w	#$100,$1C(a0)
@@ -34657,24 +30032,8 @@ loc_1D917:
 Obj7B_MapUnc_1D920:	binclude	"mappings/sprite/obj7B.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_1D964:
-JmpTo14_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1D96A:
-JmpTo34_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1D970:
-JmpTo5_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1D976:
-JmpTo32_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1D97C:
-JmpTo4_SolidObject_Always_SingleCharacter:
-		jmp	(SolidObject_Always_SingleCharacter).l
 
-		align 4
+		jmpTos	JmpTo14_DisplaySprite,JmpTo34_DeleteObject,JmpTo5_AnimateSprite,JmpTo32_Adjust2PArtPointer,JmpTo4_SolidObject_Always_SingleCharacter
 
 ;===============================================================================
 ; Object 0x4D - Hidden Palace - Rhinobot
@@ -34697,7 +30056,7 @@ loc_1D996:
 		move.b	#$18,$19(a0)
 		move.b	#$10,$16(a0)
 		move.b	#$18,$17(a0)
-		bsr.w	JmpTo2_ObjectMoveAndFall
+		jsrto	JmpTo2_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1D9E4
@@ -34712,8 +30071,8 @@ loc_1D9E6:
 		move.w	loc_1DA02(pc,d0.w),d1
 		jsr	loc_1DA02(pc,d1.w)
 		lea	(loc_1DAd2).l,A1
-		bsr.w	JmpTo6_AnimateSprite
-		bra.w	JmpTo20_MarkObjGone
+		jsrto	JmpTo6_AnimateSprite
+		jmpto	JmpTo20_MarkObjGone
 loc_1DA02:
 		dc.w	loc_1DA06-loc_1DA02
 		dc.w	loc_1DA2A-loc_1DA02
@@ -34730,7 +30089,7 @@ loc_1DA28:
 		rts
 loc_1DA2A:
 		bsr.w	loc_1DA74
-		bsr.w	JmpTo2_ObjectMoveAndFall
+		jsrto	JmpTo2_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1DA50
@@ -34840,18 +30199,8 @@ loc_1DC1C:
 ; Object 0x4D - Hidden Palace - Rhinobot
 ; [ End ]
 ;===============================================================================
-		align 4
-; loc_1DC40:
-JmpTo20_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1DC46:
-JmpTo6_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1DC4C:
-JmpTo2_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
 
-		align 4
+		jmpTos0	JmpTo20_MarkObjGone,JmpTo6_AnimateSprite,JmpTo2_ObjectMoveAndFall
 
 ;===============================================================================
 ; Object 0x52 - Piranha
@@ -34908,8 +30257,8 @@ loc_1DCEC:
 		move.w	$003C(a0),$003A(a0)
 loc_1Dd0E:
 		lea	(loc_1DE4E).l,A1
-		bsr.w	JmpTo7_AnimateSprite
-		bsr.w	JmpTo12_ObjectMove
+		jsrto	JmpTo7_AnimateSprite
+		jsrto	JmpTo12_ObjectMove
 		tst.w	$003A(a0)
 		bgt.w	JmpTo21_MarkObjGone
 		cmpi.w	#$FFFF,$003A(a0)
@@ -34919,11 +30268,11 @@ loc_1Dd0E:
 		move.w	#$FFFF,$003A(a0)
 		move.b	#2,$001C(a0)
 		move.w	#1,$003E(a0)
-		bra.w	JmpTo21_MarkObjGone
+		jmpto	JmpTo21_MarkObjGone
 loc_1Dd50:
 		move.w	#$390,(Water_Level_1).w
 		lea	(loc_1DE4E).l,A1
-		bsr.w	JmpTo7_AnimateSprite
+		jsrto	JmpTo7_AnimateSprite
 		move.w	$003E(a0),d0
 		sub.w	d0,$0030(a0)
 		bsr.w	loc_1DE00
@@ -34941,13 +30290,13 @@ loc_1Dd50:
 		move.w	d0,$0010(a0)
 		addq.w	#1,$003E(a0)
 		st		$002A(a0)
-		bra.w	JmpTo21_MarkObjGone
+		jmpto	JmpTo21_MarkObjGone
 loc_1DDA8:
 		move.w	y_pos(a0),d0
 		cmp.w	(Water_Level_1).w,d0
 		bgt.s	loc_1DDBC
 		move.b	#1,$001C(a0)
-		bra.w	JmpTo21_MarkObjGone
+		jmpto	JmpTo21_MarkObjGone
 loc_1DDBC:
 		move.b	#0,$001C(a0)
 		bset	#6,$0022(a0)
@@ -34967,7 +30316,7 @@ loc_1DDd6:
 		asr.w	#1,d0
 		move.w	d0,$0010(a0)
 		sf		$002A(a0)
-		bra.w	JmpTo21_MarkObjGone
+		jmpto	JmpTo21_MarkObjGone
 loc_1DE00:
 		move.l	x_pos(a0),d2
 		move.l	y_pos(a0),d3
@@ -35023,18 +30372,8 @@ loc_1DE8C:
 ; Object 0x52 - Piranha
 ; [ End ]
 ;===============================================================================
-		align 4
-; loc_1DE98:
-JmpTo21_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1DE9E:
-JmpTo7_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1DEA4:
-JmpTo12_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo21_MarkObjGone,JmpTo7_AnimateSprite,JmpTo12_ObjectMove
 
 ;===============================================================================
 ; Object 0x4F - Hidden Palace - Dinobot
@@ -35058,7 +30397,7 @@ loc_1DEC0:
 		move.b	#$10,$0016(a0)
 		move.b	#6,$0017(a0)
 		move.b	#$C,$0020(a0)
-		bsr.w	JmpTo3_ObjectMoveAndFall
+		jsrto	JmpTo3_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l			 ; loc_13898
 		tst.w	d1
 		bpl.s	loc_1DF14
@@ -35074,13 +30413,13 @@ loc_1DF16:
 		move.w	loc_1DF5C(pc,d0.w),d1
 		jsr	loc_1DF5C(pc,d1.w)
 		lea	(loc_1DFBC).l,A1
-		bsr.w	JmpTo8_AnimateSprite
+		jsrto	JmpTo8_AnimateSprite
 		move.w	x_pos(a0),d0
 		andi.w	#$FF80,d0
 		sub.w	(Camera_X_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	loc_1DF46
-		bra.w	JmpTo15_DisplaySprite
+		jmpto	JmpTo15_DisplaySprite
 loc_1DF46:
 		lea	(Object_Respawn_Table).w,A2
 		moveq	#0,d0
@@ -35088,9 +30427,12 @@ loc_1DF46:
 		beq.s	loc_1DF58
 		bclr	#7,2(a2,d0.w)
 loc_1DF58:
-		bra.w	JmpTo35_DeleteObject
+		jmpto	JmpTo35_DeleteObject
 loc_1DF5C:
-		ori.b	#$28,d4
+		dc.w	loc_1DF60-loc_1DF5C
+		dc.w	loc_1DF84-loc_1DF5C
+
+loc_1DF60:
 		subq.w	#1,$0030(a0)
 		bpl.s	loc_1DF82
 		addq.b	#2,$0025(a0)
@@ -35101,7 +30443,9 @@ loc_1DF5C:
 		neg.w	$0010(a0)
 loc_1DF82:
 		rts
-		bsr.w	JmpTo13_ObjectMove
+
+loc_1DF84:
+		jsrto	JmpTo13_ObjectMove
 		jsr	(ObjHitFloor).l			 ; loc_13898
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1DFA0
@@ -35116,7 +30460,7 @@ loc_1DFA0:
 		move.b	#0,$001C(a0)
 		rts
 loc_1DFB8:
-		bra.w	JmpTo35_DeleteObject
+		jmpto	JmpTo35_DeleteObject
 loc_1DFBC:
 		dc.w	loc_1DFC0-loc_1DFBC
 		dc.w	loc_1DFC3-loc_1DFBC
@@ -35131,24 +30475,8 @@ Obj4F_MapUnc_1DFCA:	binclude	"mappings/sprite/obj4F.bin"
 		even
 
 ; ===========================================================================
-		align 4
-; loc_1DFF0:
-JmpTo15_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1DFF6:
-JmpTo35_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1DFFC:
-JmpTo8_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1E002:
-JmpTo3_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
-; loc_1E008:
-JmpTo13_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo15_DisplaySprite,JmpTo35_DeleteObject,JmpTo8_AnimateSprite,JmpTo3_ObjectMoveAndFall,JmpTo13_ObjectMove
 
 ;===============================================================================
 ; Object 0x50 - Oil Ocean - Aquis (Seahorse)
@@ -35187,7 +30515,7 @@ loc_1E02A:
 		move.w	d0,$0032(a0)
 		move.w	d0,$0034(a0)
 		move.w	y_pos(a0),$002A(a0)
-		bsr.w	JmpTo8_SingleObjLoad
+		jsrto	JmpTo8_SingleObjLoad
 		bne.s	loc_1E0E2
 		_move.b	#$50,id(a1)
 		move.b	#4,$0024(a1)
@@ -35206,14 +30534,14 @@ loc_1E02A:
 		bset	#6,$0022(a0)
 loc_1E0E2:
 		lea	(loc_1E4A8).l,A1
-		bsr.w	JmpTo9_AnimateSprite
+		jsrto	JmpTo9_AnimateSprite
 		move.w	#$39C,(Water_Level_1).w
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1E108(pc,d0.w),d1
 		jsr	loc_1E108(pc,d1.w)
 		bsr.w	loc_1E2E0
-		bra.w	JmpTo22_MarkObjGone
+		jmpto	JmpTo22_MarkObjGone
 loc_1E108:
 		dc.w	loc_1E14E-loc_1E108
 		dc.w	loc_1E160-loc_1E108
@@ -35227,27 +30555,27 @@ loc_1E10E:
 		btst	#7,$0022(a1)
 		bne.w	JmpTo36_DeleteObject
 		lea	(loc_1E4A8).l,A1
-		bsr.w	JmpTo9_AnimateSprite
-		bra.w	JmpTo16_DisplaySprite
+		jsrto	JmpTo9_AnimateSprite
+		jmpto	JmpTo16_DisplaySprite
 loc_1E138:
 		bsr.w	loc_1E404
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		lea	(loc_1E4A8).l,A1
-		bsr.w	JmpTo9_AnimateSprite
-		bra.w	JmpTo22_MarkObjGone
+		jsrto	JmpTo9_AnimateSprite
+		jmpto	JmpTo22_MarkObjGone
 loc_1E14E:
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		bsr.w	loc_1E3E6
 		bsr.w	loc_1E28C
 		bsr.w	loc_1E224
 		rts
 loc_1E160:
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		bsr.w	loc_1E3E6
 		bsr.w	loc_1E2AE
 		rts
 loc_1E16E:
-		bsr.w	JmpTo4_ObjectMoveAndFall
+		jsrto	JmpTo4_ObjectMoveAndFall
 		bsr.w	loc_1E3E6
 		bsr.w	loc_1E180
 		bsr.w	loc_1E1FC
@@ -35261,7 +30589,7 @@ loc_1E18C:
 		rts
 loc_1E18E:
 		st		$002D(a0)
-		bsr.w	JmpTo8_SingleObjLoad
+		jsrto	JmpTo8_SingleObjLoad
 		bne.s	loc_1E1FA
 		_move.b	#$50,id(a1)
 		move.b	#6,$0024(a1)
@@ -35380,11 +30708,11 @@ loc_1E310:
 		add.w	d1,y_pos(a1)
 		rts
 loc_1E31A:
-		bsr.w	JmpTo4_ObjectMoveAndFall
+		jsrto	JmpTo4_ObjectMoveAndFall
 		bsr.w	loc_1E330
 		lea	(loc_1E4A8).l,A1
-		bsr.w	JmpTo9_AnimateSprite
-		bra.w	JmpTo22_MarkObjGone
+		jsrto	JmpTo9_AnimateSprite
+		jmpto	JmpTo22_MarkObjGone
 loc_1E330:
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
@@ -35416,8 +30744,8 @@ loc_1E396:
 		rts
 loc_1E398:
 		lea	(loc_1E4A8).l,A1
-		bsr.w	JmpTo9_AnimateSprite
-		bra.w	JmpTo16_DisplaySprite
+		jsrto	JmpTo9_AnimateSprite
+		jmpto	JmpTo16_DisplaySprite
 loc_1E3A6:
 		tst.b	$0025(a0)
 		bne.s	loc_1E3E4
@@ -35448,7 +30776,7 @@ loc_1E404:
 		beq.w	loc_1E4A6
 		moveq	#2,d3
 loc_1E40E:
-		bsr.w	JmpTo8_SingleObjLoad
+		jsrto	JmpTo8_SingleObjLoad
 		bne.s	loc_1E480
 		_move.b	id(a0),id(a1)
 		move.b	#8,$0024(a1)
@@ -35475,14 +30803,14 @@ loc_1E47A:
 		move.w	#$40,$0010(a1)
 loc_1E480:
 		dbf	d3,loc_1E40E
-		bsr.w	JmpTo8_SingleObjLoad
+		jsrto	JmpTo8_SingleObjLoad
 		bne.s	loc_1E4A2
 		_move.b	id(a0),id(a1)
 		move.b	#$A,$0024(a1)
 		move.l	mappings(a0),mappings(a1)
 		move.w	#$24E0,art_tile(a1)
 loc_1E4A2:
-		bra.w	JmpTo36_DeleteObject
+		jmpto	JmpTo36_DeleteObject
 loc_1E4A6:
 		rts
 loc_1E4A8:
@@ -35615,31 +30943,31 @@ loc_1E646:
 		move.w	#$FF00,$0010(a0)
 loc_1E6A4:
 		lea	loc_1E4A8(pc),A1
-		bsr.w	JmpTo9_AnimateSprite
+		jsrto	JmpTo9_AnimateSprite
 		move.w	#$39C,(Water_Level_1).w
 		moveq	#0,d0
 		move.b	$0025(a0),d0
 		move.w	loc_1E6C4(pc,d0.w),d1
 		jsr	loc_1E6C4(pc,d1.w)
-		bra.w	JmpTo22_MarkObjGone
+		jmpto	JmpTo22_MarkObjGone
 loc_1E6C4:
 		dc.w	loc_1E6DC-loc_1E6C4
 		dc.w	loc_1E6F2-loc_1E6C4
 loc_1E6C8:
 		bsr.w	loc_1E404
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		lea	loc_1E4A8(pc),A1
-		bsr.w	JmpTo9_AnimateSprite
-		bra.w	JmpTo22_MarkObjGone
+		jsrto	JmpTo9_AnimateSprite
+		jmpto	JmpTo22_MarkObjGone
 loc_1E6DC:
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		bsr.w	loc_1E3E6
 		bsr.w	loc_1E72E
 		bsr.w	loc_1E810
 		bsr.w	loc_1E780
 		rts
 loc_1E6F2:
-		bsr.w	JmpTo14_ObjectMove
+		jsrto	JmpTo14_ObjectMove
 		bsr.w	loc_1E3E6
 		bsr.w	loc_1E72E
 		bsr.w	loc_1E810
@@ -35699,7 +31027,7 @@ loc_1E780:
 loc_1E7A4:
 		rts
 loc_1E7A6:
-		bsr.w	JmpTo8_SingleObjLoad
+		jsrto	JmpTo8_SingleObjLoad
 		bne.s	loc_1E80E
 		_move.b	#$51,id(a1)
 		move.b	#4,$0024(a1)
@@ -35763,29 +31091,8 @@ loc_1E86E:
 ; Object 0x51 - Oil Ocean - Aquis (Seahorse)
 ; [ End ]
 ;===============================================================================
-; loc_1E870:
-JmpTo16_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1E876:
-JmpTo36_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1E87C:
-JmpTo8_SingleObjLoad:
-		jmp	(SingleObjLoad).l
-; loc_1E882:
-JmpTo22_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1E888:
-JmpTo9_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1E88E:
-JmpTo4_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
-; loc_1E894:
-JmpTo14_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo16_DisplaySprite,JmpTo36_DeleteObject,JmpTo8_SingleObjLoad,JmpTo22_MarkObjGone,JmpTo9_AnimateSprite,JmpTo4_ObjectMoveAndFall,JmpTo14_ObjectMove
 
 ;===============================================================================
 ; Object 0x4B - Green Hill - Buzz Bomber
@@ -35802,10 +31109,10 @@ loc_1E8AA:
 		dc.w	loc_1E8C4-loc_1E8AA
 		dc.w	loc_1E8B2-loc_1E8AA
 loc_1E8B2:
-		bsr.w	JmpTo15_ObjectMove
+		jsrto	JmpTo15_ObjectMove
 		lea	(loc_1EAF2).l,A1
-		bsr.w	JmpTo10_AnimateSprite
-		bra.w	JmpTo_MarkObjGone_P1
+		jsrto	JmpTo10_AnimateSprite
+		jmpto	JmpTo_MarkObjGone_P1
 loc_1E8C4:
 		movea.l	$002A(a0),A1
 		tst.b	(a1)
@@ -35819,12 +31126,12 @@ loc_1E8d6:
 		move.b	$0022(a1),$0022(a0)
 		move.b	$0001(a1),$0001(a0)
 		lea	(loc_1EAF2).l,A1
-		bsr.w	JmpTo10_AnimateSprite
-		bra.w	JmpTo_MarkObjGone_P1
+		jsrto	JmpTo10_AnimateSprite
+		jmpto	JmpTo_MarkObjGone_P1
 loc_1E8FC:
 		move.l	#Obj4B_MapUnc_1EB0E,mappings(a0) ; Obj4B_MapUnc_1EB0E
 		move.w	#$3E6,art_tile(a0)
-		bsr.w	JmpTo33_Adjust2PArtPointer
+		jsrto	JmpTo33_Adjust2PArtPointer
 		ori.b	#4,$0001(a0)
 		move.b	#$A,$0020(a0)
 		move.b	#4,$0018(a0)
@@ -35833,13 +31140,13 @@ loc_1E8FC:
 		move.b	#$18,$0017(a0)
 		move.b	#3,$0018(a0)
 		addq.b	#2,routine(a0)
-		bsr.w	JmpTo12_SingleObjLoad2
+		jsrto	JmpTo12_SingleObjLoad2
 		bne.s	loc_1E9A6
 		_move.b	#$4B,id(a1)
 		move.b	#4,$0024(a1)
 		move.l	#Obj4B_MapUnc_1EB0E,mappings(a1) ; Obj4B_MapUnc_1EB0E
 		move.w	#$3E6,art_tile(a1)
-		bsr.w	JmpTo4_Adjust2PArtPointer2
+		jsrto	JmpTo4_Adjust2PArtPointer2
 		move.b	#4,$0018(a1)
 		move.b	#$10,$0019(a1)
 		move.b	$0022(a0),$0022(a1)
@@ -35861,8 +31168,8 @@ loc_1E9A8:
 		move.w	loc_1E9C4(pc,d0.w),d1
 		jsr	loc_1E9C4(pc,d1.w)
 		lea	(loc_1EAF2).l,A1
-		bsr.w	JmpTo10_AnimateSprite
-		bra.w	JmpTo_MarkObjGone_P1
+		jsrto	JmpTo10_AnimateSprite
+		jmpto	JmpTo_MarkObjGone_P1
 loc_1E9C4:
 		dc.w	loc_1E9C8-loc_1E9C4
 		dc.w	loc_1EA58-loc_1E9C4
@@ -35932,7 +31239,7 @@ loc_1EA72:
 		move.b	#6,$0024(a1)
 		move.l	#Obj4B_MapUnc_1EB0E,mappings(a1) ; Obj4B_MapUnc_1EB0E
 		move.w	#$3E6,art_tile(a1)
-		bsr.w	JmpTo4_Adjust2PArtPointer2
+		jsrto	JmpTo4_Adjust2PArtPointer2
 		move.b	#4,$0018(a1)
 		move.b	#$98,$0020(a1)
 		move.b	#$10,$0019(a1)
@@ -35975,30 +31282,8 @@ Obj4B_MapUnc_1EB0E:	binclude	"mappings/sprite/obj4B.bin"
 ; Object 0x4B - Green Hill - Buzz Bomber
 ; [ End ]
 ;===============================================================================
-		align 4
-; loc_1EB8C:
-JmpTo37_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1EB92:
-JmpTo12_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1EB98:
-JmpTo10_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1EB9E:
-JmpTo4_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_1EBA4:
-JmpTo_MarkObjGone_P1:
-		jmp	(MarkObjGone_P1).l
-; loc_1EBAA:
-JmpTo33_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1EBB0:
-JmpTo15_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo37_DeleteObject,JmpTo12_SingleObjLoad2,JmpTo10_AnimateSprite,JmpTo4_Adjust2PArtPointer2,JmpTo_MarkObjGone_P1,JmpTo33_Adjust2PArtPointer,JmpTo15_ObjectMove
 
 ;===============================================================================
 ; Object 0x4A - Oil Ocean - Octus
@@ -36019,15 +31304,15 @@ loc_1EBCE:
 		bmi.s	loc_1EBD8
 		rts
 loc_1EBD8:
-		bsr.w	JmpTo5_ObjectMoveAndFall
+		jsrto	JmpTo5_ObjectMoveAndFall
 loc_1EBDC:
 		lea	(loc_1EDAA).l,A1
-		bsr.w	JmpTo11_AnimateSprite
-		bra.w	JmpTo23_MarkObjGone
+		jsrto	JmpTo11_AnimateSprite
+		jmpto	JmpTo23_MarkObjGone
 loc_1EBEA:
 		subq.w	#1,$002C(a0)
 		beq.w	JmpTo38_DeleteObject
-		bra.w	JmpTo17_DisplaySprite
+		jmpto	JmpTo17_DisplaySprite
 loc_1EBF6:
 		move.l	#Octus_Mappings,mappings(a0) ; loc_1EDBC
 		move.w	#$238A,art_tile(a0)
@@ -36037,7 +31322,7 @@ loc_1EBF6:
 		move.b	#$10,$0019(a0)
 		move.b	#$10,$0016(a0)
 		move.b	#8,$0017(a0)
-		bsr.w	JmpTo5_ObjectMoveAndFall
+		jsrto	JmpTo5_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1EC54
@@ -36058,8 +31343,8 @@ loc_1EC5C:
 		move.w	loc_1EC78(pc,d0.w),d1
 		jsr	loc_1EC78(pc,d1.w)
 		lea	(loc_1EDAA).l,A1
-		bsr.w	JmpTo11_AnimateSprite
-		bra.w	JmpTo23_MarkObjGone
+		jsrto	JmpTo11_AnimateSprite
+		jmpto	JmpTo23_MarkObjGone
 loc_1EC78:
 		dc.w	loc_1EC80-loc_1EC78
 		dc.w	loc_1ECA0-loc_1EC78
@@ -36136,7 +31421,7 @@ loc_1ED94:
 		neg.w	d0
 loc_1EDA2:
 		add.w	d0,x_pos(a0)
-		bra.w	JmpTo23_MarkObjGone
+		jmpto	JmpTo23_MarkObjGone
 loc_1EDAA:
 		dc.w	loc_1EDB0-loc_1EDAA
 		dc.w	loc_1EDB3-loc_1EDAA
@@ -36184,23 +31469,8 @@ loc_1EE3E:
 ; Object 0x4A - Oil Ocean - Octus
 ; [ End ]
 ;===============================================================================
-; loc_1EE48:
-JmpTo17_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_1EE4E:
-JmpTo38_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1EE54:
-JmpTo23_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1EE5A:
-JmpTo11_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1EE60:
-JmpTo5_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
 
-		align 4
+		jmpTos0	JmpTo17_DisplaySprite,JmpTo38_DeleteObject,JmpTo23_MarkObjGone,JmpTo11_AnimateSprite,JmpTo5_ObjectMoveAndFall
 
 ;===============================================================================
 ; Object 0x4C - Hidden Palace - Batbot
@@ -36234,8 +31504,8 @@ loc_1EEBA:
 		jsr	loc_1EEDA(pc,d1.w)
 		bsr.w	loc_1EEE0
 		lea	(loc_1F0d2).l,A1
-		bsr.w	JmpTo12_AnimateSprite
-		bra.w	JmpTo24_MarkObjGone
+		jsrto	JmpTo12_AnimateSprite
+		jmpto	JmpTo24_MarkObjGone
 loc_1EEDA:
 		dc.w	loc_1F046-loc_1EEDA
 		dc.w	loc_1F07E-loc_1EEDA
@@ -36265,10 +31535,10 @@ loc_1EF28:
 		bsr.w	loc_1F026
 		bsr.w	loc_1EFC8
 		bsr.w	loc_1EF48
-		bsr.w	JmpTo16_ObjectMove
+		jsrto	JmpTo16_ObjectMove
 		lea	(loc_1F0d2).l,A1
-		bsr.w	JmpTo12_AnimateSprite
-		bra.w	JmpTo24_MarkObjGone
+		jsrto	JmpTo12_AnimateSprite
+		jmpto	JmpTo24_MarkObjGone
 		rts
 loc_1EF48:
 		tst.b	$003D(a0)
@@ -36407,18 +31677,8 @@ loc_1F0FE:
 Obj4C_MapUnc_1F106:	binclude	"mappings/sprite/obj4C.bin"
 		even
 ; ===========================================================================
-		align 4
-; loc_1F2DC:
-JmpTo24_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1F2E2:
-JmpTo12_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1F2E8:
-JmpTo16_ObjectMove:
-		jmp	(ObjectMove).l
 
-		align 4
+		jmpTos0	JmpTo24_MarkObjGone,JmpTo12_AnimateSprite,JmpTo16_ObjectMove
 
 ;===============================================================================
 ; Object 0x4E - (Desert Level) - Crocobot
@@ -36441,7 +31701,7 @@ loc_1F302:
 		move.b	#$10,$0019(a0)
 		move.b	#$10,$0016(a0)
 		move.b	#$08,$0017(a0)
-		bsr.w	JmpTo6_ObjectMoveAndFall
+		jsrto	JmpTo6_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1F350
@@ -36456,8 +31716,8 @@ loc_1F352:
 		move.w	loc_1F36E(pc,d0),d1
 		jsr	loc_1F36E(pc,d1)
 		lea	(loc_1F406).l,A1
-		bsr.w	JmpTo13_AnimateSprite
-		bra.w	JmpTo25_MarkObjGone
+		jsrto	JmpTo13_AnimateSprite
+		jmpto	JmpTo25_MarkObjGone
 loc_1F36E:
 		dc.w	loc_1F372-loc_1F36E
 		dc.w	loc_1F396-loc_1F36E
@@ -36474,7 +31734,7 @@ loc_1F394:
 		rts
 loc_1F396:
 		bsr.w	loc_1F3CE
-		bsr.w	JmpTo17_ObjectMove
+		jsrto	JmpTo17_ObjectMove
 		jsr	(ObjHitFloor).l			 ; (loc_13898)
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1F3B6
@@ -36585,18 +31845,8 @@ loc_1F5AE:
 ; Object 0x4E - (Desert Level) - Crocobot
 ; [ End ]
 ;===============================================================================
-; loc_1F5d0:
-JmpTo25_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1F5d6:
-JmpTo13_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1F5DC:
-JmpTo6_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
-; loc_1F5E2:
-JmpTo17_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos0	JmpTo25_MarkObjGone,JmpTo13_AnimateSprite,JmpTo6_ObjectMoveAndFall,JmpTo17_ObjectMove
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -36608,7 +31858,7 @@ Obj53:
 		move.b	routine(a0),d0
 		move.w	Obj53_Index(pc,d0.w),d1
 		jsr	Obj53_Index(pc,d1.w)
-		bra.w	JmpTo26_MarkObjGone
+		jmpto	JmpTo26_MarkObjGone
 ; ===========================================================================
 ; off_1F5FA:
 Obj53_Index:
@@ -36620,7 +31870,7 @@ Obj53_Init:
 		addq.b	#2,routine(a0)
 		move.l	#Obj53_MapUnc_1F696,4(a0)
 		move.w	#$41C,2(a0)
-		bsr.w	JmpTo34_Adjust2PArtPointer
+		jsrto	JmpTo34_Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.b	#4,$18(a0)
 		move.b	#9,$20(a0)
@@ -36630,8 +31880,8 @@ Obj53_Init:
 ; loc_1F638:
 Obj53_Main:
 		lea	(Ani_obj5C).l,a1
-		bsr.w	JmpTo14_AnimateSprite
-		bsr.w	JmpTo18_ObjectMove
+		jsrto	JmpTo14_AnimateSprite
+		jsrto	JmpTo18_ObjectMove
 		addi.w	#$18,$12(a0)
 		move.w	$30(a0),d0
 		cmp.w	y_pos(a0),d0
@@ -36667,19 +31917,9 @@ Obj53_MapUnc_1F696:	binclude	"mappings/sprite/obj53.bin"
 		even
 
 ; ===========================================================================
-		align 4
-; loc_1F6d0:
-JmpTo26_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_1F6d6:
-JmpTo14_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1F6DC:
-JmpTo34_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1F6E2:
-JmpTo18_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos0	JmpTo26_MarkObjGone,JmpTo14_AnimateSprite,JmpTo34_Adjust2PArtPointer,JmpTo18_ObjectMove
+
 ;===============================================================================
 ; Object 0x54 - Green Hill - Motobug
 ; [ Begin ]
@@ -36698,20 +31938,20 @@ loc_1F6F6:
 loc_1F700:
 		move.l	#Obj54_MapUnc_1F938,mappings(a0) ; loc_1F938
 		move.w	#$0402,art_tile(a0)
-		bsr.w	JmpTo35_Adjust2PArtPointer
+		jsrto	JmpTo35_Adjust2PArtPointer
 		ori.b	#$04,$0001(a0)
 		move.b	#$0A,$0020(a0)
 		move.b	#$04,$0018(a0)
 		move.b	#$10,$0019(a0)
 		move.b	#$10,$0016(a0)
 		move.b	#$0E,$0017(a0)
-		bsr.w	JmpTo13_SingleObjLoad2
+		jsrto	JmpTo13_SingleObjLoad2
 		bne.s	loc_1F788
 		_move.b	#$54,0(a1)
 		move.b	#$06,$0024(a1)
 		move.l	#Obj54_MapUnc_1F938,mappings(a1) ; loc_1F938
 		move.w	#$2402,art_tile(a1)
-		bsr.w	JmpTo5_Adjust2PArtPointer2
+		jsrto	JmpTo5_Adjust2PArtPointer2
 		move.b	#$03,$0018(a1)
 		move.b	#$10,$0019(a1)
 		move.b	$0022(a0),$0022(a1)
@@ -36731,7 +31971,7 @@ loc_1F79A:
 		rts
 loc_1F7A0:
 		bsr.w	loc_1F7E8
-		bsr.w	JmpTo19_ObjectMove
+		jsrto	JmpTo19_ObjectMove
 		jsr	(ObjHitFloor).l			 ; loc_13898
 		cmpi.w	#$FFF8,d1
 		blt.s	loc_1F7CC
@@ -36739,15 +31979,15 @@ loc_1F7A0:
 		bge.s	loc_1F7CC
 		add.w	d1,y_pos(a0)
 		lea	(loc_1F92C).l,A1
-		bsr.w	JmpTo15_AnimateSprite
-		bra.w	JmpTo2_MarkObjGone_P1
+		jsrto	JmpTo15_AnimateSprite
+		jmpto	JmpTo2_MarkObjGone_P1
 loc_1F7CC:
 		addq.b	#2,routine(a0)
 		move.w	#$0014,$0030(a0)
 		st		$0034(a0)
 		lea	(loc_1F92C).l,A1
-		bsr.w	JmpTo15_AnimateSprite
-		bra.w	JmpTo2_MarkObjGone_P1
+		jsrto	JmpTo15_AnimateSprite
+		jmpto	JmpTo2_MarkObjGone_P1
 loc_1F7E8:
 		tst.b	$0035(a0)
 		bne.s	loc_1F82A
@@ -36774,13 +32014,13 @@ loc_1F818:
 loc_1F82A:
 		rts
 loc_1F82C:
-		bsr.w	JmpTo13_SingleObjLoad2
+		jsrto	JmpTo13_SingleObjLoad2
 		bne.s	loc_1F888
 		_move.b	#$54,0(a1)
 		move.b	#$08,$0024(a1)
 		move.l	#Obj4B_MapUnc_1EB0E,mappings(a1) ; Obj4B_MapUnc_1EB0E
 		move.w	#$03E6,art_tile(a1)
-		bsr.w	JmpTo5_Adjust2PArtPointer2
+		jsrto	JmpTo5_Adjust2PArtPointer2
 		move.b	#$04,$0018(a1)
 		move.b	#$10,$0019(a1)
 		move.b	$0022(a0),$0022(a1)
@@ -36809,13 +32049,13 @@ loc_1F88A:
 loc_1F8BA:
 		add.w	d0,x_pos(a0)
 		lea	(loc_1EAF2).l,A1
-		bsr.w	JmpTo15_AnimateSprite
-		bra.w	JmpTo2_MarkObjGone_P1
+		jsrto	JmpTo15_AnimateSprite
+		jmpto	JmpTo2_MarkObjGone_P1
 loc_1F8CC:
 		subi.w	#$0001,$0030(a0)
 		bpl.w	JmpTo2_MarkObjGone_P1
 		neg.w	$0010(a0)
-		bsr.w	JmpTo7_ObjectMoveAndFall
+		jsrto	JmpTo7_ObjectMoveAndFall
 		move.w	$0010(a0),d0
 		asr.w	#2,d0
 		move.w	d0,$0010(a0)
@@ -36824,7 +32064,7 @@ loc_1F8CC:
 		subq.b	#2,$0024(a0)
 		sf		$0034(a0)
 		sf		$0035(a0)
-		bra.w	JmpTo2_MarkObjGone_P1
+		jmpto	JmpTo2_MarkObjGone_P1
 loc_1F904:
 		move.l	$002A(a0),A1
 		cmpi.b	#$54,(a1)
@@ -36833,7 +32073,7 @@ loc_1F904:
 		move.w	y_pos(a1),y_pos(a0)
 		move.b	$0022(a1),$0022(a0)
 		move.b	$0001(a1),$0001(a0)
-		bra.w	JmpTo2_MarkObjGone_P1
+		jmpto	JmpTo2_MarkObjGone_P1
 loc_1F92C:
 		dc.w	loc_1F930-loc_1F92C
 		dc.w	loc_1F934-loc_1F92C
@@ -36851,30 +32091,8 @@ Obj54_MapUnc_1F938:	binclude	"mappings/sprite/obj54.bin"
 ; Object 0x54 - Green Hill - Motobug
 ; [ End ]
 ;===============================================================================
-; loc_1F96C:
-JmpTo39_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_1F972:
-JmpTo13_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_1F978:
-JmpTo15_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_1F97E:
-JmpTo5_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_1F984:
-JmpTo2_MarkObjGone_P1:
-		jmp	(MarkObjGone_P1).l
-; loc_1F98A:
-JmpTo35_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-; loc_1F990:
-JmpTo7_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
-; loc_1F996:
-JmpTo19_ObjectMove:
-		jmp	(ObjectMove).l
+
+		jmpTos0	JmpTo39_DeleteObject,JmpTo13_SingleObjLoad2,JmpTo15_AnimateSprite,JmpTo5_Adjust2PArtPointer2,JmpTo2_MarkObjGone_P1,JmpTo35_Adjust2PArtPointer,JmpTo7_ObjectMoveAndFall,JmpTo19_ObjectMove
 
 ;===============================================================================
 ; Object 0x57 -
@@ -36897,11 +32115,11 @@ loc_1F9B6:
 		cmpi.w	#$29d0,x_pos(a0)
 		ble.s	loc_1F9CE
 		subi.w	#$0001,x_pos(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1F9CE:
 		move.w	#$29d0,x_pos(a0)
 		addq.b	#2,$0025(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1F9DC:
 		moveq	#0,d0
 		move.b	$002C(a0),d0
@@ -36914,12 +32132,12 @@ loc_1F9EE:
 		cmpi.w	#$041E,y_pos(a0)
 		bge.s	loc_1FA00
 		addi.w	#$0001,y_pos(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FA00:
 		addq.b	#2,$002C(a0)
 		bset	#0,$002D(a0)
 		move.w	#$003C,$002A(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FA14:
 		subi.w	#$0001,$002A(a0)
 		bpl.w	JmpTo18_DisplaySprite
@@ -36927,7 +32145,7 @@ loc_1FA14:
 		addq.b	#2,$0025(a0)
 		move.b	#$0F,$0020(a0)
 		bset	#1,$002D(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FA38:
 		bsr.w	loc_1FBA8
 		bsr.w	loc_1FB86
@@ -36942,10 +32160,10 @@ loc_1FA38:
 		asl.l	#$08,d0
 		add.l	d0,d2
 		move.l	d2,x_pos(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FA6A:
 		subq.w	#1,$003C(a0)
-		dc.w	$6A00,$0000
+		bpl.w	*+2	; BossDefeated is missing
 		bset	#0,$0022(a0)
 		bclr	#$07,$0022(a0)
 		clr.w	$0010(a0)
@@ -36959,26 +32177,26 @@ loc_1FA94:
 		bpl.w	JmpTo18_DisplaySprite
 		addq.b	#2,$0025(a0)
 		move.b	#0,$002C(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FAAE:
 		moveq	#0,d0
 		move.b	$002C(a0),d0
 		move.w	loc_1FAC0(pc,d0),d1
 		jsr	loc_1FAC0(pc,d1)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FAC0:
 		dc.w	loc_1FAC6-loc_1FAC0
 		dc.w	loc_1FB3E-loc_1FAC0
 		dc.w	loc_1FB58-loc_1FAC0
 loc_1FAC6:
 		bclr	#0,$002D(a0)
-		bsr.w	JmpTo14_SingleObjLoad2
+		jsrto	JmpTo14_SingleObjLoad2
 		bne.w	JmpTo18_DisplaySprite
 		_move.b	#$58,0(a1)
 		move.l	A0,$0034(a1)
 		move.l	#Obj_0x57_Mappings,mappings(a1) ; loc_20168
 		move.w	#$2540,art_tile(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#$04,$0001(a1)
 		move.b	#$20,$0019(a1)
 		move.b	#$04,$0018(a1)
@@ -37012,7 +32230,7 @@ loc_1FB58:
 		tst.b	(Boss_defeated_flag).w
 		bne.s	loc_1FB84
 		move.b	#1,(Boss_defeated_flag).w
-		bra.w	JmpTo40_DeleteObject
+		jmpto	JmpTo40_DeleteObject
 loc_1FB84:
 		rts
 loc_1FB86:
@@ -37085,8 +32303,8 @@ loc_1FC22:
 		bpl.w	JmpTo18_DisplaySprite
 		move.b	#0,$0024(a0)
 		lea	(loc_2012E).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FC46:
 		moveq	#0,d0
 		move.b	$0025(a0),d0
@@ -37110,19 +32328,19 @@ loc_1FC7C:
 		move.b	$0022(a1),$0022(a0)
 		move.b	$0001(a1),$0001(a0)
 		lea	(loc_2012E).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FCA2:
 		subi.w	#$0001,$002A(a0)
 		bpl.s	loc_1FCBE
 		cmpi.w	#$FFF0,$002A(a0)
 		ble.w	JmpTo40_DeleteObject
 		addi.w	#$0001,y_pos(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FCBE:
 		lea	(loc_2012E).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FCCC:
 		move.l	$0034(a0),A1
 		cmpi.b	#$55,(a1)
@@ -37136,7 +32354,7 @@ loc_1FCCC:
 		addi.w	#8,y_pos(a0)
 		move.b	$0022(a1),$0022(a0)
 		move.b	$0001(a1),$0001(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1Fd0E:
 		move.b	#$08,$001A(a0)
 		move.b	#0,$0018(a0)
@@ -37158,7 +32376,7 @@ loc_1Fd34:
 		btst	#1,$002D(a1)
 		beq.w	JmpTo18_DisplaySprite
 		addq.b	#2,$0025(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1Fd52:
 		move.l	$0034(a0),A1
 		cmpi.b	#$55,(a1)
@@ -37170,7 +32388,7 @@ loc_1Fd52:
 		addq.b	#2,$0025(a0)
 loc_1Fd74:
 		bsr.w	loc_1FB86
-		bsr.w	JmpTo8_ObjectMoveAndFall
+		jsrto	JmpTo8_ObjectMoveAndFall
 		jsr	(ObjHitFloor).l	; (loc_13898)
 		tst.w	d1
 		bpl.s	loc_1FD8A
@@ -37184,8 +32402,8 @@ loc_1FD8A:
 		add.w	d0,$2E(a1)
 loc_1FDA4:
 		lea	(loc_2023C).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FDB2:
 		subi.w	#1,$2A(a0)
 		bpl.w	JmpTo18_DisplaySprite
@@ -37195,18 +32413,18 @@ loc_1FDB2:
 		cmpi.b	#1,$18(a0)
 		beq.w	JmpTo18_DisplaySprite
 		neg.w	$10(a0)
-		bra.w	JmpTo18_DisplaySprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FDDE:
 		subq.w	#1,$2A(a0)
 		bpl.w	JmpTo18_DisplaySprite
-		bsr.w	JmpTo8_ObjectMoveAndFall
-		bsr.w	JmpTo2_ObjHitFloor
+		jsrto	JmpTo8_ObjectMoveAndFall
+		jsrto	JmpTo2_ObjHitFloor
 		tst.w	d1
 		bpl.s	loc_1FDFC
 		move.w	#-$200,$12(a0)
 		add.w	d1,y_pos(a0)
 loc_1FDFC:
-		bra.w	JmpTo27_MarkObjGone
+		jmpto	JmpTo27_MarkObjGone
 loc_1FE00:
 		move.l	$34(a0),A1
 		cmpi.b	#$55,(a1)
@@ -37229,8 +32447,8 @@ loc_1FE00:
 loc_1FE54:
 		add.w	d0,x_pos(a0)
 		lea	(loc_2023C).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FE66:
 		move.w	#$FFFD,d0
 		btst	#0,$22(a0)
@@ -37239,8 +32457,8 @@ loc_1FE66:
 loc_1FE74:
 		add.w	d0,x_pos(a0)
 		lea	(loc_2023C).l,A1
-		bsr.w	JmpTo16_AnimateSprite
-		bra.w	JmpTo18_DisplaySprite
+		jsrto	JmpTo16_AnimateSprite
+		jmpto	JmpTo18_DisplaySprite
 loc_1FE86:
 		cmpi.b	#1,$21(a1)
 		beq.s	loc_1FE90
@@ -37266,7 +32484,7 @@ loc_1FEB6:
 		move.l	A0,$34(a1)
 		move.l	#loc_20250,4(a1)
 		move.w	#$24C0,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$10,$19(a1)
 		move.b	#1,$18(a1)
@@ -37288,7 +32506,7 @@ loc_1FF2E:
 		move.l	A0,$34(a1)
 		move.l	#loc_20250,4(a1)
 		move.w	#$24C0,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$10,$19(a1)
 		move.b	#1,$18(a1)
@@ -37310,7 +32528,7 @@ loc_1FFA6:
 		move.l	A0,$34(a1)
 		move.l	#loc_20250,4(a1)
 		move.w	#$24C0,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$10,$19(a1)
 		move.b	#2,$18(a1)
@@ -37332,7 +32550,7 @@ loc_2001E:
 		move.l	A0,$34(a1)
 		move.l	#loc_20250,4(a1)
 		move.w	#$24C0,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$10,$19(a1)
 		move.b	#1,$18(a1)
@@ -37352,7 +32570,7 @@ loc_20080:
 		move.l	A0,$34(a1)
 		move.l	#loc_20250,4(a1)
 		move.w	#$4C0,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1)
 		move.b	#2,$18(a1)
@@ -37370,7 +32588,7 @@ loc_200C8:
 		move.l	A0,$34(a1)
 		move.l	#loc_20168,4(a1)
 		move.w	#$2540,2(a1)
-		bsr.w	JmpTo6_Adjust2PArtPointer2
+		jsrto	JmpTo6_Adjust2PArtPointer2
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1)
 		move.b	#4,$18(a1)
@@ -37484,30 +32702,8 @@ loc_202C2:
 ; Object 0x58 -
 ; [ End ]
 ;===============================================================================
-; loc_202DC:
-JmpTo18_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_202E2:
-JmpTo40_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_202E8:
-JmpTo27_MarkObjGone:
-		jmp	(MarkObjGone).l
-; loc_202EE:
-JmpTo14_SingleObjLoad2:
-		jmp	(SingleObjLoad2).l
-; loc_202F4:
-JmpTo16_AnimateSprite:
-		jmp	(AnimateSprite).l
-; loc_202FA:
-JmpTo6_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_20300:
-JmpTo2_ObjHitFloor:
-		jmp	(ObjHitFloor).l
-; loc_20306:
-JmpTo8_ObjectMoveAndFall:
-		jmp	(ObjectMoveAndFall).l
+
+		jmpTos0	JmpTo18_DisplaySprite,JmpTo40_DeleteObject,JmpTo27_MarkObjGone,JmpTo14_SingleObjLoad2,JmpTo16_AnimateSprite,JmpTo6_Adjust2PArtPointer2,JmpTo2_ObjHitFloor,JmpTo8_ObjectMoveAndFall
 
 ;===============================================================================
 ; Object 0x55 - Ghz Boss
@@ -37540,7 +32736,7 @@ loc_20324:
 		bne.s	loc_20370
 		addi.w	#$60,2(a0)
 loc_20370:
-		bsr.w	JmpTo36_Adjust2PArtPointer
+		jsrto	JmpTo36_Adjust2PArtPointer
 		jsr	(SingleObjLoad2).l	; (loc_E788)
 		bne.w	loc_20434
 		_move.b	#$55,0(a1)
@@ -37561,7 +32757,7 @@ loc_20370:
 		bne.s	loc_203D8
 		addi.w	#$60,2(a1)
 loc_203D8:
-		bsr.w	JmpTo7_Adjust2PArtPointer2
+		jsrto	JmpTo7_Adjust2PArtPointer2
 		tst.b	$28(a0)
 		bmi.s	loc_20434
 		jsr	(SingleObjLoad2).l	; (loc_E788)
@@ -37570,7 +32766,7 @@ loc_203D8:
 		move.l	A0,$34(a1)
 		move.l	#Ghz_Boss_Mappings_1,4(a1)	; loc_20612
 		move.w	#$4D0,2(a1)
-		bsr.w	JmpTo7_Adjust2PArtPointer2
+		jsrto	JmpTo7_Adjust2PArtPointer2
 		move.b	#1,$1E(a0)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1)
@@ -37597,7 +32793,7 @@ loc_2044E:
 		move.l	loc_20484(pc,d0),A1
 		jsr	(a1)
 		lea	(loc_206AE).l,A1
-		jsr	AnimateSprite	; (loc_d412)
+		jsr	(AnimateSprite).l	; (loc_d412)
 		move.b	$22(a0),d0
 		andi.b	#3,d0
 		andi.b	#$FC,1(a0)
@@ -37649,7 +32845,7 @@ loc_20520:
 		addq.b	#2,$24(a0)
 		move.l	#Ghz_Boss_Mappings_2,4(a0) ; loc_2062A
 		move.w	#$4D8,2(a0)
-		bsr.w	JmpTo36_Adjust2PArtPointer
+		jsrto	JmpTo36_Adjust2PArtPointer
 		move.b	#0,$1A(a0)
 		move.b	#5,$1E(a0)
 		move.l	$34(a0),A1
@@ -37674,7 +32870,7 @@ loc_20560:
 		addi.w	#4,y_pos(a0)
 		subi.w	#$28,x_pos(a0)
 loc_205A2:
-		bra.w	JmpTo19_DisplaySprite
+		jmpto	JmpTo19_DisplaySprite
 ;===============================================================================
 ; Object 0x55 - Ghz Boss
 ; [ End ]
@@ -37695,7 +32891,7 @@ loc_205B8:
 		addq.b	#2,$24(a0)
 		move.l	#Obj_0x56_Mappings,4(a0) ; loc_2065A
 		move.w	#$5A0,2(a0)
-		bsr.w	JmpTo36_Adjust2PArtPointer
+		jsrto	JmpTo36_Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.b	#1,$18(a0)
 		move.b	#0,$20(a0)
@@ -37711,7 +32907,7 @@ loc_205F4:
 		cmpi.b	#7,$1A(a0)
 		beq.w	JmpTo41_DeleteObject
 loc_2060E:
-		bra.w	JmpTo19_DisplaySprite
+		jmpto	JmpTo19_DisplaySprite
 Ghz_Boss_Mappings_1:
 loc_20612:
 		dc.w	loc_20616-loc_20612
@@ -37798,19 +32994,8 @@ loc_20704:
 ; Object 0x56 - Ghz Boss
 ; [ End ]
 ;===============================================================================
-		nop
-; loc_20728:
-JmpTo19_DisplaySprite:
-		jmp	(DisplaySprite).l
-; loc_2072E:
-JmpTo41_DeleteObject:
-		jmp	(DeleteObject).l
-; loc_20734:
-JmpTo7_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-; loc_2073A:
-JmpTo36_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+
+		jmpTos	JmpTo19_DisplaySprite,JmpTo41_DeleteObject,JmpTo7_Adjust2PArtPointer2,JmpTo36_Adjust2PArtPointer
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -37835,7 +33020,7 @@ Obj8A_Init:
 		move.w	#$F0,$A(a0)
 		move.l	#Obj8A_MapUnc_207C6,4(a0)
 		move.w	#$5A0,2(a0)
-		bsr.w	JmpTo37_Adjust2PArtPointer
+		jsrto	JmpTo37_Adjust2PArtPointer
 		move.w	(Ending_demo_number).w,d0
 		move.b	d0,$1A(a0)
 		move.b	#0,1(a0)
@@ -37863,12 +33048,8 @@ Obj8A_Display:
 Obj8A_MapUnc_207C6:	binclude	"mappings/sprite/obj8A.bin"
 		even
 ; ===========================================================================
-		nop
-; loc_20E54:
-JmpTo37_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
 
-		align 4
+		jmpTos	JmpTo37_Adjust2PArtPointer
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -37912,7 +33093,7 @@ Obj3E_Var:	dc.b   2,$20, 4, 0	; routine,width,priority,frame
 Obj3E_Init:
 		move.l	#loc_210AC,4(a0)
 		move.w	#$49D,2(a0)
-		bsr.w	JmpTo38_Adjust2PArtPointer
+		jsrto	JmpTo38_Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.w	y_pos(a0),$30(a0)
 		moveq	#0,d0
@@ -38123,11 +33304,8 @@ loc_2114C:
 loc_21156:
 		dc.w	$0000
 ; ===========================================================================
-; loc_21158:
-JmpTo38_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
 
-		align 4
+		jmpTos0	JmpTo38_Adjust2PArtPointer
 
 ;===============================================================================
 ; Sub Routine TouchResponse
@@ -38135,7 +33313,7 @@ JmpTo38_Adjust2PArtPointer:
 ;===============================================================================
 TouchResponse: ; loc_21160:
 		nop
-		bsr.w	loc_21502
+		jsrto	JmpTo_Touch_Rings
 		move.w	x_pos(a0),d2
 		move.w	y_pos(a0),d3
 		subi.w	#8,d2
@@ -38323,7 +33501,7 @@ HurtSonic: ; loc_21384:
 HurtShield: ; loc_213AC:
 		move.b	#0,(Shield_flag).w
 		move.b	#4,$24(a0)
-		bsr.w	J_Sonic_ResetOnFloor_00	; loc_214FC
+		jsrto	JmpTo_Sonic_ResetOnFloor	; loc_214FC
 		bset	#1,$22(a0)
 		move.w	#-$400,$12(a0)
 		move.w	#-$200,$10(a0)
@@ -38357,15 +33535,15 @@ Hurt_NoRings: ; loc_2141A:
 ;===============================================================================
 
 ;===============================================================================
-; Sub Routine KillSonic
+; Sub Routine KillCharacter
 ; [ Begin ]
 ;===============================================================================
-KillSonic: ; loc_21422:
+KillCharacter: ; loc_21422:
 		tst.w	(Debug_placement_mode).w
 		bne.s	Kill_NoDeath	; loc_21476
 		move.b	#0,(Invincibility_flag).w
 		move.b	#6,$24(a0)
-		bsr.w	J_Sonic_ResetOnFloor_00	; loc_214FC
+		jsrto	JmpTo_Sonic_ResetOnFloor	; loc_214FC
 		bset	#1,$22(a0)
 		move.w	#$F900,$12(a0)
 		move.w	#0,$10(a0)
@@ -38383,7 +33561,7 @@ Kill_NoDeath ; loc_21476:
 		moveq	#-1,d0
 		rts
 ;===============================================================================
-; Sub Routine KillSonic
+; Sub Routine KillCharacter
 ; [ End ]
 ;===============================================================================
 
@@ -38440,10 +33618,9 @@ loc_214F0:
 Touch_E1: ; loc_214F6:
 		addq.b	#1,$21(a1)
 		rts
-J_Sonic_ResetOnFloor_00: ; loc_214FC:
-		jmp	(Sonic_ResetOnFloor).l	; loc_1090C
-loc_21502:
-		jmp	(Touch_Rings).l	; loc_DF6C
+
+		jmpTos0	JmpTo_Sonic_ResetOnFloor,JmpTo_Touch_Rings
+
 ;===============================================================================
 ; Sub Routine TouchResponse
 ; [ End ]
@@ -39128,7 +34305,9 @@ loc_21d38:
 ; Special Stage - Sub-routine
 ; [ End ]
 ;===============================================================================
-		nop
+
+		jmpTos	; Empty
+
 ;===============================================================================
 ; Object 0x09 - Sonic In Special Stage
 ; [ Begin ]
@@ -39154,7 +34333,7 @@ loc_21d64:
 		move.b	#7,$17(a0)
 		move.l	#MapUnc_Sonic,$4(a0)	; loc_614C0
 		move.w	#$780,2(a0)
-		bsr.w	JmpTo39_Adjust2PArtPointer
+		jsrto	JmpTo39_Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.b	#0,$18(a0)
 		move.b	#2,$1C(a0)
@@ -39782,11 +34961,8 @@ loc_223E0:
 Obj10:
 		rts
 ; ===========================================================================
-; loc_223E4:
-JmpTo39_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
 
-		align 4
+		jmpTos0	JmpTo39_Adjust2PArtPointer
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -40455,7 +35631,7 @@ Map16Delta_Null: ; loc_22d60:
 loc_22d62: ; Load Hill Top 8x8 Extra Background Tiles In To Ram
 		lea	(Hill_Top_Background).l,a0 ; loc_28300
 		lea	(Object_RAM+$800).w,a4
-		bsr.w	JmpTo_NemDecToRAM
+		jsrto	JmpTo_NemDecToRAM
 		lea	(Object_RAM+$800).w,a1
 		lea	(loc_22D94).l,a4
 		moveq	#0,d2
@@ -40479,11 +35655,8 @@ loc_22D94:
 		dc.w	$2B00,$3280,$3600,$3680,$3C80,$3d00,$3F00,$3F80
 		dc.w	$4080,$4480,$4580,$4880,$4900,$4B80,$4C80,$4D80
 ; ===========================================================================
-; loc_22DF4:
-JmpTo_NemDecToRAM:
-		jmp	(NemDecToRAM).l
 
-		align 4
+		jmpTos0	JmpTo_NemDecToRAM
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -40508,7 +35681,7 @@ Obj21_Init:
 		move.w	#$108,x_sub(a0)
 		move.l	#Obj21_MapUnc_22E80,mappings(a0)
 		move.w	#$6CA,art_tile(a0)
-		bsr.w	JmpTo40_Adjust2PArtPointer
+		jsrto	JmpTo40_Adjust2PArtPointer
 		move.b	#0,render_flags(a0)
 		move.b	#0,priority(a0)
 ; loc_22E3C:
@@ -40650,7 +35823,7 @@ Sub_Time_Over: ; loc_230EE:
 		clr.b	(Update_HUD_timer).w
 		lea	(MainCharacter).w,a0
 		movea.l	a0,a2
-		bsr.w	KillSonic				; loc_21422
+		bsr.w	KillCharacter				; loc_21422
 		move.b	#1,(Time_Over_flag).w
 		rts
 loc_23104:
@@ -41009,11 +36182,8 @@ loc_23748:
 loc_23888:
 		binclude	"data\sprites\debugnum.dat"
 		even
-; loc_23B68:
-JmpTo40_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
 
-		align 4
+		jmpTos0	JmpTo40_Adjust2PArtPointer
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -41240,7 +36410,7 @@ LoadDebugObjectSprite:
 		move.l	(a2,d0.w),mappings(a0)
 		move.w	6(a2,d0.w),art_tile(a0)
 		move.b	5(a2,d0.w),mapping_frame(a0)
-		bsr.w	JmpTo41_Adjust2PArtPointer
+		jsrto	JmpTo41_Adjust2PArtPointer
 		rts
 ; End of function LoadDebugObjectSprite
 
@@ -41487,10 +36657,7 @@ Debug_NGHZ: dbglistheader
 	dbglistobj $36,Obj36_MapUnc_CAB0,  0,0,$2434
 Debug_NGHZ_End:
 
-; loc_2434C:
-JmpTo41_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
-		align 4
+		jmpTos0	JmpTo41_Adjust2PArtPointer
 
 ; ---------------------------------------------------------------------------
 ; "MAIN LEVEL LOAD BLOCK" (after Nemesis)
