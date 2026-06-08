@@ -22831,7 +22831,6 @@ loc_167C6:
 		andi.w	#$000F,d0
 		move.b	loc_167EC(pc,d0),d2
 		cmpi.b	#2,d2
-loc_167E0:
 		bne.s	loc_16806
 		move.b	(Timer_frames).w,d2
 		andi.b	#1,d2
@@ -22861,7 +22860,6 @@ loc_16806:
 		move.l	A2,$0006(a4)
 		move.w	(a2)+,d4
 		add.w	x_pos(a0),d4
-loc_16840:
 		move.w	(a2)+,d5
 		add.w	y_pos(a0),d5
 		addq.b	#2,(a4)
@@ -22869,7 +22867,6 @@ loc_16840:
 		move.b	#2,$001C(a1)
 		move.w	#$0800,$0014(a1)
 		move.w	#0,$0010(a1)
-loc_16860:
 		move.w	#0,$0012(a1)
 		bclr	#$05,$0022(a0)
 		bclr	#$05,$0022(a1)
