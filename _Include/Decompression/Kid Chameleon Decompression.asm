@@ -7,6 +7,8 @@
 ; a1 = starting art tile
 ; a2 = destination address
 ; a3 = end of destination address
+
+; What's interesting about this is that a3 gets moved to d7 and a3 is never used again.
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
