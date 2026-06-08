@@ -16552,8 +16552,8 @@ loc_E770:
 
 ; loc_E772:
 SingleObjLoad:
-		lea	($FFFFB800).w,a1
-		move.w	#$5F,d0
+		lea	(Dynamic_Object_RAM).w,a1
+		move.w	#bytesToXcnt(Dynamic_Object_RAM_End-Dynamic_Object_RAM,object_size),d0
 
 loc_E77A:
 		tst.b	(a1)
@@ -16576,7 +16576,7 @@ return_E786:
 ; loc_E788:
 SingleObjLoad2:
 		move.l	a0,a1
-		move.w	#$d000,d0
+		move.w	#Dynamic_Object_RAM_End,d0
 		sub.w	a0,d0		; subtract current object location
 		lsr.w	#object_size_bits,d0		; divide by $40
 		subq.w	#1,d0		; keep from going over the object zone
