@@ -32950,7 +32950,7 @@ loc_214E0:
 		bra.w	loc_212B8
 Touch_d7: ; loc_214E4:
 		move.w	A0,d1
-		subi.w	#Object_RAM,d1
+		subi.w	#MainCharacter,d1
 		beq.s	loc_214F0
 		addq.b	#1,$21(a1)
 loc_214F0:
