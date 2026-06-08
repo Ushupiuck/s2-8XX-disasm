@@ -23396,7 +23396,7 @@ loc_172F2:
 		move.b	#2,$001C(a0)
 		move.b	#$04,$001A(a0)
 		move.w	#0,$0012(a0)
-		move.l	#$00017410,mappings(a0)
+		move.l	#loc_17410_B,mappings(a0)
 		move.w	#$839E,art_tile(a0)
 		jsrto	JmpTo5_Adjust2PArtPointer
 		move.b	#0,$001A(a0)
