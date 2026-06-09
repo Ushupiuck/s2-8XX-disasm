@@ -820,7 +820,7 @@ Sprite_count:			ds.b	1	; the number of sprites drawn in the current frame
 PalCycle_Frame:			ds.w	1	; ColorID loaded in PalCycle
 PalCycle_Timer:			ds.w	1	; number of frames until next PalCycle call
 RNG_seed:			ds.l	1	; used for random number generation
-Game_paused:			ds.w	1	
+Game_paused:			ds.w	1
 				ds.b	4	; $FFFFF63C-$FFFFF63F ; seems unused
 DMA_data_thunk:			ds.w	1	; Used as a RAM holder for the final DMA command word. Data will NOT be preserved across V-INTs, so consider this space reserved.
 				ds.w	1	; $FFFFF642-$FFFFF643 ; seems unused
@@ -853,14 +853,14 @@ MiscLevelVariables_End
 Plc_Buffer:			ds.b	$60	; Pattern load queue (each entry is 6 bytes)
 Plc_Buffer_Only_End:
 				; these seem to store nemesis decompression state so PLC processing can be spread out across frames
-Plc_Buffer_Reg0:		ds.l	1	
-Plc_Buffer_Reg4:		ds.l	1	
-Plc_Buffer_Reg8:		ds.l	1	
-Plc_Buffer_RegC:		ds.l	1	
-Plc_Buffer_Reg10:		ds.l	1	
-Plc_Buffer_Reg14:		ds.l	1	
+Plc_Buffer_Reg0:		ds.l	1
+Plc_Buffer_Reg4:		ds.l	1
+Plc_Buffer_Reg8:		ds.l	1
+Plc_Buffer_RegC:		ds.l	1
+Plc_Buffer_Reg10:		ds.l	1
+Plc_Buffer_Reg14:		ds.l	1
 Plc_Buffer_Reg18:		ds.w	1	; amount of current entry remaining to decompress
-Plc_Buffer_Reg1A:		ds.w	1	
+Plc_Buffer_Reg1A:		ds.w	1
 				ds.b	4	; seems unused
 Plc_Buffer_End:
 
@@ -1212,7 +1212,7 @@ Z80_Reset =			$A11200
 Security_Addr =			$A14000
 
 ; ---------------------------------------------------------------------------
-; I/O Area 
+; I/O Area
 HW_Version =			$A10001
 HW_Port_1_Data =		$A10003
 HW_Port_2_Data =		$A10005

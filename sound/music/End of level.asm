@@ -153,7 +153,7 @@ Mus_ActClear_Voices:
 	smpsVcDecayLevel    $01, $01, $01, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $1B, $00, $00, $1B
-	
+
 ; Unused voice
 ;	Voice $04
 ;	$3D

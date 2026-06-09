@@ -199,7 +199,7 @@ Mus_DEZ_Loop00:
 	dc.b	$06, dSnare, dSnare, $0C
 	smpsLoop            $00, $05, Mus_DEZ_Loop00
 	smpsJump            Mus_DEZ_DAC
-	
+
 ; Unreachable
 	smpsStop
 
