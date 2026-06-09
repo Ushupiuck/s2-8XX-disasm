@@ -31485,7 +31485,7 @@ Hurt_ChkSpikes: ; loc_213F0:
 		move.b	#$1A,$1C(a0)
 		move.w	#$78,$30(a0)
 		move.w	#SndID_Hurt,d0
-		cmpi.b	#$36,(a2)
+		cmpi.b	#id_Obj36,(a2)
 		bne.s	loc_21410
 		move.w	#SndID_HurtBySpikes,d0
 loc_21410:
@@ -31518,7 +31518,7 @@ KillCharacter: ; loc_21422:
 		move.b	#$18,$1C(a0)
 		bset	#7,2(a0)
 		move.w	#SndID_Hurt,d0
-		cmpi.b	#$36,(a2)
+		cmpi.b	#id_Obj36,(a2)
 		bne.s	loc_21470
 		move.w	#SndID_HurtBySpikes,d0
 loc_21470:
