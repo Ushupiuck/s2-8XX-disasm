@@ -15445,53 +15445,72 @@ loc_E612:
 		rts
 loc_E616:
 		lea	(Object_RAM_block_indices).w,a1
-		lea	($FFFFBE00).w,a3
+		; Check block 1.
+		lea	(Dynamic_Object_RAM_2P_End+(12*0)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
-		lea	($FFFFC100).w,a3
+		bmi.s	.foundBlock
+		; Check block 2.
+		lea	(Dynamic_Object_RAM_2P_End+(12*1)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
-		lea	($FFFFC400).w,a3
+		bmi.s	.foundBlock
+		; Check block 3.
+		lea	(Dynamic_Object_RAM_2P_End+(12*2)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
-		lea	($FFFFC700).w,a3
+		bmi.s	.foundBlock
+		; Check block 4.
+		lea	(Dynamic_Object_RAM_2P_End+(12*3)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
-		lea	($FFFFCA00).w,a3
+		bmi.s	.foundBlock
+		; Check block 5.
+		lea	(Dynamic_Object_RAM_2P_End+(12*4)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
-		lea	($FFFFCd00).w,a3
+		bmi.s	.foundBlock
+		; Check block 6.
+		lea	(Dynamic_Object_RAM_2P_End+(12*5)*object_size).w,a3
 		tst.b	(a1)+
-		bmi.s	loc_E64E
+		bmi.s	.foundBlock
+		; This code should never be reached.
 		nop
 		nop
-loc_E64E:
+
+.foundBlock:
+		; Rewind a little so that 'a1' points to the object block index that we found.
 		subq.w	#1,a1
 		rts
 loc_E652:
+		; Find which object block holds this object block index.
 		lea	(Object_RAM_block_indices).w,a1
-		lea	($FFFFBE00).w,a3
+		; Check block 1.
+		lea	(Dynamic_Object_RAM_2P_End+(12*0)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
-		lea	($FFFFC100).w,a3
+		beq.s	.foundBlock
+		; Check block 2.
+		lea	(Dynamic_Object_RAM_2P_End+(12*1)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
-		lea	($FFFFC400).w,a3
+		beq.s	.foundBlock
+		; Check block 3.
+		lea	(Dynamic_Object_RAM_2P_End+(12*2)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
-		lea	($FFFFC700).w,a3
+		beq.s	.foundBlock
+		; Check block 4.
+		lea	(Dynamic_Object_RAM_2P_End+(12*3)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
-		lea	($FFFFCA00).w,a3
+		beq.s	.foundBlock
+		; Check block 5.
+		lea	(Dynamic_Object_RAM_2P_End+(12*4)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
-		lea	($FFFFCd00).w,a3
+		beq.s	.foundBlock
+		; Check block 6.
+		lea	(Dynamic_Object_RAM_2P_End+(12*5)*object_size).w,a3
 		cmp.b	(a1)+,d2
-		beq.s	loc_E68A
+		beq.s	.foundBlock
+		; This code should never be reached.
 		nop
 		nop
-loc_E68A:
-		move.b	#$FF,-(a1)
+
+.foundBlock:
+		; Mark this object block as empty.
+		move.b	#-1,-(a1)
 		movem.l a1/a3,-(sp)
 		moveq	#0,d1
 		moveq	#$B,d2
