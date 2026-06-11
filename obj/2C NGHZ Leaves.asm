@@ -104,7 +104,7 @@ loc_1A18A:
 loc_1A192:
 		jsrto	JmpTo4_SingleObjLoad
 		bne.w	loc_1A21E
-		_move.b	#$2C,0(a1)		; load obj2C (leaves generator)
+		_move.b	#id_Obj2C,0(a1)		; load obj2C (leaves generator)
 		move.b	#4,routine(a1)
 		move.w	x_pos(a2),x_pos(a1)
 		move.w	y_pos(a2),y_pos(a1)

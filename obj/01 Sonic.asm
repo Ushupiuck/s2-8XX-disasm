@@ -247,7 +247,7 @@ Obj01_InWater:
 		bne.s	return_FE54		; if already underwater,branch
 
 		bsr.w	ResumeMusic
-		move.b	#$A,(BreathingBubbles).w	; load Obj0A (Sonic's breathing bubbles) at $FFFFB340
+		move.b	#id_Obj0A,(BreathingBubbles).w	; load Obj0A (Sonic's breathing bubbles) at $FFFFB340
 		move.b	#$81,(BreathingBubbles+$28).w
 		move.w	#$300,(Sonic_top_speed).w
 		move.w	#6,(Sonic_acceleration).w
@@ -256,7 +256,7 @@ Obj01_InWater:
 		asr.w	$12(a0)			; memory operands can only be shifted one bit at a time
 		asr.w	$12(a0)
 		beq.s	return_FE54
-		move.b	#8,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
+		move.b	#id_Obj08,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
 		move.w	#SndID_Splash,d0			; splash sound
 		jmp	(PlaySound).l
 ; ---------------------------------------------------------------------------
@@ -270,7 +270,7 @@ Obj01_OutWater:
 		move.w	#$80,(Sonic_deceleration).w
 		asl.w	$12(a0)
 		beq.w	return_FE54
-		move.b	#8,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
+		move.b	#id_Obj08,(WaterSplash).w	; load Obj08 (splash animation) at $FFFFB300
 		cmpi.w	#-$1000,$12(a0)
 		bgt.s	loc_FEE2
 		move.w	#-$1000,$12(a0)		; limit upwards y-velocity when exiting out of water
@@ -1609,8 +1609,8 @@ CheckGameOver:
 		subq.b	#1,(Life_count).w
 		bne.s	Obj01_ResetLevel
 		move.w	#0,$3A(a0)
-		move.b	#$39,(GameOver_GameText).w
-		move.b	#$39,(GameOver_OverText).w
+		move.b	#id_Obj39,(GameOver_GameText).w
+		move.b	#id_Obj39,(GameOver_OverText).w
 		move.b	#1,(GameOver_OverText+$1A).w
 		clr.b	(Time_Over_flag).w
 ; loc_10A5E:
@@ -1631,8 +1631,8 @@ Obj01_ResetLevel:
 		tst.b	(Time_Over_flag).w
 		beq.s	return_10A9C
 		move.w	#0,$3A(a0)
-		move.b	#$39,(TimeOver_TimeText).w
-		move.b	#$39,(TimeOver_OverText).w
+		move.b	#id_Obj39,(TimeOver_TimeText).w
+		move.b	#id_Obj39,(TimeOver_OverText).w
 		move.b	#2,(TimeOver_TimeText+$1A).w
 		move.b	#3,(TimeOver_OverText+$1A).w
 		bra.s	Obj01_Finished

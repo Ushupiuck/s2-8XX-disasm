@@ -202,7 +202,7 @@ loc_123F6:
 loc_12404:
 		move.l	A0,-(sp)
 		lea	(MainCharacter).w,A0
-		jsr	ObjectMove				; (loc_d27A)
+		jsr	(ObjectMove).l				; (loc_d27A)
 		addi.w	#$10,$12(a0)
 		move.l	(sp)+,A0
 		bra.s	loc_1241C
@@ -219,7 +219,7 @@ loc_1242C:
 		move.w	d0,$3A(a0)
 		jsr	(SingleObjLoad).l		 ; (loc_E772)
 		bne.w	loc_124FC
-		_move.b	#$A,id(a1)
+		_move.b	#id_Obj0A,id(a1)
 		move.w	(MainCharacter+x_pos).w,x_pos(a1)
 		moveq	#6,d0
 		btst	#0,(MainCharacter+$22).w
